@@ -1,0 +1,164 @@
+﻿@model DataAccess.CustomModels.RegisterVm
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f3f3f3;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
+
+    .main {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 300px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+        font-weight: bold;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg bg-light shadow-sm mb-5">
+    <div class="w-100 d-flex justify-content-between">
+        <div>
+            <a class="navbar-brand fs-3 ms-3 fw-bolder text-primary" href="#">Online BookStore</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container main w-100">
+    <div class="headerdata d-flex justify-content-between">
+        <h2 class="text-success">Registration Form</h2>
+        <a class="me-2" asp-controller="Home" asp-action="Index">Back To Login</a>
+    </div>
+    <form action="" id="RegisterForm" onsubmit="RegisterPost()">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" id="floatingInputFirstName" asp-for=@Model.firstname placeholder="First Name">
+                    <label for="floatingInputFirstName">First Name</label>
+                    <span class="text-danger" asp-validation-for="@Model.firstname"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" id="floatingInputLastName" asp-for=@Model.lastname placeholder="Last Name">
+                    <label for="floatingInputLastName">Last Name</label>
+                    <span class="text-danger" asp-validation-for="@Model.lastname"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="date" class="form-control" id="floatingBirthDate" asp-for=@Model.birthdate placeholder="Birth Date">
+                    <label for="floatingBirthDate">Birth Date</label>
+                    <span class="text-danger" asp-validation-for="@Model.birthdate"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="my-2">
+                    <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="@Model.Gender" required>
+                        <option value="male" selected>Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="email" class="form-control" id="floatingEmail" asp-for=@Model.email placeholder="Email Address">
+                    <label for="floatingEmail">Email Address</label>
+                    <span class="text-danger" asp-validation-for="@Model.email"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="password" class="form-control" id="floatingPassword" asp-for=@Model.Password placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                    <span class="text-danger" asp-validation-for="@Model.Password"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" id="floatingContact" asp-for=@Model.Contact placeholder="Contact">
+                    <label for="floatingContact">Contact</label>
+                    <span class="text-danger" asp-validation-for="@Model.Contact"></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="password" class="form-control" id="floatingConPassword" asp-for=@Model.ConfirmPassword onchange="comparePassword()" placeholder="Confirm Password">
+                    <label for="floatingConPassword">Confirm Password</label>
+                    <span id="message"></span>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="col-12 col-md-6">
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" id="floatingCity" asp-for=@Model.city placeholder="City">
+                    <label for="floatingCity">City</label>
+                    <span class="text-danger" asp-validation-for="@Model.city"></span>
+                </div>
+            </div>
+            <div class="col-12 ">
+                <div class="form-floating my-2">
+                    <textarea class="form-control" id="floatingAddress" asp-for=@Model.Address placeholder="Address" style="height: 100px;"></textarea>
+                    <label for="floatingAddress">Address</label>
+                    <span class="text-danger" asp-validation-for="@Model.Address"></span>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="d-flex gap-2 w-100 justify-content-end">
+            <button class="btn btn-success p-2 px-3" type="submit">Submit</button>
+            <a id="reset" class="btn btn-secondary p-2 px-3">Reset</a>
+        </div>
+    </form>
+</div>
+
+
+
+<!-- Custom JS -->
+<script>
+    // Get the reset button
+    const resetButton = document.querySelector('form #reset');
+
+    // Add event listener to the reset button
+    resetButton.addEventListener('click', function (event) {
+        // Prevent the default form reset behavior
+        event.preventDefault();
+
+        // Get all input fields within the form
+        const inputFields = document.querySelectorAll('form input, form textarea, form select');
+
+        // Loop through each input field and clear its value
+        inputFields.forEach(function (input) {
+            input.value = '';
+        });
+
+        // Clear the selected option in the gender dropdown
+        const genderDropdown = document.querySelector('form select[name="gender"]');
+        genderDropdown.selectedIndex = 0; // Select the first option (Male)
+    });
+
+    function comparePassword() {
+        if ($('#floatingPassword').val() !== $('#floatingConPassword').val()) {
+            $('#message').html('Passwords do not match').css('color', 'red').show();
+        } else {
+            $('#message').hide();
+        }
+    }
+</script>
+

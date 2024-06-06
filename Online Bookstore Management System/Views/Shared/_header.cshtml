@@ -1,0 +1,32 @@
+﻿@model DataAccess.CustomModels.Customer_MainPage;
+@inject IHttpContextAccessor context
+
+<nav class="navbar navbar-expand-lg py-3 w-100 bg-light shadow-sm  " style="z-index:auto;">
+    <div class="container-fluid">
+        <a class="navbar-brand fs-4 fw-bolder text-primary" href="#">Online BookStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                <ul class=" d-flex p-0  me-auto mb-2 mb-lg-0" style="list-style:none;font-size:16px;">
+                    <li class="nav-item mx-2">
+                        <a class="btn bg-transparent fw-semibold border-0   active text-dark" aria-current="page" onclick="getcustDash()">Home</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="btn bg-transparent fw-semibold border-0 active text-dark " style="cursor:pointer;" aria-current="page" onclick="GetUserProfile()">My Profile</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="btn bg-transparent fw-semibold border-0 text-dark" href="#">My Orders</a>
+                    </li>
+                </ul>
+                <h5 class="overflow-hidden d-lg-flex d-none">
+                    Welcome: <strong>@context.HttpContext.Session.GetString("UserName")</strong>
+                </h5>
+                <div>
+                    <a class="btn btn-outline-danger  ms-3" asp-action="logout" asp-controller="Home">Logout</a>
+                </div>
+           
+        </div>
+    </div>
+</nav>
+

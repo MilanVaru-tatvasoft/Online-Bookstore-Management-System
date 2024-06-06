@@ -1,0 +1,410 @@
+﻿@model DataAccess.CustomModels.AdminBookListmodel;
+@functions {
+    public bool ischecked(int autherId)
+    {
+        if (Model.search2 != null)
+        {
+            if (Model.search2.Contains(autherId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public bool ischecked2(int catId)
+    {
+        if (Model.search2 != null)
+        {
+            if (Model.search3.Contains(catId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public bool ischecked3(int pubId)
+    {
+        if (Model.search4 != null)
+        {
+            if (Model.search4.Contains(pubId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+}
+@* dropdown css *@
+<style>
+    /* Inside your ASP.NET Core MVC CSS file */
+
+    .dropdown {
+        position: relative;
+        font-size: 14px;
+        color: #333;
+    }
+
+        .dropdown .dropdown-list {
+            padding: 12px;
+            background: #fff;
+            position: absolute;
+            top: 30px;
+            left: 2px;
+            right: 2px;
+            box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .15);
+            transform-origin: 50% 0;
+            transform: scale(1, 0);
+            transition: transform .15s ease-in-out .15s;
+            max-height: 66vh;
+            overflow-y: scroll;
+            z-index: 1;
+        }
+
+        .dropdown .dropdown-option {
+            display: block;
+            padding: 8px 12px;
+            opacity: 0;
+            transition: opacity .15s ease-in-out;
+        }
+
+        .dropdown .dropdown-label {
+            display: block;
+            height: 100%;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+            .dropdown .dropdown-label:before {
+                content: '▼';
+                float: right;
+            }
+
+        .dropdown.on .dropdown-list {
+            transform: scale(1, 1);
+            transition-delay: 0s;
+        }
+
+            .dropdown.on .dropdown-list .dropdown-option {
+                opacity: 1;
+                transition-delay: .2s;
+            }
+
+        .dropdown.on .dropdown-label:before {
+            content: '▲';
+        }
+
+    [type="checkbox"] {
+        position: relative;
+        top: -1px;
+        margin-right: 4px;
+    }
+
+</style>
+@* pagination css *@
+<style>
+    #pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page {
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    .active {
+        font-weight: bold;
+    }
+
+</style>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+
+<div class="" id="custDashboard2">
+    <div class="bookCategory">
+        <h3 class="my-2 ms-1">All Books</h3>
+    </div>
+    <div class="mx-0 my-3  p-3">
+        <div class="searchbar">
+            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="Searchbooks()">
+                <div class=" col-md-3  col-6">
+                    <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
+                </div>
+                <div class="form-group col-md-3 col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search2" hidden>
+                        <label class="dropdown-label p-2 ">Authors</label>
+
+                        <div class="dropdown-list">
+
+                            @foreach (var i in Model.authors)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="autherData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
+                                    @i.Name
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group col-md-3  col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search3" hidden>
+                        <label class="dropdown-label p-2">Categories</label>
+
+                        <div class="dropdown-list ">
+
+                            @foreach (var i in Model.categories)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="categorytdata" type="checkbox" name="dropdown-group" checked="@ischecked2(i.Categoryid)" value="@i.Categoryid" />
+                                    @i.Categoryname
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group col-md-3  col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search3" hidden>
+                        <label class="dropdown-label p-2">publishers</label>
+
+                        <div class="dropdown-list ">
+
+                            @foreach (var i in Model.publishers)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="publisherdata" type="checkbox" name="dropdown-group" checked="@ischecked3(i.Publisherid)" value="@i.Publisherid" />
+                                    @i.Name
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="reset" class="btn btn-secondary" onclick="AdminBookList()">Reset</button>
+                </div>
+            </form>
+            <hr class="m-0 w-100" />
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-end me-5 w-100">
+            <button class="btn btn-primary " onclick="getAddbookmodal()">
+                <span class="d-none d-md-inline-block">Add Book</span>
+                <i class="bi bi-plus d-block d-md-none"></i>
+            </button>
+        </div>
+        <table id="book-table" class="table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>category</th>
+                    <th>Price</th>
+                    <th>Available Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.bookList)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/BookListCollections/@obj.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Bookphoto">
+                        </td>
+                        <td><span class="text-wrap fs-5">@obj.Title</span></td>
+                        <td>@Model.authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
+                        <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
+                        <td>@obj.Price $</td>
+                        <td>@obj.Stockquantity </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
+                                <button class="btn btn-warning" onclick="EditBooksPage(@obj.Bookid)">Edit </button>
+                                <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+        var table = $('#book-table').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 5,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+
+            }
+        });
+        $('.dataTables_filter').hide();
+        $('#book-Table_first').hide();
+        $('#book-Table_last').hide();
+
+    })
+</script>
+
+<script>
+
+        (function ($) {
+            var CheckboxDropdown = function (el) {
+                var _this = this;
+                this.$el = $(el);
+                this.$label = this.$el.find('.dropdown-label');
+                this.$inputs = this.$el.find('[type="checkbox"]');
+
+
+                this.$label.on('click', function (e) {
+                    e.preventDefault();
+                    _this.toggleOpen();
+                });
+
+                this.$inputs.on('change', function (e) {
+                    _this.onCheckBox();
+                });
+            };
+
+            CheckboxDropdown.prototype.onCheckBox = function () {
+                this.updateStatus();
+            };
+
+            CheckboxDropdown.prototype.updateStatus = function () {
+                var checked = this.$el.find(':checked');
+
+
+
+            };
+
+            
+
+            CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
+                var _this = this;
+
+                if (!this.isOpen || forceOpen) {
+                    this.isOpen = true;
+                    this.$el.addClass('on');
+                    $(document).on('click', function (e) {
+                        if (!$(e.target).closest('[data-control]').length) {
+                            _this.toggleOpen();
+                        }
+                    });
+                }
+                else {
+                    this.isOpen = false;
+                    this.$el.removeClass('on');
+                    $(document).off('click');
+                }
+            };
+
+            var checkboxesDropdowns = document.querySelectorAll('[data-control="checkbox-dropdown"]');
+            for (var i = 0, length = checkboxesDropdowns.length; i < length; i++) {
+                new CheckboxDropdown(checkboxesDropdowns[i]);
+            }
+        })(jQuery);
+
+    function Searchbooks() {
+        event.preventDefault();
+
+        // Get all checked checkboxes with class "autherData"
+        let checkboxes = document.querySelectorAll(".autherData:checked");
+        let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
+        let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
+        const search2 = [];
+
+        // Loop through checked checkboxes and push their values to the search2 array
+        var formData = new FormData($('#searchForm')[0]);
+        checkboxes.forEach(function (checkbox) {
+            formData.append('search2', checkbox.value);
+
+        });
+        checkboxes2.forEach(function (checkbox) {
+            formData.append('search3', checkbox.value);
+
+        });
+        checkboxes3.forEach(function (checkbox) {
+            formData.append('search4', checkbox.value);
+
+        });
+
+        console.log(search2); // Output the selected values to console
+
+
+        console.log(formData);
+        $.ajax({
+            method: "POST",
+            url: "/Admin/searchBooks",
+            contentType: false,
+            processData: false,
+            data: formData, // Convert formData to query string
+            success: function (result) {
+                $('#AdminDash').html(result);
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+
+    function ViewBookDetails(bookId) {
+        $.ajax({
+            method: "GET",
+            url: "/Admin/ViewBookDetails",
+            data: { bookId: bookId },
+            success: function (result) {
+                $('#AdminDash').empty()
+                $('#AdminDash').html(result)
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+
+    function getAddbookmodal() {
+        $.ajax({
+            method: "get",
+            url: "/Admin/getAddBook",
+            success: function (result) {
+
+                $('#Modaldata').html(result);
+                $('#addBookModal').modal('show');
+
+            },
+            error: function () {
+                console.error('Error loading partial view');
+                alert('Error loading partial view');
+            }
+        });
+    }
+
+</script>
+<div id="Modaldata"></div>

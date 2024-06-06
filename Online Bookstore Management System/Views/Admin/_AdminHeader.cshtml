@@ -1,0 +1,84 @@
+﻿@model DataAccess.CustomModels.Customer_MainPage;
+@inject IHttpContextAccessor context
+
+<style>
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        margin-right: 1rem;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+        .navbar-nav .nav-link:hover {
+            color: #007bff;
+        }
+
+    .dropdown-menu a.dropdown-item {
+        transition: background-color 0.3s;
+    }
+
+        .dropdown-menu a.dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #007bff;
+    }
+
+    .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+</style>
+<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bolder text-primary" href="#">Online BookStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active text-dark " aria-current="page" onclick="AdminDashboard()" style="cursor:pointer;">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" onclick="AdminBookList()" style="cursor:pointer;">BookList</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="#">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="#">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="#"></a>
+                </li>
+               
+            </ul>
+            <h5 class="overflow-hidden">
+                Welcome <strong>@context.HttpContext.Session.GetString("UserName")</strong>
+            </h5>
+            <a class="btn btn-outline-danger ms-3" asp-action="logout" asp-controller="Home">Logout</a>
+        </div>
+    </div>
+</nav>
+

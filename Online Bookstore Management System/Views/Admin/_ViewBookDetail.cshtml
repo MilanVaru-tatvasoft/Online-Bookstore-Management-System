@@ -1,0 +1,36 @@
+﻿@model DataAccess.CustomModels.viewBookModel;
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<div class=" d-flex  justify-content-end w-100 mt-5">
+    <button class=" btn btn btn-dark shadow mt-0 me-5" onclick="AdminBookList()">Back</button>
+</div>
+<div class="container-md   d-flex align-content-center mt-5">
+    <div class="d-flex flex-column flex-md-row p-md-5 gap-5">
+        <div class="d-flex justify-content-center px-md-5 px-3">
+            <img src="~/BookListCollections/@Model.bookPic" class="img-fluid" alt="@Model.bookPic">
+        </div>
+        <div class="d-flex bg-light p-5 w-100  flex-column w-75 justify-content-center ">
+            <input type="text" asp-for="@Model.bookId" hidden />
+            <h1> @Model.Title</h1>
+            <div class="d-flex my-3">
+                <h6 class="fw-bold me-3"> About: </h6>
+                <h6 class="m-0 w-100 pe-2 text-break">@Model.description</h6>
+            </div>
+            <h6>Auther:<span class="text-secondary">&nbsp; @Model.authorName</span></h6>
+            <h5>Price:<span class="text-danger">&nbsp; @Model.price $</span></h5>
+            <h6>Pages:@Model.pageNumber</h6>
+            <h6>Publisher:@Model.publisherName</h6>
+            <div class="d-flex gap-2 ">
+                <button class="btn btn-warning" onclick="EditBooksPage(@Model.bookId)">Edit </button>
+                <button class="btn btn-danger" onclick="DeleteBooksPage(@Model.bookId)">Delete </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ModalAction"></div>
+

@@ -1,0 +1,370 @@
+﻿@model DataAccess.CustomModels.Customer_MainPage;
+@functions{
+    public bool ischecked(int autherId)
+    {
+        if(Model.search2 != null)
+        {
+            if (Model.search2.Contains(autherId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public bool ischecked2(int catId)
+    {
+        if(Model.search2 != null)
+        {
+            if (Model.search3.Contains(catId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public bool ischecked3(int pubId)
+    {
+        if(Model.search4 != null)
+        {
+            if (Model.search4.Contains(pubId))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+}
+@* dropdown css *@
+<style>
+    /* Inside your ASP.NET Core MVC CSS file */
+
+    .dropdown {
+        position: relative;
+        font-size: 14px;
+        color: #333;
+       
+    }
+
+        .dropdown .dropdown-list {
+            padding: 12px;
+            background: #fff;
+            position: absolute;
+            top: 30px;
+            left: 2px;
+            right: 2px;
+            box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .15);
+            transform-origin: 50% 0;
+            transform: scale(1, 0);
+            transition: transform .15s ease-in-out .15s;
+            max-height: 66vh;
+            overflow-y: scroll;
+            z-index: 1;
+           
+        }
+
+        .dropdown .dropdown-option {
+            display: block;
+            padding: 8px 12px;
+            opacity: 0;
+            transition: opacity .15s ease-in-out;
+        }
+
+        .dropdown .dropdown-label {
+            display: block;
+            height: 100%;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius:4px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+            .dropdown .dropdown-label:before {
+                content: '▼';
+                float: right;
+            }
+
+        .dropdown.on .dropdown-list {
+            transform: scale(1, 1);
+            transition-delay: 0s;
+        }
+
+            .dropdown.on .dropdown-list .dropdown-option {
+                opacity: 1;
+                transition-delay: .2s;
+            }
+
+        .dropdown.on .dropdown-label:before {
+            content: '▲';
+        }
+
+    [type="checkbox"] {
+        position: relative;
+        top: -1px;
+        margin-right: 4px;
+    }
+
+</style>
+@* pagination css *@
+<style>
+    #pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page {
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    .active {
+        font-weight: bold;
+    }
+
+</style>
+<style>
+
+</style>
+
+
+<div class="" id="custDashboard2">
+    <div class="bookCategory">
+        <h3 class="my-2 ms-1">All Books</h3>
+    </div>
+    <div class="mx-0 my-3  p-3">
+        <div class="searchbar">
+            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="SearchParamsbooks()">
+                <div class=" col-md-3  col-6">
+                    <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
+                </div>
+                <div class="form-group col-md-3 col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search2"  hidden>
+                        <label class="dropdown-label p-2 ">Authors</label>
+
+                        <div class="dropdown-list">
+
+                            @foreach (var i in Model.authors)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="autherData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
+                                    @i.Name
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group col-md-3  col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search3" hidden>
+                        <label class="dropdown-label p-2">Categories</label>
+
+                        <div class="dropdown-list ">
+
+                            @foreach (var i in Model.categories)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="categorytdata" type="checkbox" name="dropdown-group" checked="@ischecked2(i.Categoryid)" value="@i.Categoryid" />
+                                    @i.Categoryname
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group col-md-3  col-6">
+                    <div class="dropdown " data-control="checkbox-dropdown">
+                        <input type="text" asp-for="@Model.search3" hidden>
+                        <label class="dropdown-label p-2">publishers</label>
+
+                        <div class="dropdown-list ">
+
+                            @foreach (var i in Model.publishers)
+                            {
+                                <label class="dropdown-option">
+                                    <input class="publisherdata" type="checkbox" name="dropdown-group" checked="@ischecked3(i.Publisherid)" value="@i.Publisherid" />
+                                    @i.Name
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="reset" class="btn btn-secondary" onclick="getcustDash()">Reset</button>
+                </div>
+            </form>
+            <hr class="m-0 w-100" />
+        </div>
+    </div>
+    <div class="table row container-fluid px-sm-3  " id="book-list">
+        <!-- Books will be dynamically inserted here -->
+        @if (Model.bookList.Count() != 0)
+        {
+            @foreach (var obj in Model.bookList)
+            {
+                <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                    <div class="card border-0 h-100 shadow">
+                        <img src="~/BookListCollections/@obj.Bookphoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.Bookphoto">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@obj.Title</h5>
+                            <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
+                            <p class="card-text text-truncate px-1">Auther: @Model.authors?.FirstOrDefault(x=>x.Authorid == obj.Authorid).Name</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.Bookid)">View More</buttton>
+                            <buttton class="btn btn-warning" onclick="">Add to Cart</buttton>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center w-100">No Data</p>
+        }
+    </div>
+</div>
+
+<script>
+    
+    (function ($) {
+        // Define the CheckboxDropdown constructor function
+        var CheckboxDropdown = function (el) {
+            var _this = this;
+            this.$el = $(el);
+            this.$label = this.$el.find('.dropdown-label');
+            this.$inputs = this.$el.find('[type="checkbox"]');
+
+
+            // Event listener for clicking the dropdown label
+            this.$label.on('click', function (e) {
+                e.preventDefault();
+                _this.toggleOpen();
+            });
+
+            // Event listener for checkbox change
+            this.$inputs.on('change', function (e) {
+                _this.onCheckBox();
+            });
+        };
+
+        // Method to update dropdown status based on checkbox selection
+        CheckboxDropdown.prototype.onCheckBox = function () {
+            this.updateStatus();
+        };
+
+        // Method to update dropdown status based on checkbox selection
+        CheckboxDropdown.prototype.updateStatus = function () {
+            var checked = this.$el.find(':checked');
+
+          
+         
+        };
+
+        // Method to handle "Check All" functionality
+        CheckboxDropdown.prototype.onCheckAll = function (checkAll) {
+            if (!this.areAllChecked || checkAll) {
+                this.areAllChecked = true;
+                this.$checkAll.html('Uncheck All');
+                this.$inputs.prop('checked', true);
+            }
+            else {
+                this.areAllChecked = false;
+                this.$checkAll.html('Check All');
+                this.$inputs.prop('checked', false);
+            }
+
+            this.updateStatus();
+        };
+
+        // Method to toggle dropdown open/closed state
+        CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
+            var _this = this;
+
+            if (!this.isOpen || forceOpen) {
+                this.isOpen = true;
+                this.$el.addClass('on');
+                $(document).on('click', function (e) {
+                    if (!$(e.target).closest('[data-control]').length) {
+                        _this.toggleOpen();
+                    }
+                });
+            }
+            else {
+                this.isOpen = false;
+                this.$el.removeClass('on');
+                $(document).off('click');
+            }
+        };
+
+        // Initialize CheckboxDropdown for each dropdown with data-control="checkbox-dropdown"
+        var checkboxesDropdowns = document.querySelectorAll('[data-control="checkbox-dropdown"]');
+        for (var i = 0, length = checkboxesDropdowns.length; i < length; i++) {
+            new CheckboxDropdown(checkboxesDropdowns[i]);
+        }
+    })(jQuery);
+
+
+</script>
+<div id="pagination"></div>
+<script>
+    // Number of pages
+    const totalPages = 10;
+
+    // Current page
+    let currentPage = 1;
+
+    // Function to generate pagination
+    function generatePagination() {
+        let paginationHTML = '';
+
+        // Previous button
+        paginationHTML += `<span class="page btn" onclick="prevPage()">&#171;</span>`;
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                paginationHTML += `<span class="page btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</span>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                paginationHTML += `<span class="page btn">...</span>`;
+            }
+        }
+
+        // Next button
+        paginationHTML += `<span class="btn page" onclick="nextPage()">&#187;</span>`;
+
+        document.getElementById('pagination').innerHTML = paginationHTML;
+    }
+
+    // Function to go to a specific page
+    function goToPage(page) {
+        currentPage = page;
+        generatePagination();
+    }
+
+    function nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            generatePagination();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            generatePagination();
+        }
+    }
+
+    generatePagination();
+</script>

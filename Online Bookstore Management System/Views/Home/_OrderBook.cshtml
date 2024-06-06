@@ -1,0 +1,216 @@
+﻿@model DataAccess.CustomModels.OrderData;
+<style>
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .modal-body h6 {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .collapse .form-group {
+        margin-bottom: 15px;
+    }
+</style>
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="" id="confirmOrderForm">
+                    <input type="text" asp-for="@Model.bookId" hidden />
+                    <input type="text" asp-for="@Model.customerId" hidden />
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5 class="text-decoration-underline">Customer Information</h5>
+                            <p><strong>Name:</strong><span id="txtcustomerName"> @Model.CustomerName</span></p>
+                            <input type="text" asp-for="@Model.CustomerName" id="inpcustomerName" hidden />
+
+                            <p><strong>Address:</strong><span id="txtOrderAddress"> @Model.OrderAddress </span></p>
+                            <input type="text" asp-for="@Model.OrderAddress" id="inpOrderAddress" hidden />
+
+                            <p><strong>Phone Number:</strong><span id="txtPhoneNumber"> @Model.PhoneNumber </span></p>
+                            <input type="text" asp-for="@Model.PhoneNumber" id="inpPhoneNumber" hidden />
+
+                            <p><strong>City:</strong><span id="txtCity"> @Model.city </span></p>
+                            <input type="text" asp-for="@Model.city" id="inpCity" hidden />
+
+                            <p><strong>Email:</strong><span id="txtEmail"> @Model.Email </span></p>
+                            <input type="text" asp-for="@Model.Email" id="inpEmail" hidden />
+
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-decoration-underline">Book Information</h5>
+
+                            <p><strong>Book Name:</strong> @Model.BookName</p>
+                            <input type="text" asp-for="@Model.BookName" hidden />
+
+                            <p><strong>Author Name:</strong> @Model.AuthorName</p>
+                            <input type="text" asp-for="@Model.AuthorName" hidden />
+
+                            <p><strong>Price:</strong>$ @Model.Price</p>
+                            <input type="text" asp-for="@Model.Price" id="inpBookPrice" hidden />
+
+                            <p><strong>Quantity:</strong><span id="txtQantity">@Model.Quantity</span></p>
+                            <input type="text" asp-for="@Model.Quantity" id="inpQantity" hidden />
+
+                            <p><strong>Total Amount:</strong><span id="txtTotalAmount">&nbsp; $ @Model.TotalAmount</span> </p>
+                            <input type="text" asp-for="@Model.TotalAmount" id="inpTotalAmount" hidden />
+
+                        </div>
+                    </div>
+
+                </form>
+                <div class="d-flex justify-content-start gap-2">
+                    <button class="btn btn-warning" id="btnEditCustomerDetails" data-bs-toggle="collapse" data-bs-target="#editForm" aria-expanded="false" aria-controls="editForm">Edit Customer Details</button>
+                    <button class="btn btn-success" id="btnEditQuantity" data-bs-toggle="collapse" data-bs-target="#editQuantityform" aria-expanded="false" aria-controls="editQuantityform">Edit Quantity</button>
+
+                </div>
+                <div class="collapse mt-3" id="editForm">
+                    <form id="editCustomerForm">
+                        <input type="text" asp-for="@Model.bookId" hidden />
+                        <input type="text" asp-for="@Model.customerId" hidden />
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editCustomerName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="editCustomerName" name="updateCustomerName" value="@Model.UpdateCustomerName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editAddress" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="editAddress" name="updareOrderAddress" value="@Model.UpdateOrderAddress">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editCity" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="editCity" name="updateCity" value="@Model.updateCity">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editPhoneNumber" class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="editPhoneNumber" name="updatePhoneNumber" value="@Model.UpdatePhoneNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="editEmail" name="updateEmail" value="@Model.UpdateEmail">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editForm">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="collapse mt-3" id="editQuantityform">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editQuantity" class="form-label">Qantity</label>
+                                <input type="text" class="form-control" id="editQuantity" name="updateQuantity" value="@Model.UpdateQuantity">
+                            </div>
+                            <div>
+                                <button class="btn btn-warning" onclick="updateQuantity()">Add</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editQuantityform">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="getOrderConfirmation()">Confirm order</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Function to show the modal
+
+        // Function to handle form submission
+        $('#editCustomerForm').on('submit', function (e) {
+            e.preventDefault();
+            var editcustName = $('#editCustomerName').val();
+            var editAddress = $('#editAddress').val();
+            var editmobile = $('#editPhoneNumber').val();
+            var editCity = $('#editCity').val();
+            var editemail = $('#editEmail').val();
+            var editquantity = $('#editEmail').val();
+            if (editcustName !== "" && editAddress !== "" && editmobile !== "" && editCity !== "" && editQuantity !== "") {
+                $('#txtcustomerName').text(editcustName);
+                $('#inpcustomerName').val(editcustName);
+
+                $('#txtOrderAddress').text(editAddress);
+                $('#inpOrderAddress').val(editAddress);
+
+                $('#txtPhoneNumber').text(editmobile);
+                $('#inpPhoneNumber').val(editmobile);
+
+                $('#txtEmail').text(editemail);
+                $('#inpEmail').val(editemail);
+
+                $('#txtCity').text(editCity);
+                $('#inpCity').val(editCity);
+
+                $('#txtCity').text(editCity);
+                $('#inpCity').val(editCity);
+
+
+                console.log(editcustName)
+                // You can add similar lines for other fields if you need to update them
+
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Data updated", // Corrected spelling of Data
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#editForm').collapse('hide');
+                $('#btnEditCustomerDetails').hide();
+            }
+        });
+    });
+
+    function updateQuantity() {
+
+
+        var editQuantity = $('#editQuantity').val(); // Corrected variable name from editQantity to editQuantity
+        var price = $('#inpBookPrice').val(); // Corrected variable name from editQantity to editQuantity
+        $('#txtQantity').text(editQuantity);
+        $('#inpQantity').val(editQuantity);
+
+        var total = price;
+        if (editQuantity > 1) {
+            total = total * editQuantity;
+
+        }
+
+        $('#txtTotalAmount').text(" $" + total.toFixed(2));
+        $('#inpTotalAmount').val(total.toFixed(2));
+
+        $('#editQuantityform').collapse('hide');
+
+    }
+    $('#btnEditCustomerDetails').on('click', function () {
+        $('#editQuantityform').collapse('hide');
+    });
+    $('#btnEditQuantity').on('click', function () {
+        $('#editForm').collapse('hide');
+    });
+
+</script>

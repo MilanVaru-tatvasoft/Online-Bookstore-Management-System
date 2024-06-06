@@ -1,0 +1,102 @@
+﻿@model DataAccess.CustomModels.viewBookModel;
+<div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBookdetails" >
+                    <div class="row  my-3">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="bookName">Book Name</label>
+                                <input type="text" asp-for="Title" class="form-control" id="bookName" placeholder="Enter book name">
+                            </div>
+                            <div class="form-group">
+                                <label for="authorName">Author Name</label>
+                                <input type="text" asp-for="authorName" class="form-control" id="authorName" placeholder="Enter author name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="text" asp-for="price" class="form-control" id="price" placeholder="Enter price">
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <input type="text" asp-for="categoryName" class="form-control" id="category" placeholder="Enter category">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="bookPhoto">Book Photo (JPG/PNG only)</label>
+                                <input type="file" asp-for=bookPhoto class="form-control-file" id="bookPhoto">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="description">Brief Description</label>
+                                <textarea class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="pages">Number of Pages</label>
+                                <input type="number" asp-for=pageNumber class="form-control" id="pages" placeholder="Enter number of pages">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="publisher">Publisher Name</label>
+                                <input type="text" asp-for=publisherName class="form-control" id="publisher" placeholder="Enter publisher name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="pages">Stock Quantity</label>
+                                <input type="number" asp-for=Stockquantity class="form-control" id="Stockquantity" placeholder="stockQunatity">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                      @*       <div class="form-group">
+                                <label for="publisher">Publisher Name</label>
+                                <input type="text" asp-for=publisherName class="form-control" id="publisher" placeholder="Enter publisher name">
+                            </div> *@
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 m-2">
+                        <button type="submit" class="btn btn-primary" onclick="Addbook()">Save</button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom CSS for modal */
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .modal-body h6 {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: lighter;
+    }
+
+    .collapse .form-group {
+        margin-bottom: 15px;
+    }
+</style>
+
+<script>
+</script>
