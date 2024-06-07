@@ -69,43 +69,7 @@ namespace BusinessLogic.Repository
             model.bookList = bookList;
             return model;
         }
-        public bool validateLogin(string email, string password)
-        {
-            var userData = _context.Users.FirstOrDefault(u => u.Email == email);
-            if (userData != null)
-            {
-                if (userData.Passwordhash == password)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return false;
-
-        }
-        public bool resetPassword(ResetPasswordModel model)
-        {
-            User user = _context.Users.FirstOrDefault(x => x.Email == model.Email);
-            if (user != null)
-            {
-                user.Passwordhash = model.Password;
-                _context.SaveChanges();
-
-                Customer customer = _context.Customers.FirstOrDefault(x => x.Userid == user.Userid);
-                if (customer != null)
-                {
-                    customer.Passwordhash = model.Password;
-                    _context.SaveChanges();
-                    
-                }
-
-                return true;
-            }
-            return false;
-        }
+     
         public Admin getAdminData(string email)
         {
             Admin admin = _context.Admins.FirstOrDefault(x=>x.Email == email);
@@ -161,11 +125,6 @@ namespace BusinessLogic.Repository
             }
         }
 
-        public User getSessionData(string email)
-        {
-            User? user = _context.Users.FirstOrDefault(x => x.Email == email);
-            return user;
-        }
 
         public UserProfile getUserProfile(int? uId)
         {
@@ -342,6 +301,10 @@ namespace BusinessLogic.Repository
                 
             };
             _context.Orderdetails.Add(orderdetail);
+            _context.SaveChanges();
+
+            book.Stockquantity = (int)(book.Stockquantity - data.Quantity);
+            _context.Update(book);
             _context.SaveChanges();
 
         }

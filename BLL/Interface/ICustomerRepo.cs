@@ -11,12 +11,10 @@ namespace BusinessLogic.Interface
     public interface ICustomerRepo
     {
         public Customer_MainPage getdata(Customer_MainPage model);
-        public bool validateLogin(string email, string password);
-        public bool resetPassword(ResetPasswordModel model);
+      
         public Admin getAdminData(string email);
         public Customer getCustomerData(string email);
         public bool registerPost(RegisterVm model);
-        public User getSessionData(string email);
         public UserProfile getUserProfile(int? uId);
         public bool editUserProfile(UserProfile profile);
         public viewBookModel viewBookDetails(int bookId,int? userId);

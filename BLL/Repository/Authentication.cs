@@ -5,13 +5,64 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
-
-
+using DataAccess.DataContext;
+using DataAccess.DataModels;
+using DataAccess.CustomModels;
 
 namespace BusinessLogic.Repository
 {
     public class Authentication:IAuthentication
+
     {
+        private readonly ApplicationDbContext _context;
+        public Authentication(ApplicationDbContext context)
+        {
+            _context = context;
+
+        }
+        public User getSessionData(string email)
+        {
+            User? user = _context.Users.FirstOrDefault(x => x.Email == email);
+            return user;
+        }
+
+        public bool validateLogin(string email, string password)
+        {
+            var userData = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (userData != null)
+            {
+                if (userData.Passwordhash == password)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+
+        }
+        public bool resetPassword(ResetPasswordModel model)
+        {
+            User user = _context.Users.FirstOrDefault(x => x.Email == model.Email);
+            if (user != null)
+            {
+                user.Passwordhash = model.Password;
+                _context.SaveChanges();
+
+                Customer customer = _context.Customers.FirstOrDefault(x => x.Userid == user.Userid);
+                if (customer != null)
+                {
+                    customer.Passwordhash = model.Password;
+                    _context.SaveChanges();
+
+                }
+
+                return true;
+            }
+            return false;
+        }
     }
     public class Authorize : Attribute,IAuthorizationFilter
     {

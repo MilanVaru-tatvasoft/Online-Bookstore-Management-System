@@ -16,4 +16,7 @@ public partial class Category
     [Column("categoryname")]
     [StringLength(100)]
     public string Categoryname { get; set; } = null!;
+
+    [Column("isdeleted")]
+    public bool? Isdeleted { get; set; }
 }

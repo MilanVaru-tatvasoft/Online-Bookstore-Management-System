@@ -1,10 +1,10 @@
 ﻿@model DataAccess.CustomModels.AdminBookListmodel;
 @functions {
-    public bool ischecked(int autherId)
+    public bool ischecked(int authoeId)
     {
         if (Model.search2 != null)
         {
-            if (Model.search2.Contains(autherId))
+            if (Model.search2.Contains(authoeId))
             {
                 return true;
             }
@@ -113,10 +113,6 @@
         cursor: pointer;
     }
 
-    .active {
-        font-weight: bold;
-    }
-
 </style>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -198,47 +194,48 @@
         </div>
     </div>
     <div class="container-fluid">
-        <div class="d-flex justify-content-end me-5 w-100">
-            <button class="btn btn-primary " onclick="getAddbookmodal()">
-                <span class="d-none d-md-inline-block">Add Book</span>
-                <i class="bi bi-plus d-block d-md-none"></i>
-            </button>
+        <div class="d-flex justify-content-end m-2   w-100">
+            <button class="btn btn-primary " onclick="getAddbookmodal()">    Add Book </button>
+         
         </div>
-        <table id="book-table" class="table">
-            <thead>
-                <tr>
-                    <th>Book</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>category</th>
-                    <th>Price</th>
-                    <th>Available Quantity</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var obj in Model.bookList)
-                {
+        <div class="table-responsive">
+
+            <table id="book-table" class="table ">
+                <thead>
                     <tr>
-                        <td>
-                            <img src="~/BookListCollections/@obj.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Bookphoto">
-                        </td>
-                        <td><span class="text-wrap fs-5">@obj.Title</span></td>
-                        <td>@Model.authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
-                        <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
-                        <td>@obj.Price $</td>
-                        <td>@obj.Stockquantity </td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
-                                <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit </button>
-                                <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
-                            </div>
-                        </td>
+                        <th>Book</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>category</th>
+                        <th>Price</th>
+                        <th>Available Quantity</th>
+                        <th>Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model.bookList)
+                    {
+                        <tr>
+                            <td>
+                                <img src="~/BookListCollections/@obj.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Bookphoto">
+                            </td>
+                            <td><span class="text-wrap fs-5">@obj.Title</span></td>
+                            <td>@Model.authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
+                            <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
+                            <td>@obj.Price $</td>
+                            <td>@obj.Stockquantity </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
+                                    <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -297,7 +294,7 @@
 
             };
 
-            
+
 
             CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
                 var _this = this;
@@ -409,6 +406,7 @@
             success: function (result) {
 
                 $('#Modaldata').html(result);
+                $('#ModalAction').html(result);
                 $('#addBookModal').modal('show');
 
             },

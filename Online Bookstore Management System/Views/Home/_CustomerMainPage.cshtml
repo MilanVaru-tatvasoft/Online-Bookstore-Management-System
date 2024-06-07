@@ -1,10 +1,10 @@
 ﻿@model DataAccess.CustomModels.Customer_MainPage;
 @functions{
-    public bool ischecked(int autherId)
+    public bool ischecked(int authoeId)
     {
         if(Model.search2 != null)
         {
-            if (Model.search2.Contains(autherId))
+            if (Model.search2.Contains(authoeId))
             {
                 return true;
             }

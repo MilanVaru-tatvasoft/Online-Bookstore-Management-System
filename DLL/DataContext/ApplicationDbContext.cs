@@ -28,6 +28,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Customer> Customers { get; set; }
 
+    public virtual DbSet<Emaillog> Emaillogs { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<Orderdetail> Orderdetails { get; set; }
@@ -71,6 +73,7 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Authorid).HasName("authors_pkey");
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Isdeleted).HasDefaultValueSql("false");
         });
 
         modelBuilder.Entity<Book>(entity =>
@@ -78,6 +81,7 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Bookid).HasName("books_pkey");
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Isdeleted).HasDefaultValueSql("false");
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasConstraintName("fk_author");
 
@@ -87,6 +91,8 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Categoryid).HasName("categories_pkey");
+
+            entity.Property(e => e.Isdeleted).HasDefaultValueSql("false");
         });
 
         modelBuilder.Entity<Customer>(entity =>
@@ -94,6 +100,13 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Customerid).HasName("customers_pkey");
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        modelBuilder.Entity<Emaillog>(entity =>
+        {
+            entity.HasKey(e => e.Emaillogid).HasName("emaillog_pkey");
+
+            entity.Property(e => e.Senddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<Order>(entity =>

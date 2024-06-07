@@ -1,0 +1,33 @@
+﻿@model DataAccess.CustomModels.AuthorListmodel
+
+<div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addAuthorModalLabel">Add New Author</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUpdateAuthorForm">
+                    <div class="mb-3">
+                        <input type="hidden" asp-for="@Model.authorId" />
+                        <label for="authorName" class="form-label">Author Name</label>
+                        <input type="text" asp-for=autherName class="form-control" id="authorName" placeholder="Enter author name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="authorBio"  class="form-label">Author Biography</label>
+                        <textarea class="form-control" asp-for=Bio id="authorBio" rows="4" placeholder="Enter author biography"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="birthdate"  class="form-label">Birthdate</label>
+                        <input type="date" asp-for=birthdate class="form-control" id="birthdate">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="AddOrUpdateAuthor()">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

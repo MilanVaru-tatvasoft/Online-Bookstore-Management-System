@@ -37,6 +37,47 @@ function RegisterPost() {
         }
     });
 }
+function resetpassword() {
+    event.preventDefault();
+
+    $.ajax({
+        method: "POST",
+        url: "/Home/ResetPassword",
+        data: $('#resetForm').serialize(),
+
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "password changed",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/Home/Logout";
+
+                });
+
+
+
+
+            } else {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Error",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                getResetPasswordPage(result.email)
+            }
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
 function SearchParamsbooks() {
     event.preventDefault();
 
@@ -316,10 +357,13 @@ function Addbook() {
                 swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Book Added",
+                    title: "Book Added",    
                     showConfirmButton: false,
                     timer: 1500
                 })
+                $('#addBookModal').modal('hide').on('hidden.bs.modal', function () {
+                    AdminBookList();
+                });
             }
         },
         error: function () {
@@ -346,6 +390,11 @@ function Updatebook() {
                     showConfirmButton: false,
                     timer: 1500
                 })
+                $('#addBookModal').modal('hide').on('hidden.bs.modal', function () {
+                    AdminBookList();
+                });
+
+
                
             } else if (result.code == 402) {
                 swal.fire({
@@ -362,41 +411,88 @@ function Updatebook() {
         }
     });
 }
-
-
-function resetpassword() {
+function DeleteBooksPage(bookId) {
     event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/getDeleteBook",
+                data: { bookId: bookId },
 
+                success: function (result) {
+                    if (result.code==401)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Removed",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            AdminBookList();
+                        });
+
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
+
+
+function GetAdminProfile() {
+    $.ajax({
+        method: "GET",
+        url: "/Admin/getAdminProfile",
+
+        success: function (result) {
+            $('#AdminDash').empty()
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function editAdminProfile() {
+    event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/ResetPassword",
-        data: $('#resetForm').serialize(),
+        url: "/Admin/editAdminProfile",
+        data: $('#AdminProfileData').serialize(),
+
 
         success: function (result) {
             if (result.code == 401) {
-                swal.fire({
+                Swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "password changed",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = "/Home/Logout";
-
-                });
-
-
-
-
-            } else {
-                swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Error",
+                    title: "Profile updated",
                     showConfirmButton: false,
                     timer: 1500
                 })
-                getResetPasswordPage(result.email)
+
+            }
+            else if (result.code == 402) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "error occured",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         },
         error: function () {
@@ -405,4 +501,231 @@ function resetpassword() {
     });
 }
 
+function GetAuthersList() {
+    $.ajax({
+        method: "GET",
+        url: "/Admin/getAutherList",
 
+        success: function (result) {
+            $('#AdminDash').empty()
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function GetCategoryList() {
+    $.ajax({
+        method: "GET",
+        url: "/Admin/getCategoryList",
+
+        success: function (result) {
+            $('#AdminDash').empty()
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function getAddorUpdateAuther(authorId) {
+    $.ajax({
+        method: "get",
+        url: "/Admin/getAddAuthor",
+        data: { authorId: authorId },
+
+        success: function (result) {
+
+            $('#AuthorModal').html(result);
+            $('#addAuthorModal').modal('show');
+
+        },
+        error: function () {
+            console.error('Error loading partial view');
+            alert('Error loading partial view');
+        }
+    });
+}
+function DeleteAuther(authorId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/getDeleteAuthor",
+                data: { authorId: authorId },
+
+                success: function (result) {
+                    if (result.code == 401)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Removed",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            GetAuthersList();
+                        });
+
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
+
+function getAddorUpdateCategory(categoryId) {
+    $.ajax({
+        method: "get",
+        url: "/Admin/getAddCategory",
+        data: { categoryId: categoryId },
+
+        success: function (result) {
+
+            $('#CategoryModal').html(result);
+            $('#addCategoryModal').modal('show');
+
+        },
+        error: function () {
+            console.error('Error loading partial view');
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function DeleteCategory(categoryId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/getDeleteCategory",
+                data: { categoryId: categoryId },
+
+                success: function (result) {
+                    if (result.code == 401)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Removed",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            GetCategoryList();
+                        });
+
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
+
+function AddOrUpdateAuthor() {
+    event.preventDefault();
+
+    $.ajax({
+        method: "POST",
+        url: "/Admin/addOrUpdateAuthor",
+        data: $('#addUpdateAuthorForm').serialize(),
+   
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Done",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
+                    GetAuthersList();
+                });
+
+
+
+            } else if (result.code == 402) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Auther exist",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addAuthorModal').modal('hide');
+                GetAuthersList();
+
+            }
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function AddOrUpdateCategory() {
+    event.preventDefault();
+
+    $.ajax({
+        method: "POST",
+        url: "/Admin/addOrUpdateCategory",
+        data: $('#addUpdateCategoryForm').serialize(),
+
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Done",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addCategoryModal').modal('hide').on('hidden.bs.modal', function () {
+                    GetCategoryList();
+                });
+
+
+
+            } else if (result.code == 402) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Auther exist",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addCategoryModal').modal('hide')
+                GetCategoryList();
+
+            }
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}

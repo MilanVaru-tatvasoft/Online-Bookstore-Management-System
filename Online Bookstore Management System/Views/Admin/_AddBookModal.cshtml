@@ -18,30 +18,27 @@
             </div>
             <div class="modal-body">
                 <form id="addBookdetails">
+                    <input type="text" id="inpBookId" asp-for="@Model.bookId" hidden />
+                    <input type="text" asp-for="@Model.bookPic" hidden />
                     <div class="row my-3">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="bookName">Book Name</label>
                                 <input type="text" asp-for="Title" class="form-control" id="bookName" placeholder="Enter book name">
+                                <input type="text" asp-for="@Model.Title" hidden />
                             </div>
                             <div class="form-group">
-                                @if (Model.bookId == null)
-                                {
-                                    <label for="authorName">Author Name</label>
-                                    <input type="text" asp-for="authorName" class="form-control" id="authorName" placeholder="Enter author name">
-                                }
-                                else
-                                {
-                                    <label for="price">Auther</label>
 
-                                    <select class="form-select" aria-label="Default select example" asp-for="@Model.authorName">
-                                        @foreach (var i in Model.author.ToList())
-                                        {
-                                            <option value="@i.Name">@i.Name</option>
-                                        }
+                                <label for="price">Auther</label>
 
-                                    </select>
-                                }
+                                <select class="form-select" aria-label="Default select example" asp-for="@Model.authorName">
+                                    <option value="">Select Auther</option>
+                                    @foreach (var i in Model.author.ToList())
+                                    {
+                                        <option value="@i.Name">@i.Name</option>
+                                    }
+                                </select>
+
                             </div>
                             <div class="form-group">
                                 <label for="price">Price</label>
@@ -64,8 +61,7 @@
                             <div class="form-group">
                                 <label for="bookPhoto">Book Photo (JPG/PNG only)</label>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="bookPhoto" accept=".jpg, .png" asp-for="@Model.bookPic" onchange="fileUploaded(this)">
-                                    <label class="custom-file-label" for="bookPhoto">Choose file</label>
+                                    <input type="file" class="custom-file-input" id="bookPhoto" accept=".jpg, .png" asp-for="@Model.bookPhoto">
                                 </div>
                                 @if (Model.bookId != null && Model.bookPic != null)
                                 {
@@ -73,7 +69,6 @@
                                         <img src="~/BookListCollections/@Model.bookPic" class="img-fluid rounded" width="150" height="225" alt="@Model.bookPic">
                                     </div>
                                 }
-
                             </div>
 
                         </div>
@@ -95,8 +90,18 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 m-2">
-                        <button type="submit" class="btn btn-primary" onclick="Addbook()">Save</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        @if (Model.bookId == null)
+                        {
+
+                            <button type="submit" class="btn btn-primary" onclick="Addbook()">Save</button>
+                        }
+                        else
+                        {
+
+                            <button type="submit" class="btn btn-primary" onclick="Updatebook()">Update</button>
+                        }
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
                     </div>
                 </form>
             </div>
@@ -162,7 +167,8 @@
 </style>
 
 <script>
-    function fileUploaded(item) {
-        console.log(item.files);
+    var i = $('#inpBookId').val();
+    if (i !== "" && i !== null) {
+        $('#bookName').prop('disabled', true);
     }
 </script>

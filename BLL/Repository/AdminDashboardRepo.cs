@@ -57,7 +57,7 @@ namespace BusinessLogic.Repository
         {
 
             model.categories = _context.Categories.ToList();
-            List<Book> bookList = _context.Books.ToList();
+            List<Book> bookList = _context.Books.Where(x => x.Isdeleted != true).ToList();
             model.authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
 
@@ -80,19 +80,6 @@ namespace BusinessLogic.Repository
             {
                 bookList = bookList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
             }
-
-
-            //int page = 1;
-            // int pageSize = 10;
-
-
-            //int totalItems = bookList.Count();
-            //var books = bookList.Skip((page - 1) * model.PageSize).Take(pageSize).ToList();
-
-            //model.CurrentPage = page;
-            //model.PageSize = pageSize;
-            //model.TotalItems = totalItems;
-            //model.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
             model.bookList = bookList;
             return model;
@@ -118,20 +105,20 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public int isautherExist(string? autherName)
+        public int isAuthorExist(string? AuthorName)
         {
-            int? autherId = _context.Authors.FirstOrDefault(x => x.Name == autherName)?.Authorid;
+            int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name == AuthorName && x.Isdeleted != true)?.Authorid;
 
-            if (autherId == null)
+            if (AuthorId == null)
             {
-                Author author = new Author() { Name = autherName };
+                Author author = new Author() { Name = AuthorName };
                 _context.Authors.Add(author);
                 _context.SaveChanges();
-                autherId = author.Authorid;
+                AuthorId = author.Authorid;
             }
 
 
-            return (int)autherId;
+            return (int)AuthorId;
         }
         public int ispublisherExist(string? publisherName)
         {
@@ -163,21 +150,29 @@ namespace BusinessLogic.Repository
         }
         public bool isbookExist(string? bookTitle)
         {
-            List<string> bookList = _context.Books.Select(x => x.Title).ToList();
+            List<string> bookList = _context.Books.Where(i => i.Isdeleted != true).Select(x => x.Title).ToList();
             if (bookList.Contains(bookTitle)) { return true; }
             return false;
         }
-
-        public void addBook(viewBookModel model,int? userId)
+        public viewBookModel getAddBook()
         {
-            int? autherId = isautherExist(model.authorName);
+            viewBookModel model = new viewBookModel()
+            {
+                author = _context.Authors.ToList(),
+                categories = _context.Categories.ToList(),
+            };
+            return model;
+        }
+        public void addBook(viewBookModel model, int? userId)
+        {
+            int? AuthorId = isAuthorExist(model.authorName);
             int? publisherId = ispublisherExist(model.publisherName);
             int? categoryId = isCategoryExist(model.categoryName);
 
             Book book = new Book();
 
             book.Title = model.Title;
-            book.Authorid = autherId;
+            book.Authorid = AuthorId;
             book.Bookphoto = model.bookPhoto.FileName;
             book.Publisherid = publisherId;
             book.Categoryid = categoryId;
@@ -187,7 +182,7 @@ namespace BusinessLogic.Repository
             book.Createdby = userId;
             book.Createddate = DateTime.Now;
             book.Description = model.description;
-            if (model.bookPhoto != null) { storefile(model.bookPhoto); } 
+            if (model.bookPhoto != null) { storefile(model.bookPhoto); }
             _context.Books.Add(book);
             _context.SaveChanges();
 
@@ -213,17 +208,18 @@ namespace BusinessLogic.Repository
             };
             return model;
         }
-        public void updateBook(viewBookModel model,int? userId)
+        public void updateBook(viewBookModel model, int? userId)
         {
-            int? autherId = isautherExist(model.authorName);
+            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == model.bookId);
+
+            int? AuthorId = isAuthorExist(model.authorName);
             int? publisherId = ispublisherExist(model.publisherName);
             int? categoryId = isCategoryExist(model.categoryName);
 
-            Book book = new Book();
 
             book.Title = model.Title;
-            book.Authorid = autherId;
-            book.Bookphoto = model.bookPhoto.FileName;
+            book.Authorid = AuthorId;
+            book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
             book.Publisherid = publisherId;
             book.Categoryid = categoryId;
             book.Noofpages = model.pageNumber;
@@ -232,8 +228,8 @@ namespace BusinessLogic.Repository
             book.Createdby = userId;
             book.Createddate = DateTime.Now;
             book.Description = model.description;
-            if (model.bookPhoto != null) { storefile(model.bookPhoto); } 
-            _context.Books.Add(book);
+            if (model.bookPhoto != null) { storefile(model.bookPhoto); }
+            _context.Books.Update(book);
             _context.SaveChanges();
 
         }
@@ -254,5 +250,214 @@ namespace BusinessLogic.Repository
             }
 
         }
+
+        public bool getDeleteBook(int bookId)
+        {
+            if (bookId != 0)
+            {
+                Book? book = _context.Books.FirstOrDefault(x => x.Bookid == bookId);
+                book.Isdeleted = true;
+                _context.Books.Update(book);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public AdminProfileModel getAdminProfile(int? uId)
+        {
+            User user = _context.Users.FirstOrDefault(x => x.Userid == uId);
+            AdminProfileModel Profile = new AdminProfileModel()
+            {
+                UserId = user.Userid,
+                FirstName = user.Firstname,
+                LastName = user.Lastname,
+                Email = user.Email,
+                Contact = user.Phonenumber,
+                Address = user.Address,
+                birthdate = user.Birthdate,
+                city = user.City,
+                gender = user.Gender,
+
+            };
+            return Profile;
+        }
+        public bool editAdminProfile(AdminProfileModel profile)
+        {
+            User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
+            if (user != null)
+            {
+                user.Firstname = profile.FirstName;
+                user.Address = profile.Address;
+                user.Lastname = profile.LastName;
+                user.Email = profile.Email;
+                user.Birthdate = profile.birthdate;
+                user.City = profile.city;
+                user.Gender = profile.gender;
+                user.Phonenumber = profile.Contact;
+                _context.Users.Update(user);
+                _context.SaveChanges();
+
+                Admin? admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
+                if (admin != null)
+                {
+                    admin.Firstname = profile.FirstName;
+                    admin.Lastname = profile.LastName;
+                    admin.Address = profile.Address;
+                    admin.Email = profile.Email;
+                    admin.City = profile.city;
+                    admin.Gender = profile.gender;
+                    admin.Phonenumber = profile.Contact;
+                    _context.Admins.Update(admin);
+                    _context.SaveChanges();
+                }
+
+                return true;
+            }
+            return false;
+
+        }
+
+        public AuthorListmodel GetAuthorList()
+        {
+            AuthorListmodel model = new AuthorListmodel()
+            {
+                authors = _context.Authors.Where(x => x.Isdeleted != true).ToList(),
+            };
+            return model;
+        }
+        public CategoryListModel getCategoriesList()
+        {
+            CategoryListModel model = new CategoryListModel()
+            {
+                categories = _context.Categories.Where(x => x.Isdeleted != true).ToList(),
+            };
+            return model;
+        }
+
+        public AuthorListmodel getEditAuthor(int authorId)
+        {
+            Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == authorId);
+            AuthorListmodel model = new AuthorListmodel();
+            if (author != null && authorId != 0)
+            {
+                model.authorId = author.Authorid;
+                model.autherName = author.Name;
+                model.birthdate = author.Birthdate;
+                model.Bio = author.Bio;
+            }
+            else
+            {
+                model.authorId = 0;
+            }
+
+            return model;
+        }
+
+        public CategoryListModel getAddCategory(int categoryId)
+        {
+            Category? category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
+            CategoryListModel model = new CategoryListModel();
+            if (category != null && categoryId != 0)
+            {
+                model.categoryId = category.Categoryid;
+                model.categoryName = category.Categoryname;
+            }
+            else
+            {
+                model.categoryId = 0;
+            }
+
+            return model;
+        }
+
+        public bool getDeleteAuthor(int authorId)
+        {
+            if (authorId != 0)
+            {
+                Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == authorId);
+                author.Isdeleted = true;
+                _context.Authors.Update(author);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool getDeleteCategory(int categoryId)
+        {
+            if (categoryId != 0)
+            {
+                Category? category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
+                category.Isdeleted = true;
+                _context.Categories.Update(category);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddOrUpdateAuthor(AuthorListmodel model)
+        {
+            if (model.authorId != 0)
+            {
+                Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == model.authorId);
+                author.Name = model.autherName;
+                author.Bio = model.Bio;
+                author.Birthdate = model.birthdate;
+                author.Isdeleted = false;
+                _context.Authors.Update(author);
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                if(_context.Authors.Any(x=>x.Name.Trim() != model.autherName.Trim()))
+                {
+                    Author auther = new Author()
+                    {
+                        Name = model.autherName, Bio = model.Bio,Birthdate= model.birthdate, Isdeleted = false
+                    };
+                    _context.Authors.Add(auther);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+
+
+        }
+        public bool AddOrUpdateCategory(CategoryListModel model)
+        {
+            if (model.categoryId != 0)
+            {
+                Category? ca = _context.Categories.FirstOrDefault(x => x.Categoryid == model.categoryId);
+                ca.Categoryname = model.categoryName;
+                ca.Isdeleted = false;
+                _context.Categories.Update(ca);
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                if (_context.Categories.Any(x => x.Categoryname.Trim() != model.categoryName.Trim()))
+                {
+                    Category category = new Category()
+                    {
+                        Categoryname = model.categoryName,
+                        Isdeleted = false
+                    };
+                    _context.Categories.Add(category);
+                    _context.SaveChanges();
+                    return true;
+
+                }
+                return false;
+
+            }
+
+        }
+
+
     }
 }

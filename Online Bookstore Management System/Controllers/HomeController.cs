@@ -15,14 +15,16 @@ namespace Online_Bookstore_Management_System.Controllers
         private readonly ICustomerRepo _customerRepo;
         private readonly IHttpContextAccessor _httpcontext;
         private readonly IJwtServices _jwtServices;
+        private readonly IAuthentication _authentication;
 
 
-        public HomeController(ILogger<HomeController> logger, ICustomerRepo customerRepo, IJwtServices jwtServices, IHttpContextAccessor httpcontext)
+        public HomeController(ILogger<HomeController> logger, ICustomerRepo customerRepo, IJwtServices jwtServices, IHttpContextAccessor httpcontext, IAuthentication authentication)
         {
             _logger = logger;
             _customerRepo = customerRepo;
             _httpcontext = httpcontext;
             _jwtServices = jwtServices;
+            _authentication = authentication;
         }
 
         public IActionResult Index()
@@ -34,9 +36,9 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             if (!string.IsNullOrEmpty(model.loginEmail) && !string.IsNullOrEmpty(model.password))
             {
-                if (_customerRepo.validateLogin(model.loginEmail, model.password))
+                if (_authentication.validateLogin(model.loginEmail, model.password))
                 {
-                    User user = _customerRepo.getSessionData(model.loginEmail);
+                    User user = _authentication.getSessionData(model.loginEmail);
                     string roleId ;
                     if (user.Roleid == 1) { roleId = "Admin"; } else { roleId = "customer"; }
                     string name = user.Firstname + " " + user.Lastname;
@@ -111,19 +113,6 @@ namespace Online_Bookstore_Management_System.Controllers
             }
             return View();
         }
-        public IActionResult ViewBooksPage(int bookId)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-
-            viewBookModel model = _customerRepo.viewBookDetails(bookId, userId);
-            return PartialView("_viewBooksPage", model);
-        }
-
-        public IActionResult searchBooks(Customer_MainPage model)
-        {
-            _customerRepo.getdata(model);
-            return PartialView("_CustomerMainPage", model);
-        }
         public IActionResult editUserProfile(UserProfile profile)
         {
             if (ModelState.IsValid)
@@ -136,6 +125,19 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 402 });
             }
             return View();
+        }
+        public IActionResult ViewBooksPage(int bookId)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+
+            viewBookModel model = _customerRepo.viewBookDetails(bookId, userId);
+            return PartialView("_viewBooksPage", model);
+        }
+
+        public IActionResult searchBooks(Customer_MainPage model)
+        {
+            _customerRepo.getdata(model);
+            return PartialView("_CustomerMainPage", model);
         }
 
         public IActionResult GetOrderDatailsPage(int bookId)
@@ -185,7 +187,7 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult ResetPassword(ResetPasswordModel model)
         {
             
-                if (_customerRepo.resetPassword(model))
+                if (_authentication.resetPassword(model))
                 {
                     return Json(new { code = 401 });
                 }

@@ -1,0 +1,72 @@
+﻿@model DataAccess.CustomModels.CategoryListModel
+<div class="" id="custDashboard2">
+    <div class="bookCategory">
+        <h3 class="my-2 ms-1">All Categories</h3>
+    </div>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-end m-2  w-100">
+            <button class="btn btn-success  " onclick="getAddorUpdateCategory(0)">    Add category </button>
+        </div>
+        <div class="table-responsive">
+
+            <table id="CategoryTable" class="table ">
+                <thead>
+
+                    <tr>
+                        <th>CategoryId</th>
+                        <th>Category Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model.categories.ToList())
+                    {
+                        <tr>
+
+                            <td>
+                                <span class="text-wrap fs-5">@obj.Categoryid</span>
+                                <input type="hidden" asp-for="@obj.Categoryid">
+                            </td>
+                            <td>@obj.Categoryname</td>
+
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-warning" onclick="getAddorUpdateCategory(@obj.Categoryid)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteCategory(@obj.Categoryid)">Delete </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="CategoryModal"></div>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        var table = $('#CategoryTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 5,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+
+            }
+        });
+        $('.dataTables_filter').hide();
+        $('#book-Table_first').hide();
+        $('#book-Table_last').hide();
+
+    })
+ 
+</script>

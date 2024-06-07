@@ -54,6 +54,9 @@ public partial class Book
     [StringLength(1000)]
     public string? Description { get; set; }
 
+    [Column("isdeleted")]
+    public bool? Isdeleted { get; set; }
+
     [InverseProperty("Book")]
     public virtual ICollection<Addtocart> Addtocarts { get; set; } = new List<Addtocart>();
 

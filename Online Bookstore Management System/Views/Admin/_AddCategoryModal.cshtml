@@ -1,0 +1,29 @@
+﻿@model DataAccess.CustomModels.CategoryListModel;
+
+
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUpdateCategoryForm">
+                    <input type="hidden" asp-for="@Model.categoryId" />
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category Name</label>
+
+                        <input type="text" asp-for=categoryName  class="form-control" id="categoryName" placeholder="Enter category name">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="AddOrUpdateCategory()">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
