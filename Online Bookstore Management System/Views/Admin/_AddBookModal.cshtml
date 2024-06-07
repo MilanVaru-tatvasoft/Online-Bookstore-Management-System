@@ -1,75 +1,102 @@
 ﻿@model DataAccess.CustomModels.viewBookModel;
+
 <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+            <div class="modal-header bg-primary text-white">
+                @if (Model.bookId != null)
+                {
+
+                    <h5 class="modal-title" id="addBookModalLabel">Update Book</h5>
+                }
+                else
+                {
+
+                    <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+                }
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addBookdetails" >
-                    <div class="row  my-3">
+                <form id="addBookdetails">
+                    <div class="row my-3">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="bookName">Book Name</label>
                                 <input type="text" asp-for="Title" class="form-control" id="bookName" placeholder="Enter book name">
                             </div>
                             <div class="form-group">
-                                <label for="authorName">Author Name</label>
-                                <input type="text" asp-for="authorName" class="form-control" id="authorName" placeholder="Enter author name">
+                                @if (Model.bookId == null)
+                                {
+                                    <label for="authorName">Author Name</label>
+                                    <input type="text" asp-for="authorName" class="form-control" id="authorName" placeholder="Enter author name">
+                                }
+                                else
+                                {
+                                    <label for="price">Auther</label>
+
+                                    <select class="form-select" aria-label="Default select example" asp-for="@Model.authorName">
+                                        @foreach (var i in Model.author.ToList())
+                                        {
+                                            <option value="@i.Name">@i.Name</option>
+                                        }
+
+                                    </select>
+                                }
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="price">Price</label>
                                 <input type="text" asp-for="price" class="form-control" id="price" placeholder="Enter price">
                             </div>
                             <div class="form-group">
+                                <label for="pages">Number of Pages</label>
+                                <input type="number" asp-for="pageNumber" class="form-control" id="pages" placeholder="Enter number of pages">
+                            </div>
+                            <div class="form-group">
                                 <label for="category">Category</label>
                                 <input type="text" asp-for="categoryName" class="form-control" id="category" placeholder="Enter category">
+                            </div>
+                            <div class="form-group">
+                                <label for="publisher">Publisher Name</label>
+                                <input type="text" asp-for="publisherName" class="form-control" id="publisher" placeholder="Enter publisher name">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="bookPhoto">Book Photo (JPG/PNG only)</label>
-                                <input type="file" asp-for=bookPhoto class="form-control-file" id="bookPhoto">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="bookPhoto" accept=".jpg, .png" asp-for="@Model.bookPic" onchange="fileUploaded(this)">
+                                    <label class="custom-file-label" for="bookPhoto">Choose file</label>
+                                </div>
+                                @if (Model.bookId != null && Model.bookPic != null)
+                                {
+                                    <div class="text-center mt-3">
+                                        <img src="~/BookListCollections/@Model.bookPic" class="img-fluid rounded" width="150" height="225" alt="@Model.bookPic">
+                                    </div>
+                                }
+
                             </div>
+
                         </div>
+
                         <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="description">Brief Description</label>
-                                <textarea class="form-control" id="description" rows="3"></textarea>
+                                <textarea class="form-control" id="description" asp-for=description rows="3"></textarea>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="pages">Number of Pages</label>
-                                <input type="number" asp-for=pageNumber class="form-control" id="pages" placeholder="Enter number of pages">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="publisher">Publisher Name</label>
-                                <input type="text" asp-for=publisherName class="form-control" id="publisher" placeholder="Enter publisher name">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
+
+
                             <div class="form-group">
                                 <label for="pages">Stock Quantity</label>
-                                <input type="number" asp-for=Stockquantity class="form-control" id="Stockquantity" placeholder="stockQunatity">
+                                <input type="number" asp-for="Stockquantity" class="form-control" id="Stockquantity" placeholder="stockQunatity">
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                      @*       <div class="form-group">
-                                <label for="publisher">Publisher Name</label>
-                                <input type="text" asp-for=publisherName class="form-control" id="publisher" placeholder="Enter publisher name">
-                            </div> *@
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 m-2">
                         <button type="submit" class="btn btn-primary" onclick="Addbook()">Save</button>
-                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
@@ -78,25 +105,64 @@
 </div>
 
 <style>
-    /* Custom CSS for modal */
     .modal-header {
         background-color: #007bff;
         color: white;
+        border-bottom: none;
     }
 
-    .modal-body h6 {
-        font-weight: bold;
-        margin-bottom: 15px;
+    .modal-content {
+        border-radius: 20px;
+        box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-body {
+        padding: 30px;
     }
 
     .form-group label {
-        font-weight: lighter;
+        font-weight: bold;
+        color: #333;
     }
 
-    .collapse .form-group {
-        margin-bottom: 15px;
+    .custom-file-input::-webkit-file-upload-button {
+        visibility: hidden;
+    }
+
+    .custom-file-input::before {
+        content: 'Choose file';
+        display: inline-block;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        outline: none;
+        cursor: pointer;
+        border-radius: 25px;
+    }
+
+    .custom-file-input:hover::before {
+        background: #0056b3;
+    }
+
+    .custom-file-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-radius: 25px;
+    }
+
+    .custom-file-input:focus + .custom-file-label::after {
+        border-color: #007bff;
+    }
+
+    .modal-footer {
+        border-top: none;
     }
 </style>
 
 <script>
+    function fileUploaded(item) {
+        console.log(item.files);
+    }
 </script>

@@ -24,8 +24,8 @@ namespace Online_Bookstore_Management_System.Controllers
             _httpcontext = httpcontext;
             _adminDashboard = adminDashboard;
         }
-        
-        
+
+
         [Authorize("Admin")]
         public IActionResult AdminDashboard()
         {
@@ -56,9 +56,9 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult getAddBook()
         {
-            return PartialView("_AddBookModal");
+            viewBookModel model = new viewBookModel();
+            return PartialView("_AddBookModal", model);
         }
-
         public IActionResult AddBook(viewBookModel model)
         {
             if (_adminDashboard.isbookExist(model.Title))
@@ -71,6 +71,27 @@ namespace Online_Bookstore_Management_System.Controllers
                 _adminDashboard.addBook(model, userId);
                 return Json(new { code = 402 });
             }
+
+        }
+        public IActionResult updateBook(viewBookModel model)
+        {
+            if (_adminDashboard.isbookExist(model.Title))
+            {
+                int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+                //_adminDashboard.updateBook(model, userId);
+                return Json(new { code = 401 });
+            }
+            else
+            {
+
+                return Json(new { code = 402 });
+            }
+
+        }
+        public IActionResult getEditBook(int bookId)
+        {
+            viewBookModel model = _adminDashboard.getEditBook(bookId);
+            return PartialView("_AddBookModal", model);
         }
 
     }

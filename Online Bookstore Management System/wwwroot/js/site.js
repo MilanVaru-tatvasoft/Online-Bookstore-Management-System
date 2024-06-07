@@ -59,7 +59,6 @@ function SearchParamsbooks() {
         
     });
 
-    console.log(search2); // Output the selected values to console
 
 
     console.log(formData);
@@ -68,7 +67,7 @@ function SearchParamsbooks() {
         url: "/Home/searchBooks",
         contentType: false,
         processData: false,
-        data: formData, // Convert formData to query string
+        data: formData, 
         success: function (result) {
             $('#custDashboard').html(result);
 
@@ -318,6 +317,41 @@ function Addbook() {
                     position: "top-end",
                     icon: "success",
                     title: "Book Added",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+function Updatebook() {
+    event.preventDefault();
+    var formdata = new FormData($('#addBookdetails')[0]);
+
+    $.ajax({
+        method: "POST",
+        url: "/Admin/updateBook",
+        data: formdata,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Book Updated",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+               
+            } else if (result.code == 402) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Book not exist",
                     showConfirmButton: false,
                     timer: 1500
                 })

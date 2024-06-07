@@ -17,13 +17,16 @@ namespace DataAccess.CustomModels
         public string? Title { get; set; }
         public string? description { get; set; }
         public string? authorName { get; set; }
-        public string? bookPic {  get; set; }
+        public string? bookPic { get; set; } = null;
         public IFormFile? bookPhoto { get; set; }
         public string? publisherName { get; set; }
         public decimal? price { get; set; }
         public int? pageNumber { get; set; }
         public int? quantity { get; set; }
         public int? Stockquantity { get; set; }
+
+        public List<Author>? author { get; set; }
+        public List<Category>? categories { get; set; }
 
         
     }

@@ -192,6 +192,52 @@ namespace BusinessLogic.Repository
             _context.SaveChanges();
 
         }
+
+        public viewBookModel getEditBook(int bookId)
+        {
+            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == bookId);
+            viewBookModel model = new viewBookModel()
+            {
+                bookId = bookId,
+                Title = book.Title,
+                description = book.Description,
+                pageNumber = book.Noofpages,
+                price = book.Price,
+                authorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
+                publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
+                categoryName = _context.Categories?.FirstOrDefault(x => x.Categoryid == book.Categoryid).Categoryname,
+                bookPic = book.Bookphoto,
+                Stockquantity = book.Stockquantity,
+                author = _context.Authors.ToList(),
+                categories = _context.Categories.ToList(),
+            };
+            return model;
+        }
+        public void updateBook(viewBookModel model,int? userId)
+        {
+            int? autherId = isautherExist(model.authorName);
+            int? publisherId = ispublisherExist(model.publisherName);
+            int? categoryId = isCategoryExist(model.categoryName);
+
+            Book book = new Book();
+
+            book.Title = model.Title;
+            book.Authorid = autherId;
+            book.Bookphoto = model.bookPhoto.FileName;
+            book.Publisherid = publisherId;
+            book.Categoryid = categoryId;
+            book.Noofpages = model.pageNumber;
+            book.Price = (decimal)model.price;
+            book.Stockquantity = (int)model.Stockquantity;
+            book.Createdby = userId;
+            book.Createddate = DateTime.Now;
+            book.Description = model.description;
+            if (model.bookPhoto != null) { storefile(model.bookPhoto); } 
+            _context.Books.Add(book);
+            _context.SaveChanges();
+
+        }
+
         public void storefile(IFormFile fileName)
         {
             string FileName = fileName.FileName;

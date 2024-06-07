@@ -14,6 +14,8 @@ namespace BusinessLogic.Interface
         public viewBookModel viewBookDetails(int bookId, int? userId);
         public bool isbookExist(string? bookTitle);
         public void addBook(viewBookModel model, int? userId);
+        public viewBookModel getEditBook(int bookId);
+        public void updateBook(viewBookModel model, int? userId);
 
 
     }

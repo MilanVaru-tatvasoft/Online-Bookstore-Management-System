@@ -37,13 +37,10 @@
 
     }
 }
-@* dropdown css *@
 <style>
-    /* Inside your ASP.NET Core MVC CSS file */
 
     .dropdown {
         position: relative;
-        font-size: 14px;
         color: #333;
     }
 
@@ -105,9 +102,6 @@
         margin-right: 4px;
     }
 
-</style>
-@* pagination css *@
-<style>
     #pagination {
         margin-top: 20px;
         display: flex;
@@ -237,7 +231,7 @@
                         <td>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
-                                <button class="btn btn-warning" onclick="EditBooksPage(@obj.Bookid)">Edit </button>
+                                <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit </button>
                                 <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
                             </div>
                         </td>
@@ -393,6 +387,25 @@
         $.ajax({
             method: "get",
             url: "/Admin/getAddBook",
+            success: function (result) {
+
+                $('#Modaldata').html(result);
+                $('#addBookModal').modal('show');
+
+            },
+            error: function () {
+                console.error('Error loading partial view');
+                alert('Error loading partial view');
+            }
+        });
+    }
+
+    function getEditBook(bookId) {
+        $.ajax({
+            method: "get",
+            url: "/Admin/getEditBook",
+            data: { bookId: bookId },
+
             success: function (result) {
 
                 $('#Modaldata').html(result);
