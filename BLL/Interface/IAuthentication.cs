@@ -13,5 +13,7 @@ namespace BusinessLogic.Interface
         public bool validateLogin(string email, string password);
         public bool resetPassword(ResetPasswordModel model);
         public User getSessionData(string email);
+
+        public bool sendmail(string email);
     }
 }

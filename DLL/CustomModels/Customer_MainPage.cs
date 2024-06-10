@@ -12,7 +12,7 @@ namespace DataAccess.CustomModels
     {
         public List<Category> categories { get; set; }
         public List<Book> bookList { get; set; }
-        public List<Author> authors { get; set; }
+        public List<Author> Authors { get; set; }
         public List<Publisher> publishers { get; set; }
         public int UserId { get; set; }
 
@@ -109,5 +109,10 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage = "Confirmation password is required")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match")]
         public string Password2 { get; set; }
+    }
+
+    public class CartListModel
+    {
+        public List<Addtocart>? addtocarts { get; set; }
     }
 }

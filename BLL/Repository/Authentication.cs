@@ -8,10 +8,13 @@ using System.IdentityModel.Tokens.Jwt;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
 using DataAccess.CustomModels;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Net.Mail;
+using System.Net;
 
 namespace BusinessLogic.Repository
 {
-    public class Authentication:IAuthentication
+    public class Authentication : IAuthentication
 
     {
         private readonly ApplicationDbContext _context;
@@ -63,15 +66,59 @@ namespace BusinessLogic.Repository
             }
             return false;
         }
+
+        public bool sendmail(string Email)
+        {
+            User? user = _context.Users.FirstOrDefault(x => x.Email == Email);
+            if (user != null)
+            {
+                var mail = "tatva.dotnet.milanvaru@outlook.com";
+                var password = "vpgozcxbptbunspz";
+                int value;
+                var client = new SmtpClient("smtp.office365.com", 587)
+                {
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential(mail, password)
+                };
+                string subject = "Here is Your Password";
+                string message = "Your Password Is: " + user.Passwordhash;
+                MailMessage mailMessage = new MailMessage(from: mail, to: Email, subject, message);
+                mailMessage.IsBodyHtml = true;
+                try
+                {
+                    client.SendMailAsync(mailMessage);
+                    value = 1;
+
+                }
+                catch (Exception ex)
+                {
+                    value = 0;
+                }
+
+                Emaillog emaillog = new Emaillog()
+                {
+                    Emailid = user.Email,
+                    Message = message,
+                    Userid = user.Userid,
+                    Senddate = DateTime.Now,
+                    Issent = value == 1 ? true : false,
+                };
+                _context.Emaillogs.Add(emaillog);
+                _context.SaveChanges();
+
+                return true;
+            }
+            return false;
+        }
     }
-    public class Authorize : Attribute,IAuthorizationFilter
+    public class Authorize : Attribute, IAuthorizationFilter
     {
         private readonly string _role;
 
         public Authorize(string role)
         {
             this._role = role;
-        
+
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)

@@ -1,18 +1,18 @@
 ﻿@model DataAccess.CustomModels.AuthorListmodel
 <div class="" id="custDashboard2">
     <div class="bookCategory">
-        <h3 class="my-2 ms-1">All Authers</h3>
+        <h3 class="my-2 ms-1">All Authors</h3>
     </div>
     <div class="container-fluid">
         <div class="d-flex justify-content-end m-2  w-100">
-            <button class="btn btn-success  " onclick="getAddorUpdateAuther(0)"> Add Auther </button>
+            <button class="btn btn-success  " onclick="getAddorUpdateAuthor(0)"> Add Author </button>
         </div>
         <div class="table-responsive">
 
             <table id="AuthorTable" class="table ">
                 <thead>
                     <tr>
-                        <th>authoeId</th>
+                        <th>AuthorId</th>
                         <th>Author Name</th>
                         <th>Bio</th>
                         <th>Birth Date</th>
@@ -20,7 +20,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var obj in Model.authors.ToList())
+                    @foreach (var obj in Model.Authors.ToList())
                     {
                         <tr>
                            
@@ -32,8 +32,8 @@
                             </td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-warning" onclick="getAddorUpdateAuther(@obj.Authorid)">Edit </button>
-                                    <button class="btn btn-danger" onclick="DeleteAuther(@obj.Authorid)">Delete </button>
+                                    <button class="btn btn-warning" onclick="getAddorUpdateAuthor(@obj.Authorid)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteAuthor(@obj.Authorid)">Delete </button>
                                 </div>
                             </td>
                         </tr>

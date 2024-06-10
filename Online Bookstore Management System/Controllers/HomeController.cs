@@ -5,6 +5,7 @@ using DataAccess.DataModels;
 
 using Microsoft.AspNetCore.Mvc;
 using Online_Bookstore_Management_System.Models;
+using Org.BouncyCastle.Crypto.Utilities;
 using System.Diagnostics;
 
 namespace Online_Bookstore_Management_System.Controllers
@@ -39,10 +40,10 @@ namespace Online_Bookstore_Management_System.Controllers
                 if (_authentication.validateLogin(model.loginEmail, model.password))
                 {
                     User user = _authentication.getSessionData(model.loginEmail);
-                    string roleId ;
+                    string roleId;
                     if (user.Roleid == 1) { roleId = "Admin"; } else { roleId = "customer"; }
                     string name = user.Firstname + " " + user.Lastname;
-                    var jwtToken = _jwtServices.GenerateJwtToken(model.loginEmail, roleId );
+                    var jwtToken = _jwtServices.GenerateJwtToken(model.loginEmail, roleId);
                     Response.Cookies.Append("jwt", jwtToken);
                     _httpcontext.HttpContext.Session.SetString("UserName", name);
                     _httpcontext.HttpContext.Session.SetInt32("UserId", user.Userid);
@@ -181,23 +182,35 @@ namespace Online_Bookstore_Management_System.Controllers
                 Email = email,
                 UserId = userId,
             };
-            return View("_ResetPasswordPage",model);
+            return View("_ResetPasswordPage", model);
         }
         [HttpPost]
         public IActionResult ResetPassword(ResetPasswordModel model)
         {
-            
-                if (_authentication.resetPassword(model))
-                {
-                    return Json(new { code = 401 });
-                }
+
+            if (_authentication.resetPassword(model))
+            {
+                return Json(new { code = 401 });
+            }
             return Json(new { code = 401 });
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult ForgotPasswordModal()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return PartialView("_PasswordRecoveryModal");
+        }
+        public IActionResult forgotpassword(string Email)
+        {
+            if (_authentication.sendmail(Email))
+            {
+
+                return Json(new { code = 401 });
+            }
+            else
+            {
+
+                return Json(new { code = 402 });
+            }
         }
     }
 }

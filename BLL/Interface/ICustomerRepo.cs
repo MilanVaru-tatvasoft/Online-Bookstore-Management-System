@@ -22,6 +22,7 @@ namespace BusinessLogic.Interface
         public void GetAddToCart(int bookId, int? userId,int cartId);
         public void GetRemoveFromCart(int cartId, int? userId);
         public void confirmOrder(OrderData data, int? userId);
+        public CartListModel getCartList(int UserId);
 
     }
 }

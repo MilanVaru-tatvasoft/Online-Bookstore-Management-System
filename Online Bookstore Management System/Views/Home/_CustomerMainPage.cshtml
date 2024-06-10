@@ -1,10 +1,10 @@
 ﻿@model DataAccess.CustomModels.Customer_MainPage;
 @functions{
-    public bool ischecked(int authoeId)
+    public bool ischecked(int AuthorId)
     {
         if(Model.search2 != null)
         {
-            if (Model.search2.Contains(authoeId))
+            if (Model.search2.Contains(AuthorId))
             {
                 return true;
             }
@@ -148,10 +148,10 @@
 
                         <div class="dropdown-list">
 
-                            @foreach (var i in Model.authors)
+                            @foreach (var i in Model.Authors)
                             {
                                 <label class="dropdown-option">
-                                    <input class="autherData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
+                                    <input class="AuthorData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
                                     @i.Name
                                 </label>
                             }
@@ -218,11 +218,10 @@
                         <div class="card-body">
                             <h5 class="card-title text-truncate">@obj.Title</h5>
                             <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
-                            <p class="card-text text-truncate px-1">Auther: @Model.authors?.FirstOrDefault(x=>x.Authorid == obj.Authorid).Name</p>
+                            <p class="card-text text-truncate px-1">Author: @Model.Authors?.FirstOrDefault(x=>x.Authorid == obj.Authorid).Name</p>
                         </div>
                         <div class="d-flex gap-2">
                             <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.Bookid)">View More</buttton>
-                            <buttton class="btn btn-warning" onclick="">Add to Cart</buttton>
                         </div>
                     </div>
                 </div>

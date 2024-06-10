@@ -30,7 +30,7 @@ namespace BusinessLogic.Repository
 
             model.categories = _context.Categories.ToList();
             List<Book> bookList = _context.Books.ToList();
-            model.authors = _context.Authors.ToList();
+            model.Authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
 
             if (model.search1 != null)
@@ -191,7 +191,7 @@ namespace BusinessLogic.Repository
                 description = book.Description,
                 pageNumber = book.Noofpages,
                 price = book.Price,
-                authorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
+                AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 bookPic = book.Bookphoto,
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
@@ -313,6 +313,15 @@ namespace BusinessLogic.Repository
 
 
         }
+        public CartListModel getCartList(int UserId)
+        {
+            int customerId = _context.Customers.FirstOrDefault(x=>x.Userid == UserId).Customerid;
+            var model = new CartListModel();
+            List<Addtocart>? addtocart = _context.Addtocarts.Where(x => x.Customerid == customerId).ToList();
+            model.addtocarts = addtocart;
+            return model;
+        }
+
 
 
     }

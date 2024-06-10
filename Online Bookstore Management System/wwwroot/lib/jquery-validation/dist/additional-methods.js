@@ -171,7 +171,7 @@ $.validator.addMethod( "bic", function( value, element ) {
  *   L. Old format
  *   M. Old format
  *   N. Nonresident entities
- *   P. Local authorities
+ *   P. Local Authorities
  *   Q. Autonomous bodies, state or not, and the like, and congregations and religious institutions
  *   R. Congregations and religious institutions (since 2008 ORDER EHA/451/2008)
  *   S. Organs of State Administration and regions
@@ -712,7 +712,7 @@ $.validator.addMethod( "netmask", function( value, element ) {
 
 /*
  * The NIE (Número de Identificación de Extranjero) is a Spanish tax identification number assigned by the Spanish
- * authorities to any foreigner.
+ * Authorities to any foreigner.
  *
  * The NIE is the equivalent of a Spaniards Número de Identificación Fiscal (NIF) which serves as a fiscal
  * identification number. The CIF number (Certificado de Identificación Fiscal) is equivalent to the NIF, but applies to

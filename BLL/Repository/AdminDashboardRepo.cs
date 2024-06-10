@@ -41,7 +41,7 @@ namespace BusinessLogic.Repository
                                                 .ToList();
             adminDashboard.books = _context.Books
                                                 .ToList();
-            adminDashboard.authors = _context.Authors
+            adminDashboard.Authors = _context.Authors
                                                .ToList();
             adminDashboard.categories = _context.Categories
                                                .ToList();
@@ -58,7 +58,7 @@ namespace BusinessLogic.Repository
 
             model.categories = _context.Categories.ToList();
             List<Book> bookList = _context.Books.Where(x => x.Isdeleted != true).ToList();
-            model.authors = _context.Authors.ToList();
+            model.Authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
 
             if (model.search1 != null)
@@ -96,7 +96,7 @@ namespace BusinessLogic.Repository
                 description = book.Description,
                 pageNumber = book.Noofpages,
                 price = book.Price,
-                authorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
+                AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 bookPic = book.Bookphoto,
 
@@ -111,10 +111,10 @@ namespace BusinessLogic.Repository
 
             if (AuthorId == null)
             {
-                Author author = new Author() { Name = AuthorName };
-                _context.Authors.Add(author);
+                Author Author = new Author() { Name = AuthorName };
+                _context.Authors.Add(Author);
                 _context.SaveChanges();
-                AuthorId = author.Authorid;
+                AuthorId = Author.Authorid;
             }
 
 
@@ -158,14 +158,14 @@ namespace BusinessLogic.Repository
         {
             viewBookModel model = new viewBookModel()
             {
-                author = _context.Authors.ToList(),
+                Author = _context.Authors.ToList(),
                 categories = _context.Categories.ToList(),
             };
             return model;
         }
         public void addBook(viewBookModel model, int? userId)
         {
-            int? AuthorId = isAuthorExist(model.authorName);
+            int? AuthorId = isAuthorExist(model.AuthorName);
             int? publisherId = ispublisherExist(model.publisherName);
             int? categoryId = isCategoryExist(model.categoryName);
 
@@ -198,12 +198,12 @@ namespace BusinessLogic.Repository
                 description = book.Description,
                 pageNumber = book.Noofpages,
                 price = book.Price,
-                authorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
+                AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 categoryName = _context.Categories?.FirstOrDefault(x => x.Categoryid == book.Categoryid).Categoryname,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,
-                author = _context.Authors.ToList(),
+                Author = _context.Authors.ToList(),
                 categories = _context.Categories.ToList(),
             };
             return model;
@@ -212,7 +212,7 @@ namespace BusinessLogic.Repository
         {
             Book? book = _context.Books.FirstOrDefault(x => x.Bookid == model.bookId);
 
-            int? AuthorId = isAuthorExist(model.authorName);
+            int? AuthorId = isAuthorExist(model.AuthorName);
             int? publisherId = ispublisherExist(model.publisherName);
             int? categoryId = isCategoryExist(model.categoryName);
 
@@ -322,7 +322,7 @@ namespace BusinessLogic.Repository
         {
             AuthorListmodel model = new AuthorListmodel()
             {
-                authors = _context.Authors.Where(x => x.Isdeleted != true).ToList(),
+                Authors = _context.Authors.Where(x => x.Isdeleted != true).ToList(),
             };
             return model;
         }
@@ -335,20 +335,20 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public AuthorListmodel getEditAuthor(int authorId)
+        public AuthorListmodel getEditAuthor(int AuthorId)
         {
-            Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == authorId);
+            Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == AuthorId);
             AuthorListmodel model = new AuthorListmodel();
-            if (author != null && authorId != 0)
+            if (Author != null && AuthorId != 0)
             {
-                model.authorId = author.Authorid;
-                model.autherName = author.Name;
-                model.birthdate = author.Birthdate;
-                model.Bio = author.Bio;
+                model.AuthorId = Author.Authorid;
+                model.AuthorName = Author.Name;
+                model.birthdate = Author.Birthdate;
+                model.Bio = Author.Bio;
             }
             else
             {
-                model.authorId = 0;
+                model.AuthorId = 0;
             }
 
             return model;
@@ -371,13 +371,13 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public bool getDeleteAuthor(int authorId)
+        public bool getDeleteAuthor(int AuthorId)
         {
-            if (authorId != 0)
+            if (AuthorId != 0)
             {
-                Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == authorId);
-                author.Isdeleted = true;
-                _context.Authors.Update(author);
+                Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == AuthorId);
+                Author.Isdeleted = true;
+                _context.Authors.Update(Author);
                 _context.SaveChanges();
                 return true;
             }
@@ -399,26 +399,26 @@ namespace BusinessLogic.Repository
 
         public bool AddOrUpdateAuthor(AuthorListmodel model)
         {
-            if (model.authorId != 0)
+            if (model.AuthorId != 0)
             {
-                Author? author = _context.Authors.FirstOrDefault(x => x.Authorid == model.authorId);
-                author.Name = model.autherName;
-                author.Bio = model.Bio;
-                author.Birthdate = model.birthdate;
-                author.Isdeleted = false;
-                _context.Authors.Update(author);
+                Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == model.AuthorId);
+                Author.Name = model.AuthorName;
+                Author.Bio = model.Bio;
+                Author.Birthdate = model.birthdate;
+                Author.Isdeleted = false;
+                _context.Authors.Update(Author);
                 _context.SaveChanges();
                 return true;
             }
             else
             {
-                if(_context.Authors.Any(x=>x.Name.Trim() != model.autherName.Trim()))
+                if(_context.Authors.Any(x=>x.Name.Trim() != model.AuthorName.Trim()))
                 {
-                    Author auther = new Author()
+                    Author Author = new Author()
                     {
-                        Name = model.autherName, Bio = model.Bio,Birthdate= model.birthdate, Isdeleted = false
+                        Name = model.AuthorName, Bio = model.Bio,Birthdate= model.birthdate, Isdeleted = false
                     };
-                    _context.Authors.Add(auther);
+                    _context.Authors.Add(Author);
                     _context.SaveChanges();
                     return true;
                 }

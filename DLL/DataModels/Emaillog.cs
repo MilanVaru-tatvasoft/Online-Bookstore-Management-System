@@ -13,10 +13,15 @@ public partial class Emaillog
     [Column("emaillogid")]
     public int Emaillogid { get; set; }
 
+    [Column("emailid")]
+    [StringLength(100)]
+    public string? Emailid { get; set; }
+
     [Column("userid")]
     public int? Userid { get; set; }
 
-    [Column("message", TypeName = "character varying")]
+    [Column("message")]
+    [StringLength(500)]
     public string? Message { get; set; }
 
     [Column("issent")]

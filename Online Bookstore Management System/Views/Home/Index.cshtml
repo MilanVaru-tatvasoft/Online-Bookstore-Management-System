@@ -67,6 +67,10 @@
                                            placeholder="Password"
                                            required oninput="return checkPasswordlength()" />
                                 </div>
+                                <span id="error" class="text-danger"></span>
+                                <div class="d-flex justify-content-end">
+                                    <a class="text-decoration-none text-primary" onclick="forgotPasswordmail()" style="cursor:pointer;">Forgot Password</a>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-center align-items-center gap-1">
                                 <button class="btn btn-primary w-100" type="submit">
@@ -88,7 +92,26 @@
     </div>
 
 </div>
+<div id="UserProfile"></div>
 <script>
+    function forgotPasswordmail() {
+        $.ajax({
+            method: "get",
+            url: "/Home/ForgotPasswordModal",
+
+            success: function (result) {
+
+                $('#UserProfile').html(result);
+                $('#fPassword').modal('show');
+
+            },
+            error: function () {
+                console.error('Error loading partial view');
+                alert('Error loading partial view');
+            }
+        });
+    }
+
     function checkPasswordlength() {
         var password = document.getElementById("loginpassword").value;
 

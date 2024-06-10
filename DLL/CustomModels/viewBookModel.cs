@@ -16,7 +16,7 @@ namespace DataAccess.CustomModels
         public int? bookId {  get; set; }
         public string? Title { get; set; }
         public string? description { get; set; }
-        public string? authorName { get; set; }
+        public string? AuthorName { get; set; }
         public string? bookPic { get; set; } = null;
         public IFormFile? bookPhoto { get; set; }
         public string? publisherName { get; set; }
@@ -25,7 +25,7 @@ namespace DataAccess.CustomModels
         public int? quantity { get; set; }
         public int? Stockquantity { get; set; }
 
-        public List<Author>? author { get; set; }
+        public List<Author>? Author { get; set; }
         public List<Category>? categories { get; set; }
 
         

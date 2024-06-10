@@ -81,7 +81,7 @@ function resetpassword() {
 function SearchParamsbooks() {
     event.preventDefault();
 
-    let checkboxes = document.querySelectorAll(".autherData:checked");
+    let checkboxes = document.querySelectorAll(".AuthorData:checked");
     let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
     let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
     const search2 = [];
@@ -112,6 +112,21 @@ function SearchParamsbooks() {
         success: function (result) {
             $('#custDashboard').html(result);
 
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+function getCartList() {
+    $.ajax({
+        method: "POST",
+        url: "/Home/getCartList",
+        
+
+        success: function (result) {
+            $('#custDashboard').html(result)
+            $('#UserProfile').empty()
         },
         error: function () {
             alert('Error loading partial view');
@@ -501,10 +516,10 @@ function editAdminProfile() {
     });
 }
 
-function GetAuthersList() {
+function GetAuthorsList() {
     $.ajax({
         method: "GET",
-        url: "/Admin/getAutherList",
+        url: "/Admin/getAuthorList",
 
         success: function (result) {
             $('#AdminDash').empty()
@@ -531,11 +546,11 @@ function GetCategoryList() {
     });
 }
 
-function getAddorUpdateAuther(authorId) {
+function getAddorUpdateAuthor(AuthorId) {
     $.ajax({
         method: "get",
         url: "/Admin/getAddAuthor",
-        data: { authorId: authorId },
+        data: { AuthorId: AuthorId },
 
         success: function (result) {
 
@@ -549,7 +564,7 @@ function getAddorUpdateAuther(authorId) {
         }
     });
 }
-function DeleteAuther(authorId) {
+function DeleteAuthor(AuthorId) {
     event.preventDefault();
     Swal.fire({
         title: "Are you sure?",
@@ -563,7 +578,7 @@ function DeleteAuther(authorId) {
             $.ajax({
                 method: "GET",
                 url: "/Admin/getDeleteAuthor",
-                data: { authorId: authorId },
+                data: { AuthorId: AuthorId },
 
                 success: function (result) {
                     if (result.code == 401)
@@ -574,7 +589,7 @@ function DeleteAuther(authorId) {
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            GetAuthersList();
+                            GetAuthorsList();
                         });
 
 
@@ -664,7 +679,7 @@ function AddOrUpdateAuthor() {
                     timer: 1500
                 })
                 $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
-                    GetAuthersList();
+                    GetAuthorsList();
                 });
 
 
@@ -673,12 +688,12 @@ function AddOrUpdateAuthor() {
                 swal.fire({
                     position: "top-end",
                     icon: "error",
-                    title: "Auther exist",
+                    title: "Author exist",
                     showConfirmButton: false,
                     timer: 1500
                 })
                 $('#addAuthorModal').modal('hide');
-                GetAuthersList();
+                GetAuthorsList();
 
             }
         },
@@ -715,7 +730,7 @@ function AddOrUpdateCategory() {
                 swal.fire({
                     position: "top-end",
                     icon: "error",
-                    title: "Auther exist",
+                    title: "Author exist",
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -729,3 +744,47 @@ function AddOrUpdateCategory() {
         }
     });
 }
+
+function getForgotPassword() {
+    var email = $('#fpasswordEmail').val();
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(email)) {
+      $('#fpassworderrormsg').empty();
+        $.ajax({
+            method: "get",
+            url: "/Home/forgotpassword",
+            data: { email: email },
+
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        title: "Sent!",
+                        text: "Email send",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                }
+                else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Email does not exist!",
+                        icon: "warning",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+
+                $('#fPassword').modal('hide');
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+     else {
+        var errormsg = $('#fpassworderrormsg').text("enter valid email address");
+        return false;
+    }
+}
+

@@ -1,10 +1,10 @@
 ﻿@model DataAccess.CustomModels.AdminBookListmodel;
 @functions {
-    public bool ischecked(int authoeId)
+    public bool ischecked(int AuthorId)
     {
         if (Model.search2 != null)
         {
-            if (Model.search2.Contains(authoeId))
+            if (Model.search2.Contains(AuthorId))
             {
                 return true;
             }
@@ -135,10 +135,10 @@
 
                         <div class="dropdown-list">
 
-                            @foreach (var i in Model.authors)
+                            @foreach (var i in Model.Authors)
                             {
                                 <label class="dropdown-option">
-                                    <input class="autherData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
+                                    <input class="AuthorData" type="checkbox" name="dropdown-group" checked="@ischecked(i.Authorid)" value="@i.Authorid" />
                                     @i.Name
                                 </label>
                             }
@@ -220,7 +220,7 @@
                                 <img src="~/BookListCollections/@obj.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Bookphoto">
                             </td>
                             <td><span class="text-wrap fs-5">@obj.Title</span></td>
-                            <td>@Model.authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
+                            <td>@Model.Authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
                             <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
                             <td>@obj.Price $</td>
                             <td>@obj.Stockquantity </td>
@@ -324,8 +324,8 @@
     function Searchbooks() {
         event.preventDefault();
 
-        // Get all checked checkboxes with class "autherData"
-        let checkboxes = document.querySelectorAll(".autherData:checked");
+        // Get all checked checkboxes with class "AuthorData"
+        let checkboxes = document.querySelectorAll(".AuthorData:checked");
         let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
         let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
         const search2 = [];

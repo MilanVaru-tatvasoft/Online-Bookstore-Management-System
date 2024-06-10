@@ -13,7 +13,7 @@ namespace DataAccess.CustomModels
         public List<Order>? orders { get; set; }
         public List<Orderdetail>? orderdetails { get; set; }
         public List<Book>? books { get; set; }
-        public List<Author>? authors { get; set; }
+        public List<Author>? Authors { get; set; }
         public List<Publisher>? publishers { get; set; }
         public List<Category>? categories { get; set; }
         public List<Customer>? customers { get; set; }
@@ -24,7 +24,7 @@ namespace DataAccess.CustomModels
     {
         public List<Category>? categories { get; set; }
         public List<Book>? bookList { get; set; }
-        public List<Author>? authors { get; set; }
+        public List<Author>? Authors { get; set; }
         public List<Publisher>? publishers { get; set; }
         public int UserId { get; set; }
 
@@ -74,9 +74,9 @@ namespace DataAccess.CustomModels
 
     public class AuthorListmodel
     {
-        public List<Author>? authors { get; set; }
-        public int authorId { get; set; }
-        public string? autherName { get; set; }
+        public List<Author>? Authors { get; set; }
+        public int AuthorId { get; set; }
+        public string? AuthorName { get; set; }
         public string? Bio { get; set; }
         public DateTime? birthdate { get; set; }
         public bool? isdeleted { get; set; }

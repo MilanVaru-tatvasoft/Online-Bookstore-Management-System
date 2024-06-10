@@ -22,15 +22,12 @@ namespace BusinessLogic.Interface
         public bool getDeleteBook(int bookId);
         public CategoryListModel getCategoriesList();
         public AuthorListmodel GetAuthorList();
-        public AuthorListmodel getEditAuthor(int authorId);
+        public AuthorListmodel getEditAuthor(int AuthorId);
         public CategoryListModel getAddCategory(int categtoryId);
         public bool getDeleteCategory(int categoryId);
-        public bool getDeleteAuthor(int authorId);
+        public bool getDeleteAuthor(int AuthorId);
         public bool AddOrUpdateAuthor(AuthorListmodel model);
         public bool AddOrUpdateCategory(CategoryListModel model);
-
-
-
 
     }
 }

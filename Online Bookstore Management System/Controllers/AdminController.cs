@@ -16,13 +16,15 @@ namespace Online_Bookstore_Management_System.Controllers
         private readonly ICustomerRepo _customerRepo;
         private readonly IHttpContextAccessor _httpcontext;
         private readonly IAdminDashboardRepo _adminDashboard;
+        private readonly IAuthentication _authentication;
 
-        public AdminController(ILogger<AdminController> logger, ICustomerRepo customerRepo, IHttpContextAccessor httpcontext, IAdminDashboardRepo adminDashboard)
+        public AdminController(ILogger<AdminController> logger, ICustomerRepo customerRepo, IHttpContextAccessor httpcontext, IAdminDashboardRepo adminDashboard, IAuthentication authentication)
         {
             _logger = logger;
             _customerRepo = customerRepo;
             _httpcontext = httpcontext;
             _adminDashboard = adminDashboard;
+            _authentication = authentication;
         }
 
 
@@ -37,6 +39,29 @@ namespace Online_Bookstore_Management_System.Controllers
             model = _adminDashboard.getAdminDashboardData();
             return PartialView("_AdminDashData", model);
         }
+
+
+        public IActionResult getResetPassword(string email)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            ResetPasswordModel model = new ResetPasswordModel()
+            {
+                Email = email,
+                UserId = userId,
+            };
+            return View("_AdminResetPasswordPage", model);
+        }
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordModel model)
+        {
+
+            if (_authentication.resetPassword(model))
+            {
+                return Json(new { code = 401 });
+            }
+            return Json(new { code = 401 });
+        }
+
         public IActionResult getAdminBookList(AdminBookListmodel model)
         {
             _adminDashboard.getBookList(model);
@@ -127,10 +152,10 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
 
-        public IActionResult getAutherList()
+        public IActionResult getAuthorList()
         {
             AuthorListmodel model = _adminDashboard.GetAuthorList();
-            return PartialView("_AuthersList", model);
+            return PartialView("_AuthorsList", model);
         }
         public IActionResult getCategoryList()
         {
@@ -138,10 +163,10 @@ namespace Online_Bookstore_Management_System.Controllers
 
             return PartialView("_CategoryList", model);
         }
-        public IActionResult getAddAuthor(int authorId)
+        public IActionResult getAddAuthor(int AuthorId)
         {
-            AuthorListmodel model = _adminDashboard.getEditAuthor(authorId);
-            return PartialView("_AddAutherModal", model);
+            AuthorListmodel model = _adminDashboard.getEditAuthor(AuthorId);
+            return PartialView("_AddAuthorModal", model);
         }
         public IActionResult getAddCategory(int categoryId)
         {
@@ -149,9 +174,9 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_AddCategoryModal", model);
         }
 
-        public IActionResult getDeleteAuthor(int authorId)
+        public IActionResult getDeleteAuthor(int AuthorId)
         {
-            if (_adminDashboard.getDeleteAuthor(authorId))
+            if (_adminDashboard.getDeleteAuthor(AuthorId))
             {
 
                 return Json(new { code = 401 });

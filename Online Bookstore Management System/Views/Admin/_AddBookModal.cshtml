@@ -29,11 +29,11 @@
                             </div>
                             <div class="form-group">
 
-                                <label for="price">Auther</label>
+                                <label for="price">Author</label>
 
-                                <select class="form-select" aria-label="Default select example" asp-for="@Model.authorName">
-                                    <option value="">Select Auther</option>
-                                    @foreach (var i in Model.author.ToList())
+                                <select class="form-select" aria-label="Default select example" asp-for="@Model.AuthorName">
+                                    <option value="">Select Author</option>
+                                    @foreach (var i in Model.Author.ToList())
                                     {
                                         <option value="@i.Name">@i.Name</option>
                                     }
