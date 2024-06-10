@@ -497,7 +497,9 @@ function editAdminProfile() {
                     title: "Profile updated",
                     showConfirmButton: false,
                     timer: 1500
-                })
+                }).then(function () {
+                    GetAdminProfile();
+                });
 
             }
             else if (result.code == 402) {
@@ -788,3 +790,30 @@ function getForgotPassword() {
     }
 }
 
+function Passwordlength() {
+    var password = document.getElementById("password").value;
+
+    if (password.length < 6) {
+        $('#error').text("Password length must be greater than 6!");
+        return false;
+
+    } else {
+        $('#error').hide();
+    }
+}
+
+function comparePassword() {
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (password != confirmPassword) {
+        $('#error2').text("Passwords not the same!");
+        $('#submitbtn').prop('disabled', true);
+
+        return false;
+    } else {
+        $('#error2').empty();
+        $('#submitbtn').prop('disabled', false);
+
+    }
+}

@@ -174,15 +174,13 @@ namespace Online_Bookstore_Management_System.Controllers
 
         }
 
-        public IActionResult getResetPassword(string email)
+        public IActionResult ResetPasswordPage(string email)
         {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             ResetPasswordModel model = new ResetPasswordModel()
             {
                 Email = email,
-                UserId = userId,
             };
-            return View("_ResetPasswordPage", model);
+            return View(model);
         }
         [HttpPost]
         public IActionResult ResetPassword(ResetPasswordModel model)

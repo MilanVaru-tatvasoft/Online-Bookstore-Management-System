@@ -72,36 +72,43 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Email == Email);
             if (user != null)
             {
-                var mail = "tatva.dotnet.milanvaru@outlook.com";
-                var password = "vpgozcxbptbunspz";
-                int value;
+                string senderEmail = "tatva.dotnet.milanvaru@outlook.com";
+                string senderPassword = "vpgozcxbptbunspz";
+                string recipientEmail = Email;
+                string resetPasswordLink = "https://localhost:44369/home/ResetPasswordPage?email=" + recipientEmail;
+                string body = $"Click the link below to reset your password:<br/><a href='{resetPasswordLink}'>click Here</a>";
+                string subject = "Reset Your Password";
+                int result;
+
                 var client = new SmtpClient("smtp.office365.com", 587)
                 {
                     EnableSsl = true,
-                    Credentials = new NetworkCredential(mail, password)
+                    Credentials = new NetworkCredential(senderEmail, senderPassword),
+
                 };
-                string subject = "Here is Your Password";
-                string message = "Your Password Is: " + user.Passwordhash;
-                MailMessage mailMessage = new MailMessage(from: mail, to: Email, subject, message);
+
+                MailMessage mailMessage = new MailMessage(from: senderEmail, to: recipientEmail, subject, body);
                 mailMessage.IsBodyHtml = true;
+
                 try
                 {
                     client.SendMailAsync(mailMessage);
-                    value = 1;
-
+                    result = 1;
+                    Console.WriteLine("Email sent successfully!");
                 }
                 catch (Exception ex)
                 {
-                    value = 0;
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                    result = 0;
                 }
 
                 Emaillog emaillog = new Emaillog()
                 {
                     Emailid = user.Email,
-                    Message = message,
+                    Message = body,
                     Userid = user.Userid,
                     Senddate = DateTime.Now,
-                    Issent = value == 1 ? true : false,
+                    Issent = result == 1 ? true : false,
                 };
                 _context.Emaillogs.Add(emaillog);
                 _context.SaveChanges();

@@ -11,7 +11,7 @@
     }
 
     label {
-        display: block;
+        display: flex;
         margin-bottom: 5px;
         color: #555;
         font-weight: bold;
@@ -20,22 +20,43 @@
     .form-floating label {
         padding-left: 15px;
     }
-</style>
 
+
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .btn-submit {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-reset {
+        background-color: #ffc107;
+        border: none;
+        color: #212529;
+    }
+
+        .btn-reset:hover {
+            background-color: #d39e00;
+        }
+</style>
 
 
 <div class="p-3 main m-5 ">
     <div class="headerdata w-100 d-flex justify-content-between align-items-center">
         <h2 class="text-dark">My Profile</h2>
-        <div class="d-flex justify-content-end">
-            <button class="btn btn-dark px-3 ms-5  w-100" onclick="getResetPasswordPage('@Model.Email')">
-                Reset password
-            </button>
-        </div>
+
     </div>
 
-    <form id="UserProfileData" >
-        <input type="text"asp-for="@Model.UserId" hidden/>
+    <form id="UserProfileData">
+        <input type="text" asp-for="@Model.UserId" hidden />
         <div class="row">
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
@@ -53,7 +74,7 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthdate"  placeholder="Birth Date" disabled>
+                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthdate" placeholder="Birth Date" disabled>
                     <label for="floatingBirthDate">Birth Date</label>
                     <span class="text-danger" asp-validation-for="birthdate"></span>
                 </div>
@@ -96,13 +117,48 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex gap-2 w-100 justify-content-end">
-            <button id="edit" class="btn btn-primary p-2 px-3"  onclick="actionEdit()">Edit</button>
-            <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="editUserProfile()">Submit</button>
-            <a id="reset" class="btn btn-secondary p-2 px-3" style="display: none;" onclick="GetUserProfile()">cancle</a>
+        <div class="d-flex justify-content-between">
+            <div class=" ">
+                <button class="btn btn-dark px-3 ms-5 mb-2  " onclick="getResetPassword()">
+                    Reset password
+                </button>
+            </div>
+            <div class="d-flex gap-2 ">
+                <button id="edit" class="btn btn-primary p-2 px-3" onclick="actionEdit()">Edit</button>
+                <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="editUserProfile()">Submit</button>
+                <a id="reset" class="btn btn-secondary p-2 px-3" style="display: none;" onclick="GetUserProfile()">cancle</a>
+            </div>
         </div>
+
     </form>
+
+
+    <div id="resetpassword" class="d-none d-flex flex-column ">
+        <form id="resetForm" method="post" class="d-flex">
+            <div class="row w-100">
+                <div class="col-12 col-md-3">
+                    <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" required oninput="return Passwordlength()">
+                    <span class="text-danger" id="error"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return comparePassword()">
+                    <span class="text-danger" id="error2"></span>
+                </div>
+                <div class=" col-12 col-md-3 d-flex  gap-2">
+                    <button type="submit" class="btn btn-primary" id="submitbtn" onclick="resetpassword()" disabled>Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="GetUserProfile()">Reset</button>
+                </div>
+            </div>
+         
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="UserId" />
+        </form>
+    </div>
+
 </div>
+
+
+
 
 
 <!-- Custom JS -->
@@ -132,22 +188,12 @@
     }
 
 
-    function getResetPasswordPage(email) {
-        $.ajax({
-            method: "Get",
-            url: "/Home/getResetPassword",
-            data: {email:email},
-            success: function (result) {
+    function getResetPassword() {
+        event.preventDefault();
+        $('#resetpassword').toggleClass('d-block d-none');
 
-                $('#UserProfile').empty();
-                $('#UserProfile').html(result);
 
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-        });
     }
 
-   
+
 </script>

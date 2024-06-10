@@ -47,6 +47,8 @@ namespace DataAccess.CustomModels
 
         [Required(ErrorMessage = "This field is required")]
         public string? FirstName { get; set; }
+        public string? Password { get; set; }
+        public string? Password2 { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         public string? LastName { get; set; }
