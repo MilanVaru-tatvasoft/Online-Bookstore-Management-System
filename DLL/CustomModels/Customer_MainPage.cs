@@ -14,7 +14,9 @@ namespace DataAccess.CustomModels
         public List<Book> bookList { get; set; }
         public List<Author> Authors { get; set; }
         public List<Publisher> publishers { get; set; }
-        public int UserId { get; set; }
+        public List<Addtocart>? addtocarts { get; set; }
+
+        public int? UserId { get; set; }
 
         public string? search1 { get; set; }
         public List<int>? search2 { get; set; }
@@ -22,10 +24,10 @@ namespace DataAccess.CustomModels
         public List<int> search4 { get; set; }
 
         // Pagination properties
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public int PageSize { get; set; }
-        public int TotalItems { get; set; }
+        public bool hasMoreItems { get; set; }
+        public int pageNumber { get; set; }
+        public int pageSize { get; set; }
+        public int totalCount { get; set; }
     }
 
     public class UserProfile
@@ -116,5 +118,10 @@ namespace DataAccess.CustomModels
     public class CartListModel
     {
         public List<Addtocart>? addtocarts { get; set; }
+        public List<Category>? categories { get; set; }
+        public List<Book>? bookList { get; set; }
+        public List<Author>? Authors { get; set; }
+        public List<Publisher>? publishers { get; set; }
+        public int? itemCount { get; set; }  
     }
 }

@@ -48,36 +48,63 @@
             background-color: #dc3545;
             color: white;
         }
+
+    .dropdown-menu {
+        margin-left: 90%;
+    }
 </style>
-<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+<nav class="navbar navbar-expand-md bg-light shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bolder text-primary" href="#">Online BookStore</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand fw-bolder text-primary " href="#">Online BookStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active text-dark " aria-current="page" onclick="AdminDashboard()" style="cursor:pointer;">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="AdminBookList()" style="cursor:pointer;">BookList</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="GetAdminProfile()" style="cursor:pointer;">My Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="GetCategoryList()" style="cursor:pointer;">Categories</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="GetAuthorsList()" style="cursor:pointer;">Authors</a>
-                </li>
-               
-            </ul>
-            <h5 class="overflow-hidden">
-                Welcome <strong>@context.HttpContext.Session.GetString("UserName")</strong>
-            </h5>
-            <a class="btn btn-outline-danger ms-3" asp-action="logout" asp-controller="Home">Logout</a>
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+                <hr class="m-0 d-flex d-md-none " />
+            <div class="offcanvas-body d-flex align-items-md-center">
+                <ul class="navbar-nav w-100">
+                    <li class="nav-item">
+                        <a class="nav-link active text-dark" aria-current="page" onclick="AdminDashboard()" style="cursor:pointer;">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onclick="AdminBookList()" style="cursor:pointer;">BookList</a>
+                    </li>
+                    <li class="nav-item d-flex d-md-none">
+                        <a class="nav-link text-dark" onclick="GetAdminProfile()" style="cursor:pointer;">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onclick="GetCategoryList()" style="cursor:pointer;">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onclick="GetOrderList()" style="cursor:pointer;">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onclick="GetAuthorsList()" style="cursor:pointer;">Authors</a>
+                    </li>
+                    <li class="nav-item d-flex d-md-none">
+                        <a class="nav-link text-dark" asp-action="logout" asp-controller="Home">Logout</a>
+                    </li>
+                </ul>
+                <div class="mt-3 w-100 gap-3 d-none d-lg-flex justify-content-end align-items-center">
+                    <h5>Welcome <strong>@context.HttpContext.Session.GetString("UserName")</strong></h5>
+                    <div class="dropdown overflow-hidden position-static d-none d-md-block">
+                        <button class="btn bg-transparent border border-2 rounded-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi-person bi text-dark fw-bold"></i>
+                        </button>
+                        <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
+                            <li><a class="dropdown-item text-dark" href="#">Add Account</a></li>
+                            <li>
+                                <a class="dropdown-item text-dark" onclick="GetAdminProfile()" style="cursor:pointer;">My Profile</a>
+                            </li>
+                            <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </nav>

@@ -3,12 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.CustomModels
 {
     public class AdminDashboardModel
+    {
+        public List<decimal> monthlySales { get; set; } 
+        public List<string> categorties { get; set; } 
+        public List<int> noofbooks { get; set; } 
+    }
+    public class OrderListModel
     {
         public List<Order>? orders { get; set; }
         public List<Orderdetail>? orderdetails { get; set; }
@@ -90,5 +97,23 @@ namespace DataAccess.CustomModels
         public string? categoryName { get; set; }
       
         public bool? isdeleted { get; set; }
+    }
+
+    [DataContract]
+    public class DataPoint
+    {
+        public DataPoint(double x, double y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        //Explicitly setting the name to be used while serializing to JSON.
+        [DataMember(Name = "x")]
+        public Nullable<double> X = null;
+
+        //Explicitly setting the name to be used while serializing to JSON.
+        [DataMember(Name = "y")]
+        public Nullable<double> Y = null;
     }
 }

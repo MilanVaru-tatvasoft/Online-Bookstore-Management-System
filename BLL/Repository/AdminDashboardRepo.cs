@@ -11,6 +11,8 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogic.Repository
 {
@@ -22,9 +24,9 @@ namespace BusinessLogic.Repository
             _context = context;
 
         }
-        public AdminDashboardModel getAdminDashboardData()
+        public OrderListModel getOrderListData()
         {
-            AdminDashboardModel adminDashboard = new AdminDashboardModel();
+            OrderListModel orderList = new OrderListModel();
 
             // Get the IDs of all orders that are not deleted
             var orderIds = _context.Orders
@@ -33,24 +35,24 @@ namespace BusinessLogic.Repository
                                     .ToList();
 
             // Filter OrderDetails based on the list of order IDs
-            adminDashboard.orderdetails = _context.Orderdetails
+            orderList.orderdetails = _context.Orderdetails
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
-            adminDashboard.orders = _context.Orders
+            orderList.orders = _context.Orders
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
-            adminDashboard.books = _context.Books
+            orderList.books = _context.Books
                                                 .ToList();
-            adminDashboard.Authors = _context.Authors
+            orderList.Authors = _context.Authors
                                                .ToList();
-            adminDashboard.categories = _context.Categories
+            orderList.categories = _context.Categories
                                                .ToList();
-            adminDashboard.customers = _context.Customers
+            orderList.customers = _context.Customers
                                                 .ToList();
-            adminDashboard.statuses = _context.Statuses
+            orderList.statuses = _context.Statuses
                                                .ToList();
 
-            return adminDashboard;
+            return orderList;
         }
 
         public AdminBookListmodel getBookList(AdminBookListmodel model)
@@ -412,11 +414,14 @@ namespace BusinessLogic.Repository
             }
             else
             {
-                if(_context.Authors.Any(x=>x.Name.Trim() != model.AuthorName.Trim()))
+                if (_context.Authors.Any(x => x.Name.Trim() != model.AuthorName.Trim()))
                 {
                     Author Author = new Author()
                     {
-                        Name = model.AuthorName, Bio = model.Bio,Birthdate= model.birthdate, Isdeleted = false
+                        Name = model.AuthorName,
+                        Bio = model.Bio,
+                        Birthdate = model.birthdate,
+                        Isdeleted = false
                     };
                     _context.Authors.Add(Author);
                     _context.SaveChanges();
@@ -450,12 +455,56 @@ namespace BusinessLogic.Repository
                     _context.Categories.Add(category);
                     _context.SaveChanges();
                     return true;
-
                 }
                 return false;
+            }
+        }
 
+        public AdminDashboardModel getmonthSales(int year)
+        {
+            AdminDashboardModel model = new AdminDashboardModel();
+            List<decimal> saleslist = new List<decimal>();
+            for (int month = 1; month <= 12; month++)
+            {
+                var monthlyOrders = _context.Orders
+                    .Where(o => o.Orderdate.Year == year && o.Orderdate.Month == month)
+                    .OrderBy(o => o.Orderid)
+                    .ToList();
+                
+                decimal monthlySales = 0; 
+
+                if (monthlyOrders != null && monthlyOrders.Count > 0)
+                {
+                    monthlySales = monthlyOrders.Sum(o => o.Totalamount);
+                }
+
+                saleslist.Add(monthlySales);
             }
 
+            model.monthlySales = saleslist;
+            List<string> categories = _context.Categories
+                .Where(x => x.Isdeleted != true)
+                .OrderBy(x => x.Categoryid)
+                .Select(i => i.Categoryname)
+                .ToList();
+
+            List<int> booksSoldPerCategory = new List<int>();
+
+            foreach (var category in categories)
+            {
+                int booksSold = _context.Orders
+                    .Where(o => o.Orderdate.Year == year && o.Orderdetails.Any(od => od.Book.Category.Categoryname == category))
+                    .SelectMany(o => o.Orderdetails.Where(od => od.Book.Category.Categoryname == category))
+                    .Sum(od => od.Quantity);
+
+                booksSoldPerCategory.Add(booksSold);
+            }
+
+
+            model.categorties = categories;
+            model.noofbooks = booksSoldPerCategory;
+
+            return model;
         }
 
 

@@ -1,32 +1,62 @@
 ﻿@model DataAccess.CustomModels.Customer_MainPage;
 @inject IHttpContextAccessor context
+<style>
+    .dropdown-menu{
+        margin-left:90%;
+    }
 
-<nav class="navbar navbar-expand-lg py-3 w-100 bg-light shadow-sm  " style="z-index:auto;">
+</style>
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm w-100">
     <div class="container-fluid">
-        <a class="navbar-brand fs-4 fw-bolder text-primary" href="#">Online BookStore</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="btn btn-dark bg-transparent d-block d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                <ul class=" d-flex p-0  me-auto mb-2 mb-lg-0" style="list-style:none;font-size:16px;">
-                    <li class="nav-item mx-2">
-                        <a class="btn bg-transparent fw-semibold border-0   active text-dark" aria-current="page" onclick="getcustDash()">Home</a>
+        <a class="navbar-brand text-dark fs-4 fw-bolder" href="#">Online BookStore</a>
+        <div class="offcanvas offcanvas-start w-50" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header bg-dark">
+                <h5 class="offcanvas-title text-white" id="offcanvasNavbarLabel">Menu</h5>
+                <button type="button" class="btn-close bg-transparent border-0 text-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex">
+                <ul class="navbar-nav w-50">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="getcustDash()">Home</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="btn bg-transparent fw-semibold border-0 active text-dark " style="cursor:pointer;" aria-current="page" onclick="GetUserProfile()">My Profile</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" onclick="GetUserProfile()">My Profile</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="btn bg-transparent fw-semibold border-0 text-dark" onclick="getCartList()">My Cart</a>
+                    <li>
+                        <div style="position: relative;" class="d-md-none d-flex">
+                            <input type="text" value="@Model.addtocarts.Count()" hidden id="modelcountdata" />
+                            <a class="nav-link text-dark" onclick="getCartList()">My Cart</a>
+                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:6px; opacity: 0.9;" ></div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="nav-link text-dark d-md-none d-flex" asp-action="logout" asp-controller="Home">Logout</a>
                     </li>
                 </ul>
-                <h5 class="overflow-hidden d-lg-flex d-none">
-                    Welcome: <strong>@context.HttpContext.Session.GetString("UserName")</strong>
-                </h5>
-                <div>
-                    <a class="btn btn-outline-danger  ms-3" asp-action="logout" asp-controller="Home">Logout</a>
+                <div class="d-flex w-100 justify-content-end align-items-center gap-3" id="navbarSupportedContent">
+                    <h5 class=" d-none d-md-block bg-light">
+                        Welcome: <strong class="bg-light">@context.HttpContext.Session.GetString("UserName")</strong>
+                    </h5>
+                    <div style="position: relative;" class="d-none d-md-block">
+                        <button class="btn bg-transparent border rounded-1 position-relative" onclick="getCartList()">
+                            <span class="bi-cart text-dark bi fw-bold"></span>
+                        </button>
+                        <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">@Model.addtocarts.Count()</div>
+                    </div>
+                    <div class="dropdown overflow-hidden position-static d-none d-md-block">
+                        <button class="btn bg-transparent border rounded-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi-person bi text-dark fw-bold"></i>
+                        </button>
+                        <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
+                            <li><a class="dropdown-item text-dark" href="#">Add Account</a></li>
+                            <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
-           
+            </div>
         </div>
     </div>
 </nav>
-

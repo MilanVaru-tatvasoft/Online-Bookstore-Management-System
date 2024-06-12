@@ -19,4 +19,7 @@ public partial class Category
 
     [Column("isdeleted")]
     public bool? Isdeleted { get; set; }
+
+    [InverseProperty("Category")]
+    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }

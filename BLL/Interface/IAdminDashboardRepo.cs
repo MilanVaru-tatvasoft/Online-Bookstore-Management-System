@@ -9,7 +9,7 @@ namespace BusinessLogic.Interface
 {
     public interface IAdminDashboardRepo
     {
-        public AdminDashboardModel getAdminDashboardData();
+        public OrderListModel getOrderListData();
         public AdminBookListmodel getBookList(AdminBookListmodel model);
         public viewBookModel viewBookDetails(int bookId, int? userId);
         public bool isbookExist(string? bookTitle);
@@ -28,6 +28,8 @@ namespace BusinessLogic.Interface
         public bool getDeleteAuthor(int AuthorId);
         public bool AddOrUpdateAuthor(AuthorListmodel model);
         public bool AddOrUpdateCategory(CategoryListModel model);
+
+        public AdminDashboardModel getmonthSales(int year);
 
     }
 }

@@ -7,6 +7,8 @@ using DataAccess.DataContext;
 using DataAccess.DataModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using Newtonsoft.Json;
 
 namespace Online_Bookstore_Management_System.Controllers
 {
@@ -36,10 +38,14 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult AdminDashboard2()
         {
             AdminDashboardModel model = new AdminDashboardModel();
-            model = _adminDashboard.getAdminDashboardData();
             return PartialView("_AdminDashData", model);
         }
-
+        public IActionResult GetOrderList()
+        {
+            OrderListModel model = new OrderListModel();
+            model = _adminDashboard.getOrderListData();
+            return PartialView("_OrderListView", model);
+        }
 
         public IActionResult getResetPassword(string email)
         {
@@ -211,6 +217,20 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 401 });
             }
             return Json(new { code = 402 });
+
+        }
+
+        public IActionResult getViewOrder(int orderDetailId)
+        {
+            return PartialView("_ViewOrderPage");
+        }
+
+        public IActionResult getChartData()
+        {
+            int year = DateTime.Now.Year;
+            AdminDashboardModel model = _adminDashboard.getmonthSales(year);
+
+            return Json(new { MonthlySales = model.monthlySales, categoryList = model.categorties, NumberOfBooks = model.noofbooks });
 
         }
     }

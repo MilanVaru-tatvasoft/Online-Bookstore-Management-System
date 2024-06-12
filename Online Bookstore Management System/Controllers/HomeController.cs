@@ -78,15 +78,28 @@ namespace Online_Bookstore_Management_System.Controllers
         [Authorize("customer")]
         public IActionResult CustomerDashboard()
         {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             Customer_MainPage model = new Customer_MainPage();
-            model = _customerRepo.getdata(model);
+            int pageNumber = 0;
+            model = _customerRepo.getdata(model,userId,pageNumber);
             return View(model);
         }
         public IActionResult getcustDash(Customer_MainPage model)
         {
-            _customerRepo.getdata(model);
+
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            int pageNumber = 1;
+            _customerRepo.getdata(model,userId, pageNumber);
             return PartialView("_CustomerMainPage", model);
         }
+        public IActionResult getDashboardData(int pageNumber)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            Customer_MainPage model =new Customer_MainPage();
+            _customerRepo.getdata(model,userId, pageNumber);
+            return Json(model.bookList);
+        }
+
         public IActionResult getregistrationform()
         {
             return RedirectToAction("RegisterPage");
@@ -137,7 +150,9 @@ namespace Online_Bookstore_Management_System.Controllers
 
         public IActionResult searchBooks(Customer_MainPage model)
         {
-            _customerRepo.getdata(model);
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            int pageNumber = 1;
+            _customerRepo.getdata(model, userId, pageNumber);
             return PartialView("_CustomerMainPage", model);
         }
 
@@ -209,6 +224,14 @@ namespace Online_Bookstore_Management_System.Controllers
 
                 return Json(new { code = 402 });
             }
+        }
+
+        public IActionResult getCartList()
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            CartListModel model =  _customerRepo.getCartList( userId);
+            _httpcontext.HttpContext.Session.SetInt32("itemCount", (int)model.itemCount);
+            return PartialView("_MyCartList", model);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BusinessLogic.Interface
 {
     public interface ICustomerRepo
     {
-        public Customer_MainPage getdata(Customer_MainPage model);
+        public Customer_MainPage getdata(Customer_MainPage model,int? userId, int pageNumber);
       
         public Admin getAdminData(string email);
         public Customer getCustomerData(string email);
@@ -22,7 +22,8 @@ namespace BusinessLogic.Interface
         public void GetAddToCart(int bookId, int? userId,int cartId);
         public void GetRemoveFromCart(int cartId, int? userId);
         public void confirmOrder(OrderData data, int? userId);
-        public CartListModel getCartList(int UserId);
+        public CartListModel getCartList(int? UserId);
+
 
     }
 }

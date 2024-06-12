@@ -86,18 +86,18 @@ function SearchParamsbooks() {
     let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
     const search2 = [];
 
-    var formData = new FormData($('#searchForm')[0]); 
+    var formData = new FormData($('#searchForm')[0]);
     checkboxes.forEach(function (checkbox) {
         formData.append('search2', checkbox.value);
-        
+
     });
     checkboxes2.forEach(function (checkbox) {
         formData.append('search3', checkbox.value);
-        
+
     });
     checkboxes3.forEach(function (checkbox) {
         formData.append('search4', checkbox.value);
-        
+
     });
 
 
@@ -108,7 +108,7 @@ function SearchParamsbooks() {
         url: "/Home/searchBooks",
         contentType: false,
         processData: false,
-        data: formData, 
+        data: formData,
         success: function (result) {
             $('#custDashboard').html(result);
 
@@ -120,33 +120,40 @@ function SearchParamsbooks() {
 }
 function getCartList() {
     $.ajax({
-        method: "POST",
+        method: "GET",
         url: "/Home/getCartList",
-        
+
 
         success: function (result) {
-            $('#custDashboard').html(result)
+            $('#custDashboard').empty()
             $('#UserProfile').empty()
+            $('#UserProfile').html(result)
         },
         error: function () {
             alert('Error loading partial view');
         }
     });
 }
-function getcustDash() {
-    $.ajax({
-        method: "POST",
-        url: "/Home/getcustDash",
-        data: $('#searchForm').serialize(),
-
-        success: function (result) {
-            $('#custDashboard').html(result)
-            $('#UserProfile').empty()
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
+function getcustDash(pageNumber) {
+    $('#loader2').show(function () {
+        var formData = $('#searchForm').serialize();
+        $.ajax({
+            method: "POST",
+            url: "/Home/getcustDash",
+            data: formData,
+            success: function (result) {
+                $('#custDashboard').html(result);
+                $('#UserProfile').empty();
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
     });
+
+    $('#loader2').hide();
+
+
 }
 function GetUserProfile() {
     $.ajax({
@@ -180,7 +187,7 @@ function editUserProfile() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-               
+
             }
             else if (result.code == 402) {
                 Swal.fire({
@@ -229,6 +236,18 @@ function GetOrderDatailsPage(bookId) {
     });
 }
 
+function cartCount(id) {
+
+    var cartcount = $('.itemCountInCart').val();
+    if (id == 1) {
+        cartcount = parseInt(cartcount) + 1;
+        $('.badge').text(cartcount);
+    } else {
+        cartcount = parseInt(cartcount) - 1;
+        $('.badge').text(cartcount);
+    }
+
+}
 function getAddToCart(bookId, cartId) {
     event.preventDefault();
 
@@ -247,6 +266,7 @@ function getAddToCart(bookId, cartId) {
                     showConfirmButton: false,
                     timer: 1500
                 })
+                cartCount(1)
                 ViewBooksPage(bookId);
             }
 
@@ -257,7 +277,7 @@ function getAddToCart(bookId, cartId) {
     });
 }
 
-function getRemoveFromCart(bookId ,cartId) {
+function getRemoveFromCart(bookId, cartId) {
     event.preventDefault();
     Swal.fire({
         title: "Are you sure?",
@@ -274,16 +294,18 @@ function getRemoveFromCart(bookId ,cartId) {
                 data: { cartId: cartId },
 
                 success: function (result) {
-                   
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: "Removed",
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500
 
-                        });
-                    ViewBooksPage(bookId); 
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Removed",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+
+                    });
+                    cartCount(0)
+
+                    ViewBooksPage(bookId);
 
                 },
                 error: function () {
@@ -292,7 +314,7 @@ function getRemoveFromCart(bookId ,cartId) {
             });
         }
     });
-   
+
 }
 function getOrderConfirmation() {
     event.preventDefault();
@@ -311,7 +333,10 @@ function getOrderConfirmation() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            ViewBooksPage(result);
+            $('#orderDetailsModal').modal('hide').on('hidden.bs.modal', function () {
+                ViewBooksPage(result);
+            });
+        
 
         },
         error: function () {
@@ -324,7 +349,22 @@ function AdminDashboard() {
     $.ajax({
         method: "get",
         url: "/Admin/AdminDashboard2",
-       
+
+
+        success: function (result) {
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function GetOrderList() {
+    $.ajax({
+        method: "get",
+        url: "/Admin/getOrderList",
+
 
         success: function (result) {
             $('#AdminDash').html(result)
@@ -351,14 +391,14 @@ function AdminBookList() {
 
 function Addbook() {
     event.preventDefault();
-    var formdata = new FormData($('#addBookdetails')[0]); 
+    var formdata = new FormData($('#addBookdetails')[0]);
 
     $.ajax({
         method: "POST",
         url: "/Admin/AddBook",
         data: formdata,
         contentType: false,
-        processData:false,
+        processData: false,
         success: function (result) {
             if (result.code == 401) {
                 swal.fire({
@@ -372,7 +412,7 @@ function Addbook() {
                 swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Book Added",    
+                    title: "Book Added",
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -410,7 +450,7 @@ function Updatebook() {
                 });
 
 
-               
+
             } else if (result.code == 402) {
                 swal.fire({
                     position: "top-end",
@@ -443,7 +483,7 @@ function DeleteBooksPage(bookId) {
                 data: { bookId: bookId },
 
                 success: function (result) {
-                    if (result.code==401)
+                    if (result.code == 401)
                         Swal.fire({
                             title: "Deleted!",
                             text: "Removed",
@@ -670,7 +710,7 @@ function AddOrUpdateAuthor() {
         method: "POST",
         url: "/Admin/addOrUpdateAuthor",
         data: $('#addUpdateAuthorForm').serialize(),
-   
+
         success: function (result) {
             if (result.code == 401) {
                 swal.fire({
@@ -751,7 +791,7 @@ function getForgotPassword() {
     var email = $('#fpasswordEmail').val();
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
-      $('#fpassworderrormsg').empty();
+        $('#fpassworderrormsg').empty();
         $.ajax({
             method: "get",
             url: "/Home/forgotpassword",
@@ -784,7 +824,7 @@ function getForgotPassword() {
             }
         });
     }
-     else {
+    else {
         var errormsg = $('#fpassworderrormsg').text("enter valid email address");
         return false;
     }
@@ -817,3 +857,48 @@ function comparePassword() {
 
     }
 }
+
+function getRemoveFromMyCart(bookId, cartId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Home/getRemoveFromCart",
+                data: { cartId: cartId },
+
+                success: function (result) {
+
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Removed",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+
+                    });
+                    cartCount(0);
+                    getCartList();
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
+
+
+
+
+
+

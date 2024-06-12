@@ -20,6 +20,7 @@
                 <h6 class="fw-bold me-3"> About: </h6>
                 <h6 class="m-0 w-100 pe-2 text-break">@Model.description</h6>
             </div>
+            <input type="text" value="@Model.itemCount"  class="itemCountInCart" hidden />
             <h6>Author:<span class="text-secondary">&nbsp; @Model.AuthorName</span></h6>
             <h5>Price:<span class="text-danger">&nbsp; @Model.price $</span></h5>
             <h6>Pages:@Model.pageNumber</h6>

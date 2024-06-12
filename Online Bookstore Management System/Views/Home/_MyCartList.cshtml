@@ -1,1 +1,92 @@
-﻿
+﻿@model DataAccess.CustomModels.CartListModel
+
+<div class="container-fluid  ">
+    <div class="">
+        <div>
+            <div class="bookCategory">
+                <h3 class="my-2 ms-1">My Cart</h3>
+            </div>
+            <div class=" d-none d-md-flex">
+                <input type="text" value="@Model.itemCount" class="itemCountInCart" hidden />
+
+                <table id="MyCartTable" class="vw-100">
+                    <thead class="bg-body-tertiary">
+                        <tr>
+                            <th>CartId</th>
+                            <th>Book</th>
+                            <th>book Name</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model.addtocarts.ToList())
+                        {
+                            <tr onclick="">
+                                <td>
+                                    <span class="text-wrap fs-5">@obj.Cartid</span>
+                                    <input type="hidden" asp-for="@obj.Cartid">
+                                </td>
+                                <td>
+                                    <img src="~/BookListCollections/@obj.Book.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Book.Bookphoto">
+                                </td>
+                                <td>@obj.Book.Title</td>
+                                <td>@obj.Book.Price</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-warning" onclick="GetOrderDatailsPage(@obj.Bookid)">Confirm Order</button>
+                                        <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove from cart</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@foreach (var obj in Model.addtocarts.ToList())
+{
+
+    <div class=" bg-white d-flex  d-md-none  p-3 vw-100  shadow" style="margin-top:5px">
+        <div class="d-flex align-items-center me-3">
+            <img src="~/BookListCollections/@obj.Book.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Book.Bookphoto">
+        </div>
+        <div class="w-100">
+            <h6 class="d-flex align-items-center  fw-bolder">    Book Name: @obj.Book.Title </h6>
+            <h6 class="my-2 ">    Price:@obj.Book.Price </h6>
+            <div class="d-flex justify-content-end align-baseline gap-2  bottom-0">
+                <button class="btn btn-warning" onclick="GetOrderDatailsPage(@obj.Bookid)">Confirm Order</button>
+                <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove from cart</button>
+            </div>
+        </div>
+       
+    </div>
+
+
+}
+
+<div id="ModalAction"></div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#MyCartTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 5,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+            }
+        });
+        $('.dataTables_filter').hide();
+        $('#book-Table_first').hide();
+        $('#book-Table_last').hide();
+    });
+</script>

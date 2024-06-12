@@ -1,8 +1,8 @@
 ﻿@model DataAccess.CustomModels.Customer_MainPage;
-@functions{
+@functions {
     public bool ischecked(int AuthorId)
     {
-        if(Model.search2 != null)
+        if (Model.search2 != null)
         {
             if (Model.search2.Contains(AuthorId))
             {
@@ -14,7 +14,7 @@
     }
     public bool ischecked2(int catId)
     {
-        if(Model.search2 != null)
+        if (Model.search2 != null)
         {
             if (Model.search3.Contains(catId))
             {
@@ -26,7 +26,7 @@
     }
     public bool ischecked3(int pubId)
     {
-        if(Model.search4 != null)
+        if (Model.search4 != null)
         {
             if (Model.search4.Contains(pubId))
             {
@@ -45,7 +45,6 @@
         position: relative;
         font-size: 14px;
         color: #333;
-       
     }
 
         .dropdown .dropdown-list {
@@ -62,7 +61,6 @@
             max-height: 66vh;
             overflow-y: scroll;
             z-index: 1;
-           
         }
 
         .dropdown .dropdown-option {
@@ -77,7 +75,7 @@
             height: 100%;
             background: #fff;
             border: 1px solid #ccc;
-            border-radius:4px;
+            border-radius: 4px;
             line-height: 1;
             cursor: pointer;
         }
@@ -126,12 +124,10 @@
     }
 
 </style>
-<style>
-
-</style>
 
 
-<div class="" id="custDashboard2">
+
+<div id="custDashboard2" style="width:95vw;">
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
@@ -143,7 +139,7 @@
                 </div>
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search2"  hidden>
+                        <input type="text" asp-for="@Model.search2" hidden>
                         <label class="dropdown-label p-2 ">Authors</label>
 
                         <div class="dropdown-list">
@@ -206,7 +202,7 @@
             <hr class="m-0 w-100" />
         </div>
     </div>
-    <div class="table row container-fluid px-sm-3  " id="book-list">
+    <div class="table row container-fluid px-sm-3" >
         <!-- Books will be dynamically inserted here -->
         @if (Model.bookList.Count() != 0)
         {
@@ -233,9 +229,33 @@
         }
     </div>
 </div>
+<div id="loader" class="text-center mt-3" style="display: none;">
+    <img src="~/backgroundImages/loader.gif" height="50" width="50" alt="Loading...">
+</div>
+<script>
+    $(document).ready(function () {
+
+        var table = $('#book-list').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 5,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+
+            }
+        });
+        $('.dataTables_filter').hide();
+        $('#book-Table_first').hide();
+        $('#book-Table_last').hide();
+
+    })
+</script>
 
 <script>
-    
+
     (function ($) {
         // Define the CheckboxDropdown constructor function
         var CheckboxDropdown = function (el) {
@@ -266,8 +286,8 @@
         CheckboxDropdown.prototype.updateStatus = function () {
             var checked = this.$el.find(':checked');
 
-          
-         
+
+
         };
 
         // Method to handle "Check All" functionality
@@ -315,55 +335,53 @@
 
 
 </script>
-<div id="pagination"></div>
-<script>
-    // Number of pages
-    const totalPages = 10;
 
-    // Current page
-    let currentPage = 1;
+ <script>
+   @* function isScrolledToBottom() {
+        return $(window).scrollTop() + $(window).height() >= $(document).height();
+    }
 
-    // Function to generate pagination
-    function generatePagination() {
-        let paginationHTML = '';
+    function fetchMoreData(pageNumber) {
+        $('#loader').show();
 
-        // Previous button
-        paginationHTML += `<span class="page btn" onclick="prevPage()">&#171;</span>`;
 
-        // Page numbers
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                paginationHTML += `<span class="page btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</span>`;
-            } else if (i === currentPage - 2 || i === currentPage + 2) {
-                paginationHTML += `<span class="page btn">...</span>`;
+        $.ajax({
+            method: "POST",
+            url: "/Home/getDashboardData",
+            data: {
+                pageNumber: pageNumber
             }
-        }
+            ,
 
-        // Next button
-        paginationHTML += `<span class="btn page" onclick="nextPage()">&#187;</span>`;
+            success: function (result) {
 
-        document.getElementById('pagination').innerHTML = paginationHTML;
+                $('#loader').hide();
+                console.log(result)
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+
+        });
+        setTimeout(function () {
+            $('#loader').hide();
+            console.log("Data fetched for page number:", pageNumber);
+        }, 1000);
     }
 
-    // Function to go to a specific page
-    function goToPage(page) {
-        currentPage = page;
-        generatePagination();
-    }
+    $(document).ready(function () {
+        var pageNumber = 1;
+        fetchMoreData(pageNumber);
 
-    function nextPage() {
-        if (currentPage < totalPages) {
-            currentPage++;
-            generatePagination();
-        }
-    }
-
-    function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            generatePagination();
-        }
-    }
-
-    generatePagination();
+        $(window).scroll(function () {
+            if (isScrolledToBottom()) {
+                pageNumber++;
+                fetchMoreData(pageNumber);
+            }
+        });
+        }); *@
 </script>
+
+
+

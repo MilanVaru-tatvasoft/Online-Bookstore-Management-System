@@ -24,6 +24,7 @@ namespace DataAccess.CustomModels
         public int? pageNumber { get; set; }
         public int? quantity { get; set; }
         public int? Stockquantity { get; set; }
+        public int? itemCount { get; set; }
 
         public List<Author>? Author { get; set; }
         public List<Category>? categories { get; set; }

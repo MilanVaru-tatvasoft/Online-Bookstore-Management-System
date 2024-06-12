@@ -1,127 +1,157 @@
-﻿@model DataAccess.CustomModels.AdminDashboardModel;
-@functions {
-    public string? getStatus(int? statusId)
-    {
-        string? status = Model.statuses?.FirstOrDefault(c => c.StatusId == statusId).StatusName;
-        return status;
-    }
-}
+﻿
 <div class="container-fluid">
-
-    <h4 class="mt-4">Orders Dashboard</h4>
-
-    <div class="my-2 py-3 p-1 p-md-3">
-        <form id="searchForm" method="post" action="/Orders/Search">
-            <div class="row d-flex m-2 gy-2">
-
-                <div class="form-group col-md-3 col-6">
-                    <input type="text" class="form-control" id="orderName" name="orderName" placeholder="Order Name">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <input type="text" class="form-control" id="customer" name="customer" placeholder="Customer">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <input type="date" class="form-control" id="orderDate" name="orderDate" placeholder="Order ID" max="@DateTime.Today.Date">
+    <div class="row mt-2  w-100">
+        <div class="col-6 col-md-3">
+            <div class="card shadow bg-info-subtle">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">New Orders</h5>
+                        <h2 class="card-subtitle  me-3 mb-2 text-body-secondary">50</h2>
+                    </div>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
                 </div>
             </div>
-            <div class="d-flex justify-content-end gap-2">
-                <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
-                <button type="reset" class="btn btn-secondary">Cancel</button>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card  shadow bg-warning-subtle">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">Processing Orders</h5>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">15</h2>
+                    </div>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
             </div>
-        </form>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow bg-success-subtle">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">Shipped Orders</h5>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">20</h2>
+                    </div>
+
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow bg-primary-subtle">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">Delivered Orders</h5>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">10</h2>
+                    </div>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="table table-responsive  p-3">
-        <table id="ordersTable" class="display " style="width:100%">
-            <thead class="bg-body-tertiary">
-                <tr>
-                    <th>Order Name</th>
-                    <th>Customer</th>
-                    <th>Price($)</th>
-                    <th>Quantity</th>
-                    <th>Total Amount($)</th>
-                    <th>Address</th>
-                    <th>Order Date</th>
-                    <th>Status</th>
-                    <th>City</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                @if (Model.orderdetails.Count() != 0)
-                {
+    <div class="d-flex gap-2 mt-4">
+        <div class="w-50 shadow p-3">
+            <h5>Mothly Sales of books</h5>
+            <canvas id="myBarChart" style="width:100%;"></canvas>
+        </div>
+        <div class=" w-50 shadow p-3">
+            <canvas id="myPieChart" style="width:100%;"></canvas>
 
-                    @foreach (var i in Model.orderdetails)
-                    {
-                        var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
-                        <tr>
-                            <td>@i.Orderdetailid @Model.books.FirstOrDefault(x=>x.Bookid == i.Bookid).Title</td>
-                            <td>@Model.customers.FirstOrDefault(x=>x.Customerid == (Model.orders.FirstOrDefault(x=>x.Orderid == i.Orderid).Customerid)).Name</td>
-                            <td>@Model.books?.FirstOrDefault(x=>x.Bookid == i.Bookid).Price</td>
-                            <td>@i.Quantity</td>
-                            <td>@i.Totalamount</td>
-
-                            <td>@Model.customers?.FirstOrDefault(x=>x.Customerid == (Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Customerid)).Address</td>
-                            <td>@Model.orders.FirstOrDefault(x=>x.Orderid == i.Orderid).Orderdate.ToString("yyyy-MM-dd")</td>
-                            <td>@getStatus(statusid)</td>
-                            <td>@Model.orders?.FirstOrDefault(c=>c.Orderid == i.Orderid).City</td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2 w-auto">
-                                    <button class="btn btn-info">
-                                        <i class="bi bi-eye-fill text-white d-md-none d-block"></i>
-                                        <span class="d-none d-md-block">View</span>
-                                    </button>
-                                    <button class="btn btn-danger">Delete </button>
-                                </div>
-
-                            </td>
-                        </tr>
-                    }
-                }
-
-
-            </tbody>
-        </table>
-
+        </div>
     </div>
+
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {
-        var table = $('#ordersTable').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
-            "pageLength": 5,
-            language: {
-                oPaginate: {
-                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
-                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
-                }
-
+        $.ajax({
+            url: "/Admin/getChartData",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                var monthlySales = response.monthlySales;
+                var categoryList = response.categoryList;
+                var No_Of_Books = response.numberOfBooks;
+                renderBarChart(monthlySales);
+                renderPieChart(categoryList, No_Of_Books);
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to fetch monthly sales data:", error);
             }
         });
-        $('.dataTables_filter').hide();
-        $('#ordersTable_first').hide();
-        $('#ordersTable_last').hide();
-
-        $('#searchBtn').on('click', function () {
-            table.columns(0).search($('#orderName').val().trim());
-            table.columns(2).search($('#customer').val().trim());
-            table.columns(9).search($('#city').val().trim());
-            table.columns(6).search($('#orderDate').val().trim());
-            table.draw();
-            $('.dataTables_filter').hide();
-            $('#ordersTable_first').hide();
-            $('#ordersTable_last').hide();
-        });
-
-        $('button[type="reset"]').on('click', function () {
-            AdminDashboard()
-        });
     });
+
+    function renderBarChart(monthlySales) {
+        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        console.log(monthlySales);
+
+        new Chart("myBarChart", {
+            type: "bar",
+            data: {
+                labels: months,
+                datasets: [{
+                    backgroundColor: "rgba(0,0,255,0.5)",
+                    borderColor: "rgba(0,0,255,1.0)",
+                    borderWidth: 1,
+                    data: monthlySales
+                }]
+            },
+            options: {
+                legend: { display: false },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function (value, index, values) {
+                                return '$' + value;
+                            }
+                        }
+                    }],
+                    xAxes: [{
+                        barThickness: 40,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Months'
+                        }
+                    }]
+                }
+            }
+        });
+    }
 </script>
+
+<script>
+  
+    function renderPieChart(categoryList, No_Of_Books) {
+        console.log(categoryList);
+        console.log(No_Of_Books);
+
+        var pieColors = [
+            "#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145",
+            "#ffbb00", "#7e3878", "#ff8c00", "#5f9ea0", "#808080"];
+
+        new Chart("myPieChart", {
+            type: "pie",
+            data: {
+                labels: categoryList,
+                datasets: [{
+                    backgroundColor: pieColors,
+                    data: No_Of_Books
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Category-wise Book Sales"
+                }
+            }
+        });
+    }
+</script>
+
+

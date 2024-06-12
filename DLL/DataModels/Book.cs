@@ -64,6 +64,10 @@ public partial class Book
     [InverseProperty("Books")]
     public virtual Author? Author { get; set; }
 
+    [ForeignKey("Categoryid")]
+    [InverseProperty("Books")]
+    public virtual Category? Category { get; set; }
+
     [InverseProperty("Book")]
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
 

@@ -85,6 +85,8 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasConstraintName("fk_author");
 
+            entity.HasOne(d => d.Category).WithMany(p => p.Books).HasConstraintName("books_categoryid_fkey");
+
             entity.HasOne(d => d.Publisher).WithMany(p => p.Books).HasConstraintName("fk_publisher");
         });
 
