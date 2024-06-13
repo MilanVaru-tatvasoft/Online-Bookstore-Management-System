@@ -4,6 +4,9 @@
     .dropdown-menu{
         margin-left:90%;
     }
+    a{
+        cursor:pointer;
+    }
 
 </style>
 <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm w-100">
@@ -12,24 +15,24 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand text-dark fs-4 fw-bolder" href="#">Online BookStore</a>
-        <div class="offcanvas offcanvas-start w-50" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas offcanvas-start w-75" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div class="offcanvas-header bg-dark">
                 <h5 class="offcanvas-title text-white" id="offcanvasNavbarLabel">Menu</h5>
                 <button type="button" class="btn-close bg-transparent border-0 text-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body d-flex">
-                <ul class="navbar-nav w-50">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="#" onclick="getcustDash()">Home</a>
+                <ul class="navbar-nav w-100">
+                    <li class="nav-item ">
+                        <a class="nav-link text-dark"  onclick="getcustDash()" >Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="#" onclick="GetUserProfile()">My Profile</a>
+                    <li class="nav-item ">
+                        <a class="nav-link  d-flex text-dark w-100" href="#" onclick="GetUserProfile()">My Profile</a>
                     </li>
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
                             <input type="text" value="@Model.addtocarts.Count()" hidden id="modelcountdata" />
                             <a class="nav-link text-dark" onclick="getCartList()">My Cart</a>
-                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:6px; opacity: 0.9;" ></div>
+                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;">@Model.addtocarts.Count()</div>
                         </div>
                     </li>
                     <li>
@@ -51,7 +54,7 @@
                             <i class="bi-person bi text-dark fw-bold"></i>
                         </button>
                         <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
-                            <li><a class="dropdown-item text-dark" href="#">Add Account</a></li>
+                            <li><a class="dropdown-item text-dark" >Add Account</a></li>
                             <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
                         </ul>
                     </div>

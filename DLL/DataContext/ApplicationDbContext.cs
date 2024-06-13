@@ -36,6 +36,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Publisher> Publishers { get; set; }
 
+    public virtual DbSet<RatingReview> RatingReviews { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Status> Statuses { get; set; }
@@ -58,6 +60,10 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Book).WithMany(p => p.Addtocarts)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("addtocart_bookid_fkey");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Addtocarts)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("addtocart_customerid_fkey");
         });
 
         modelBuilder.Entity<Admin>(entity =>
@@ -138,6 +144,21 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Publisherid).HasName("publishers_pkey");
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        modelBuilder.Entity<RatingReview>(entity =>
+        {
+            entity.HasKey(e => e.RatingId).HasName("rating_reviews_pkey");
+
+            entity.Property(e => e.RatingDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.RatingReviews)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rating_reviews_book_id_fkey");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.RatingReviews)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rating_reviews_customer_id_fkey");
         });
 
         modelBuilder.Entity<Role>(entity =>

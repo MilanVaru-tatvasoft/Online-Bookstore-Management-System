@@ -4,6 +4,7 @@ using DataAccess.DataContext;
 using DataAccess.DataModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,75 +25,21 @@ namespace BusinessLogic.Repository
 
         }
 
-        //public Customer_MainPage getdata(Customer_MainPage model, int? userId)
-        //{
+       
 
-        //    int? customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
-        //    model.categories = _context.Categories.ToList();
-        //    List<Book> bookList = _context.Books.ToList();
-        //    model.Authors = _context.Authors.ToList();
-        //    model.publishers = _context.Publishers.ToList();
-        //    model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true).ToList();
-
-        //    if (model.search1 != null)
-        //    {
-        //        bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.search1.Trim().ToLower())).ToList();
-        //    }
-
-        //    if (model.search2 != null && model.search2.Count != 0)
-        //    {
-        //        bookList = bookList.Where(r => model.search2.Contains((int)r.Authorid)).ToList();
-        //    }
-
-        //    if (model.search3 != null && model.search3.Count != 0)
-        //    {
-        //        bookList = bookList.Where(r => model.search3.Contains((int)r.Categoryid)).ToList();
-        //    }
-
-        //    if (model.search4 != null && model.search4.Count != 0)
-        //    {
-        //        bookList = bookList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
-        //    }
-
-        //    var count = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true).ToList();
-
-
-
-        //    model.bookList = bookList;
-        //    return model;
-        //}
-
-        public Customer_MainPage getdata(Customer_MainPage model, int? userId,int pageNumber)
+        public Customer_MainPage getdata(Customer_MainPage model, int? userId, int pageNumber)
         {
             int? customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
             model.categories = _context.Categories.ToList();
             model.Authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
-            model.addtocarts = _context.Addtocarts.Where(x=>x.Customerid == customerId && x.Isremoved != true).ToList();
+            model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true).ToList();
             List<Book> booksList = _context.Books.Where(x => x.Isdeleted != true).ToList();
+            List<RatingReview> reviews = _context.RatingReviews.ToList();
 
             model.UserId = (int?)userId;
 
-           // int pageSize = 5;
-
-
-           // int itemsToSkip = (pageNumber) * pageSize;
-
-            //booksList = booksList
-            //    .Skip(itemsToSkip)
-            //    .Take( pageSize)
-            //    .ToList();
-
-            //var totalCount = _context.Books
-            //    .Where(x => x.Isdeleted != true)
-            //    .Count();
-
-            //bool hasMoreItems = totalCount > (pageNumber) * pageSize;
-
-            //model.hasMoreItems = hasMoreItems;
-            //model.pageNumber = pageNumber;
-            //model.pageSize = pageSize;
-            //model.totalCount = totalCount;
+          
 
             if (model.search1 != null)
             {
@@ -119,6 +66,7 @@ namespace BusinessLogic.Repository
 
 
             model.bookList = booksList;
+            model.reviews = reviews;
 
             return model;
         }
@@ -248,9 +196,12 @@ namespace BusinessLogic.Repository
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 bookPic = book.Bookphoto,
+                quantity = 1,
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
-                itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved !=true).ToList().Count(),
+                itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved != true).ToList().Count(),
+                reviews = _context.RatingReviews.Where(x=>x.BookId == bookId).OrderByDescending(x=>x.RatingDate).ToList(),
+                customers =_context.Customers.ToList(),
 
 
             };
@@ -286,18 +237,29 @@ namespace BusinessLogic.Repository
             return orderdata;
         }
 
-        public void GetAddToCart(int bookId, int? userId, int cartId)
+        public void GetAddToCart(int bookId, int? userId, int cartId, int quantity)
         {
             int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
             var cartData = _context.Addtocarts.FirstOrDefault(x => x.Cartid == cartId);
+            if (quantity == null && quantity == 0)
+            {
+                quantity = 1;
+            }
+
             if (cartData == null)
             {
+                decimal price = (decimal)(_context.Books?.FirstOrDefault(x => x.Bookid == bookId).Price);
                 Addtocart addtocart = new Addtocart()
                 {
                     Customerid = custId.Value,
                     Bookid = bookId,
+                    Price = price,
+                    Quantity = quantity,
+                    Totalamount = quantity * price,
                     Isremoved = false,
                     CreatedDate = DateTime.Now,
+
+
 
                 };
                 _context.Addtocarts.Add(addtocart);
@@ -305,6 +267,8 @@ namespace BusinessLogic.Repository
             }
             else
             {
+                cartData.Quantity = quantity;
+                cartData.Totalamount = (decimal)(quantity * cartData.Price);
                 cartData.Isremoved = false;
                 cartData.UpdatedDate = DateTime.Now;
                 _context.SaveChanges();
@@ -322,64 +286,106 @@ namespace BusinessLogic.Repository
         }
         public void confirmOrder(OrderData data, int? userId)
         {
-            int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
+            int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
             Book? book = _context.Books.FirstOrDefault(x => x.Bookid == data.bookId);
-            Order order = new Order()
+
+            if (custId != null && book != null)
             {
-                Customername = data.CustomerName,
-                Email = data.Email,
-                Phonenumber = data.PhoneNumber,
-                Address = data.OrderAddress,
-                City = data.city,
-                Customerid = custId,
-                Orderdate = DateTime.Today.Date,
-                Orderstatusid = 1,
-                Createdby = userId,
-                Createddate = DateTime.Now,
-                Isdeleted = false,
-                Totalamount = ((decimal)(data.Price * (decimal)data.Quantity))
-            };
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+                decimal quantity = (decimal)data.Quantity;
+                decimal totalAmount = (decimal)(data.Price * quantity);
 
-            decimal quantity = (decimal)data.Quantity;
+                Order order = new Order()
+                {
+                    Customername = data.CustomerName,
+                    Email = data.Email,
+                    Phonenumber = data.PhoneNumber,
+                    Address = data.OrderAddress,
+                    City = data.city,
+                    Customerid = custId,
+                    Orderdate = DateTime.Today.Date,
+                    Orderstatusid = 1,
+                    Createdby = userId,
+                    Createddate = DateTime.Now,
+                    Isdeleted = false,
+                    Totalamount = totalAmount
+                };
 
-            Orderdetail orderdetail = new Orderdetail()
-            {
-                Orderid = order.Orderid,
-                Bookid = data.bookId,
-                Price = book.Price,
-                Quantity = (int)data.Quantity,
-                Totalamount = (data.Price * quantity),
-                Createdby = userId.ToString(),
-                Createddate = DateTime.Now,
+                _context.Orders.Add(order);
 
-            };
-            _context.Orderdetails.Add(orderdetail);
-            _context.SaveChanges();
+                Orderdetail orderdetail = new Orderdetail()
+                {
+                    Orderid = order.Orderid,
+                    Bookid = data.bookId,
+                    Price = book.Price,
+                    Quantity = (int)data.Quantity,
+                    Totalamount = totalAmount,
+                    Createdby = userId.ToString(),
+                    Createddate = DateTime.Now
+                };
 
-            book.Stockquantity = (int)(book.Stockquantity - data.Quantity);
-            _context.Update(book);
-            _context.SaveChanges();
+                _context.Orderdetails.Add(orderdetail);
+
+                book.Stockquantity -= (int)data.Quantity;
+                _context.Update(book);
+
+                _context.SaveChanges();
+            }
+
 
         }
-       
+
         public CartListModel getCartList(int? UserId)
         {
-            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == UserId).Customerid;
-            CartListModel model = new CartListModel();
-            List<Addtocart>? addtocart = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true).ToList();
-            model.categories = _context.Categories.ToList();
-            List<Book> bookList = _context.Books.ToList();
-            model.Authors = _context.Authors.ToList();
-            model.publishers = _context.Publishers.ToList();
-            model.addtocarts = addtocart;
-            model.bookList = bookList;
-            model.itemCount = addtocart.Count();
+            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == UserId)?.Customerid ?? 0;
+            var addtocart = _context.Addtocarts
+                .Where(x => x.Customerid == customerId && x.Isremoved != true)
+                .Include(a => a.Book)
+                .ToList(); 
+
+            var model = new CartListModel
+            {
+                categories = _context.Categories.ToList(),
+                Authors = _context.Authors.ToList(), 
+                publishers = _context.Publishers.ToList(), 
+                addtocarts = addtocart,
+                bookList = addtocart.Select(a => a.Book).ToList(), 
+                itemCount = addtocart.Count()
+            };
             return model;
+
         }
 
+        public void getSubmitReviewAndRating(viewBookModel model, int? userId)
+        {
+            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid ?? 0;
 
+            RatingReview rate2 = _context.RatingReviews.FirstOrDefault(x => x.BookId == model.bookId && x.CustomerId == customerId);
+            if (rate2 != null)
+            {
+                rate2.Rating = model.ratingValue;
+                rate2.Reviews = model.reviewNote;
+                rate2.RatingDate = DateTime.Now;
+                _context.RatingReviews.Update(rate2);
+                _context.SaveChanges();
+            }
+            else
+            {
+            RatingReview rate = new RatingReview()
+            {
+                CustomerId = customerId,
+                BookId = (int)model.bookId,
+                Rating = model.ratingValue,
+                Reviews = model.reviewNote,
+                RatingDate = DateTime.Now,
+
+            };
+                _context.RatingReviews.Add(rate);
+                _context.SaveChanges();
+                
+            }
+        }
+
+       
 
     }
 }

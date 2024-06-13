@@ -1,44 +1,245 @@
 ﻿@model DataAccess.CustomModels.viewBookModel;
+<link src="https://cdn.jsdelivr.net/npm/fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" />
+
 <style>
-    * {
-        margin: 0;
-        padding: 0;
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: .5rem;
     }
+
+
+    .rate {
+        display: inline-block;
+        border: 0;
+    }
+
+        .rate > input {
+            display: none;
+        }
+
+        .rate > label {
+            float: right;
+        }
+
+            .rate > label:before {
+                display: inline-block;
+                font-size: 2rem;
+                padding: .3rem .2rem;
+                margin: 0;
+                cursor: pointer;
+                font-family: FontAwesome;
+                content: "\f005 ";
+            }
+
+
+        .rate .half:before {
+            content: "\f089 ";
+            position: absolute;
+            padding-right: 0;
+        }
+
+    input:checked ~ label,
+    label:hover, label:hover ~ label {
+        color: #73B100;
+    }
+
+
+        input:checked + label:hover, input:checked ~ label:hover,
+        input:checked ~ label:hover ~ label,
+        label:hover ~ input:checked ~ label {
+            color: #A6E72D;
+        }
 </style>
-<div class=" d-flex  justify-content-end w-100 mt-5">
-    <button class=" btn btn btn-dark shadow mt-0 me-5" onclick="getcustDash()">Back</button>
+
+<div class="d-flex justify-content-end w-100 mt-5">
+    <button class="btn btn-dark shadow mt-0 me-5" onclick="getcustDash()">Back</button>
 </div>
-<div class="container-md   d-flex align-content-center mt-5">
+<div class="container-md d-flex align-content-center mt-5">
     <div class="d-flex flex-column flex-md-row p-md-5 gap-5">
         <div class="d-flex justify-content-center px-md-5 px-3">
-            <img src="~/BookListCollections/@Model.bookPic" class="img-fluid" alt="@Model.bookPic">
+            <img src="~/BookListCollections/@Model.bookPic" class="img-fluid" height="500" width="350" alt="@Model.bookPic">
         </div>
-        <div class="d-flex bg-light p-5 w-100  flex-column w-75 justify-content-center ">
+        <div class="d-flex bg-light p-5 w-100 flex-column w-75 justify-content-center">
             <input type="text" asp-for="@Model.bookId" hidden />
-            <h1> @Model.Title</h1>
+            <h1>@Model.Title</h1>
             <div class="d-flex my-3">
-                <h6 class="fw-bold me-3"> About: </h6>
+                <h6 class="fw-bold me-3">About:</h6>
                 <h6 class="m-0 w-100 pe-2 text-break">@Model.description</h6>
             </div>
-            <input type="text" value="@Model.itemCount"  class="itemCountInCart" hidden />
-            <h6>Author:<span class="text-secondary">&nbsp; @Model.AuthorName</span></h6>
-            <h5>Price:<span class="text-danger">&nbsp; @Model.price $</span></h5>
-            <h6>Pages:@Model.pageNumber</h6>
-            <h6>Publisher:@Model.publisherName</h6>
-            <div class="d-flex gap-2 ">
+            <input type="text" value="@Model.itemCount" class="itemCountInCart" hidden />
+            <h6>Author:<span class="text-secondary">&nbsp;@Model.AuthorName</span></h6>
+            <h5>Price:<span class="text-danger">&nbsp;@Model.price $</span></h5>
+            <h6>Pages: @Model.pageNumber</h6>
+            <h6>Publisher: @Model.publisherName</h6>
+            <div class="d-flex gap-2">
                 <button class="btn btn-success" onclick="GetOrderDatailsPage(@Model.bookId)">Buy</button>
                 @if (Model.cartId != 0 && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Isremoved == false)
                 {
-                    <button class="btn btn-danger" onclick="getRemoveFromCart(@Model.bookId,@Model.cartId)">Remove From  Cart</button>
+                    <button class="btn btn-danger" onclick="getRemoveFromCart(@Model.bookId, @Model.cartId)">Remove From Cart</button>
                 }
                 else
                 {
-                    <button class="btn btn-primary" onclick="getAddToCart(@Model.bookId,@Model.cartId)">Add to Cart</button>
+                    <input type="number" asp-for="@Model.quantity" id="quantity">
+                    <button class="btn btn-primary" onclick="getAddToCart(@Model.bookId, @Model.cartId)">Add to Cart</button>
                 }
             </div>
         </div>
     </div>
 </div>
+<hr class="m-0 w-100" />
+
+<!-- Add Review Form -->
+<div class="d-flex justify-content-center mt-3 w-100">
+
+    <div class="container-md shadow card p-3 mt-5 ">
+        <h4>Add Your Review</h4>
+        <form id="reviewForm" onsubmit="submitReview(event)">
+            <input type="text" asp-for="bookId" hidden />
+      
+            <div class="mb-3 d-flex align-items-center">
+                <label for="reviewRating" class="form-label">Rating</label>
+                <input type="text" asp-for="ratingValue" id="ratingval" hidden />
+                <fieldset class="rate">
+                    <input type="radio" asp-for="ratingValue" id="rating10" name="rating" value="5" />
+                    <label for="rating10" title="5 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating9" name="rating" value="4.5" />
+                    <label class="half" for="rating9" title="4 1/2 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating8" name="rating" value="4" />
+                    <label for="rating8" title="4 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating7" name="rating" value="3.5" />
+                    <label class="half" for="rating7" title="3 1/2 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating6" name="rating" value="3" />
+                    <label for="rating6" title="3 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating5" name="rating" value="2.5" />
+                    <label class="half" for="rating5" title="2 1/2 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating4" name="rating" value="2" />
+                    <label for="rating4" title="2 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating3" name="rating" value="1.5" />
+                    <label class="half" for="rating3" title="1 1/2 stars"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating2" name="rating" value="1" />
+                    <label for="rating2" title="1 star"></label>
+                    <input type="radio" asp-for="ratingValue" id="rating1" name="rating" value="0.5" />
+                    <label class="half" for="rating1" title="1/2 star"></label>
+                </fieldset>
+            </div>
+            <div class="mb-3">
+                <label for="reviewComment" class="form-label">Comment</label>
+                <textarea class="form-control" id="reviewComment" asp-for=reviewNote rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+</div>
+
+<!-- Review Section -->
+
+<div class="container-md shadow card p-3 mt-5">
+    <h3 class="card-title">Reviews</h3>
+    <div id="reviews" class="mb-4">
+        @if (Model.reviews.Count != 0)
+        {
+            @foreach (var review in Model.reviews)
+            {
+                <div class="border p-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <h5>@Model.customers?.FirstOrDefault(x => x.Customerid == review.CustomerId)?.Name</h5>
+                        <span class="text-warning">
+                            @for (decimal i = 1m; i <= 5m; i += 1)
+                            {
+                                @if (i <= review.Rating)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                else if ((i - 0.5m) == review.Rating)
+                                {
+                                    <i class="bi bi-star-half"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            }
+                        </span>
+                    </div>
+                    <p>@review.Reviews</p>
+                <p class="text-end w-100 text-secondary-subtle">@review.RatingDate</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>no data</p>
+        }
+    </div>
+</div>
+<script>
+    function submitReview(event) {
+        event.preventDefault();
+        var reviewRating = parseFloat(document.querySelector('input[name="rating"]:checked').value);
+        var reviewComment = document.getElementById('reviewComment').value;
+
+        $('#ratingval').val(reviewRating);
+
+        var formData = $('#reviewForm').serialize();
+
+
+        $.ajax({
+            method: "POST",
+            url: "/Home/submitReviewAndRating",
+            data: formData,
+            success: function (result) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Review Added",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    ViewBooksPage(result);
+                });
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+
+
+        // // Convert rating to stars
+        // let starsHtml = '';
+        // for (let i = 1; i <= 5; i += 1) {
+        //     if (i <= reviewRating) {
+        //         starsHtml += '<i class="bi bi-star-fill"></i>';
+        //     } else if (i - 0.5 == reviewRating) {
+        //         starsHtml += '<i class="bi bi-star-half"></i>';
+        //     }
+        //     else {
+        //         starsHtml += '<i class="bi bi-star"></i>';
+        //     }
+        // }
+
+        // // Generate review HTML
+        // const reviewHtml = `
+        //                                 <div class="border p-3 mb-3">
+        //                                     <div class="d-flex justify-content-between">
+        //                                         <h5>${reviewerName}</h5>
+        //                                         <span class="text-warning">${starsHtml}</span>
+        //                                     </div>
+        //                                     <p>${reviewComment}</p>
+        //                                 </div>
+        //                             `;
+
+        // // Add the review to the list
+        // document.getElementById('reviews').insertAdjacentHTML('beforeend', reviewHtml);
+
+        // Reset the form
+    }
+
+</script>
+
+
+
 
 <div id="ModalAction"></div>
 

@@ -24,6 +24,44 @@ namespace BusinessLogic.Repository
             _context = context;
 
         }
+        public AdminDashboardModel getAdminData()
+        {
+            AdminDashboardModel model = new AdminDashboardModel();
+            var orders = _context.Orders.ToList();
+            var statuses = _context.Statuses.ToList();
+
+            var ordersByStatus = statuses.Select(status => new
+            {
+                Status = status,
+                OrderCount = orders.Count(order => order.Orderstatusid == status.StatusId)
+            }).ToList();
+
+            model.newOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 1)?.OrderCount ?? 0;
+            model.ProcessingOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 2)?.OrderCount ?? 0;
+            model.shippedOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 3)?.OrderCount ?? 0;
+            model.deliveredOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 4)?.OrderCount ?? 0;
+            model.numberOfBooks = _context.Books.Where(x=>x.Isdeleted != true).Count();
+            model.numberOfCustomer = _context.Customers.Count();
+
+                decimal sellofThisMonth = 0;
+            
+                var date = DateTime.Today;
+                var monthlyOrders = _context.Orders
+                   .Where(o => o.Orderdate.Year == date.Year && o.Orderdate.Month == date.Month)
+                   .OrderBy(o => o.Orderid)
+                   .ToList();
+
+                if (monthlyOrders != null && monthlyOrders.Count > 0)
+                {
+                sellofThisMonth = monthlyOrders.Sum(o => o.Totalamount);
+                }
+
+
+
+            model.sellofThisMonth = sellofThisMonth;
+            return model;
+            
+        }
         public OrderListModel getOrderListData()
         {
             OrderListModel orderList = new OrderListModel();
@@ -470,8 +508,8 @@ namespace BusinessLogic.Repository
                     .Where(o => o.Orderdate.Year == year && o.Orderdate.Month == month)
                     .OrderBy(o => o.Orderid)
                     .ToList();
-                
-                decimal monthlySales = 0; 
+
+                decimal monthlySales = 0;
 
                 if (monthlyOrders != null && monthlyOrders.Count > 0)
                 {

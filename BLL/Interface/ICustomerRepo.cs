@@ -19,10 +19,11 @@ namespace BusinessLogic.Interface
         public bool editUserProfile(UserProfile profile);
         public viewBookModel viewBookDetails(int bookId,int? userId);
         public OrderData getOrderDetails(int bookId, int? userId);
-        public void GetAddToCart(int bookId, int? userId,int cartId);
+        public void GetAddToCart(int bookId, int? userId,int cartId,int quantity);
         public void GetRemoveFromCart(int cartId, int? userId);
         public void confirmOrder(OrderData data, int? userId);
         public CartListModel getCartList(int? UserId);
+        public void getSubmitReviewAndRating(viewBookModel model, int? userId);
 
 
     }

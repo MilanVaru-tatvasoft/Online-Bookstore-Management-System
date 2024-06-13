@@ -134,8 +134,8 @@ function getCartList() {
         }
     });
 }
-function getcustDash(pageNumber) {
-    $('#loader2').show(function () {
+function getcustDash() {
+  
         var formData = $('#searchForm').serialize();
         $.ajax({
             method: "POST",
@@ -149,9 +149,9 @@ function getcustDash(pageNumber) {
                 alert('Error loading partial view');
             }
         });
-    });
+   
 
-    $('#loader2').hide();
+    $('#loader2').show();
 
 
 }
@@ -250,11 +250,11 @@ function cartCount(id) {
 }
 function getAddToCart(bookId, cartId) {
     event.preventDefault();
-
+    var quantity = $('#quantity').val();
     $.ajax({
         method: "GET",
         url: "/Home/getAddToCart",
-        data: { bookId: bookId, cartId: cartId },
+        data: { bookId: bookId, cartId: cartId, quantity: quantity },
 
 
         success: function (result) {
@@ -896,6 +896,7 @@ function getRemoveFromMyCart(bookId, cartId) {
     });
 
 }
+
 
 
 

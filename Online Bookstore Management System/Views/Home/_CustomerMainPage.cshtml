@@ -36,6 +36,21 @@
         return false;
 
     }
+
+    public decimal calculateAvgRating(int bookId)
+    {
+        var reviews = Model.reviews.Where(x => x.BookId == bookId).Select(i => i.Rating).ToList();
+
+        if (reviews.Any())
+        {
+            decimal avgRating = (decimal)reviews.Average();
+            return  avgRating;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
 @* dropdown css *@
 <style>
@@ -208,6 +223,7 @@
         {
             @foreach (var obj in Model.bookList)
             {
+                decimal avgRating = calculateAvgRating(obj.Bookid);
                 <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
                     <div class="card border-0 h-100 shadow">
                         <img src="~/BookListCollections/@obj.Bookphoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.Bookphoto">
@@ -215,6 +231,27 @@
                             <h5 class="card-title text-truncate">@obj.Title</h5>
                             <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
                             <p class="card-text text-truncate px-1">Author: @Model.Authors?.FirstOrDefault(x=>x.Authorid == obj.Authorid).Name</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            
+                            <span class="text-warning fs-4">
+                                
+                                @for (decimal i = 1m; i <= 5m; i += 1)
+                                {
+                                    @if (i <= avgRating)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    else if ((i - 0.5m) == avgRating)
+                                    {
+                                        <i class="bi bi-star-half"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                }
+                            </span>
                         </div>
                         <div class="d-flex gap-2">
                             <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.Bookid)">View More</buttton>
@@ -229,9 +266,7 @@
         }
     </div>
 </div>
-<div id="loader" class="text-center mt-3" style="display: none;">
-    <img src="~/backgroundImages/loader.gif" height="50" width="50" alt="Loading...">
-</div>
+
 <script>
     $(document).ready(function () {
 
@@ -336,52 +371,6 @@
 
 </script>
 
- <script>
-   @* function isScrolledToBottom() {
-        return $(window).scrollTop() + $(window).height() >= $(document).height();
-    }
-
-    function fetchMoreData(pageNumber) {
-        $('#loader').show();
-
-
-        $.ajax({
-            method: "POST",
-            url: "/Home/getDashboardData",
-            data: {
-                pageNumber: pageNumber
-            }
-            ,
-
-            success: function (result) {
-
-                $('#loader').hide();
-                console.log(result)
-
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-
-        });
-        setTimeout(function () {
-            $('#loader').hide();
-            console.log("Data fetched for page number:", pageNumber);
-        }, 1000);
-    }
-
-    $(document).ready(function () {
-        var pageNumber = 1;
-        fetchMoreData(pageNumber);
-
-        $(window).scroll(function () {
-            if (isScrolledToBottom()) {
-                pageNumber++;
-                fetchMoreData(pageNumber);
-            }
-        });
-        }); *@
-</script>
 
 
 

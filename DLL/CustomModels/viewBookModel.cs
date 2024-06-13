@@ -26,8 +26,13 @@ namespace DataAccess.CustomModels
         public int? Stockquantity { get; set; }
         public int? itemCount { get; set; }
 
+        public decimal? ratingValue { get; set; }
+        public string? reviewNote { get; set; }
+
         public List<Author>? Author { get; set; }
+        public List<RatingReview>? reviews { get; set; }
         public List<Category>? categories { get; set; }
+        public List<Customer>? customers { get; set; }
 
         
     }

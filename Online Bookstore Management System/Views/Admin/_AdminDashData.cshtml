@@ -1,4 +1,4 @@
-﻿
+﻿@model DataAccess.CustomModels.AdminDashboardModel;
 <div class="container-fluid">
     <div class="row mt-2  w-100">
         <div class="col-6 col-md-3">
@@ -6,10 +6,10 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title">New Orders</h5>
-                        <h2 class="card-subtitle  me-3 mb-2 text-body-secondary">50</h2>
+                        <h2 class="card-subtitle  me-3 mb-2 text-body-secondary">@Model.newOrders</h2>
                     </div>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+                  
+
                 </div>
             </div>
         </div>
@@ -18,10 +18,10 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title">Processing Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">15</h2>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.ProcessingOrder</h2>
                     </div>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+               
+
                 </div>
             </div>
         </div>
@@ -30,11 +30,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title">Shipped Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">20</h2>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.shippedOrder</h2>
                     </div>
 
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+                
+
                 </div>
             </div>
         </div>
@@ -43,26 +43,54 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title">Delivered Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">10</h2>
+                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.deliveredOrders</h2>
                     </div>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+                    
                 </div>
             </div>
         </div>
     </div>
-    <div class="d-flex gap-2 mt-4">
-        <div class="w-50 shadow p-3">
+
+    <div class="d-flex flex-lg-row flex-column gap-2 mt-4">
+        <div class="w-100 shadow p-3">
             <h5>Mothly Sales of books</h5>
-            <canvas id="myBarChart" style="width:100%;"></canvas>
+            <canvas id="myBarChart" class="img-fluid" style="width:100%;"></canvas>
         </div>
-        <div class=" w-50 shadow p-3">
-            <canvas id="myPieChart" style="width:100%;"></canvas>
+        <div class=" w-100 shadow p-3">
+            <canvas id="myPieChart" style="width:100%;" class="img-fluid"></canvas>
 
         </div>
     </div>
 
+    <div class="d-flex w-50">
+
+        <div class="card my-2 w-100 shadow bg-white">
+            <div class="card-body">
+                <h4 class="card-title text-start">@Model.numberOfBooks</h4>
+                <p class="card-text fw-bold">Total Books</p>
+            </div>
+        </div>
+
+
+        <div class="card w-100 my-2 shadow bg-white">
+            <div class="card-body">
+                <h4 class="card-tit. text-start">@Model.numberOfCustomer</h4>
+                <p class="card-text fw-bold">Total Numbers Of Users/Customers</p>
+            </div>
+        </div>
+
+        <div class="card w-100 my-2 shadow bg-white">
+            <div class="card-body">
+                <h4 class="card-title text-start">$ @Model.sellofThisMonth</h4>
+                <p class="card-text fw-bold">Total Sell Of the month</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
 </script>
 
@@ -113,7 +141,6 @@
                         }
                     }],
                     xAxes: [{
-                        barThickness: 40,
                         scaleLabel: {
                             display: true,
                             labelString: 'Months'
@@ -126,7 +153,7 @@
 </script>
 
 <script>
-  
+
     function renderPieChart(categoryList, No_Of_Books) {
         console.log(categoryList);
         console.log(No_Of_Books);

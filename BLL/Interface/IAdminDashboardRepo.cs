@@ -10,6 +10,8 @@ namespace BusinessLogic.Interface
     public interface IAdminDashboardRepo
     {
         public OrderListModel getOrderListData();
+        public AdminDashboardModel getAdminData();
+
         public AdminBookListmodel getBookList(AdminBookListmodel model);
         public viewBookModel viewBookDetails(int bookId, int? userId);
         public bool isbookExist(string? bookTitle);

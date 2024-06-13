@@ -13,7 +13,16 @@ namespace DataAccess.CustomModels
     {
         public List<decimal> monthlySales { get; set; } 
         public List<string> categorties { get; set; } 
-        public List<int> noofbooks { get; set; } 
+        public List<int> noofbooks { get; set; }
+        
+        public int? newOrders { get; set; }
+        public int? ProcessingOrder { get; set; }
+        public int? shippedOrder { get; set; }
+        public int? deliveredOrders { get; set; }
+        public int? numberOfBooks { get; set; }
+        public int? totalSellBooks { get; set; }
+        public int? numberOfCustomer { get; set; }
+        public decimal? sellofThisMonth { get; set; }
     }
     public class OrderListModel
     {

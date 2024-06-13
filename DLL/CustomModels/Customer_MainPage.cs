@@ -15,6 +15,7 @@ namespace DataAccess.CustomModels
         public List<Author> Authors { get; set; }
         public List<Publisher> publishers { get; set; }
         public List<Addtocart>? addtocarts { get; set; }
+        public List<RatingReview>? reviews { get; set; }
 
         public int? UserId { get; set; }
 

@@ -1,81 +1,142 @@
 ﻿@model DataAccess.CustomModels.CartListModel
 
-<div class="container-fluid  ">
+<div class=" w-100 p-1 p-md-3 ">
     <div class="">
         <div>
             <div class="bookCategory">
                 <h3 class="my-2 ms-1">My Cart</h3>
             </div>
+
             <div class=" d-none d-md-flex">
                 <input type="text" value="@Model.itemCount" class="itemCountInCart" hidden />
-
-                <table id="MyCartTable" class="vw-100">
-                    <thead class="bg-body-tertiary">
-                        <tr>
-                            <th>CartId</th>
-                            <th>Book</th>
-                            <th>book Name</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var obj in Model.addtocarts.ToList())
-                        {
-                            <tr onclick="">
-                                <td>
-                                    <span class="text-wrap fs-5">@obj.Cartid</span>
-                                    <input type="hidden" asp-for="@obj.Cartid">
-                                </td>
-                                <td>
-                                    <img src="~/BookListCollections/@obj.Book.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Book.Bookphoto">
-                                </td>
-                                <td>@obj.Book.Title</td>
-                                <td>@obj.Book.Price</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-warning" onclick="GetOrderDatailsPage(@obj.Bookid)">Confirm Order</button>
-                                        <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove from cart</button>
-                                    </div>
-                                </td>
+                <div class=" w-100">
+                    <table class=" table  table-striped">
+                        <thead class="bg-body-tertiary">
+                            <tr class="text-center">
+                                <th>CartId</th>
+                                <th>Book</th>
+                                <th>book Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total Amaunt</th>
+                                <th>Action</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var obj in Model.addtocarts.ToList())
+                            {
+                                <tr class="text-center">
+                                    <td>
+                                        <span class="text-wrap fs-5">@obj.Cartid</span>
+                                        <input type="hidden" asp-for="@obj.Cartid">
+                                    </td>
+                                    <td>
+                                        <img src="~/BookListCollections/@obj.Book.Bookphoto" class=" m-1 p-0" width="70" height="120" alt="@obj.Book.Bookphoto">
+                                    </td>
+                                    <td>@obj.Book.Title</td>
+                                    <td>@obj.Book.Price</td>
+                                    <td>
+                                        <input type="number" class="quantity2" asp-for="@obj.Quantity" value="@obj.Quantity">
+                                    </td>
+                                    <td>
+                                        @obj.Totalamount
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-warning" onclick="getAddToMyCart(@obj.Bookid,@obj.Cartid)">
+                                                add quantity</button>
+                                            <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        @foreach (var obj in Model.addtocarts.ToList())
+        {
+
+            <div class=" bg-white d-flex  d-md-none  p-3 w-100  shadow overflow-hidden" style="margin-top:5px">
+                <div class="d-flex align-items-center me-3">
+                    <img src="~/BookListCollections/@obj.Book.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Book.Bookphoto">
+                </div>
+                <div class="w-100">
+                    <h6 class="d-flex align-items-center  text-wrap fw-bolder">    Book Name: @obj.Book.Title </h6>
+                    <h6 class="my-2 "> Price:@obj.Book.Price </h6>
+                    <h6 class="my-2 ">
+                        Total Amount:  @obj.Totalamount
+                    </h6>
+                    <div class="w-100">
+                        <input type="number" class="quantity2  w-25"  asp-for="@obj.Quantity" value="@obj.Quantity" >
+                    </div>
+                    <div class="d-flex justify-content-end align-items-end gap-2  bottom-0">
+                        <button class="btn btn-success" onclick="getAddToMyCart(@obj.Bookid,@obj.Cartid)">
+                            <i class="bi-plus"></i>
+
+                            </button>
+                        <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">
+                            <i class="bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        }
+
+        <div class="d-flex flex-column flex-md-row w-100">
+            <div class="card my-2 w-100 shadow bg-secondary-subtle">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p>Total Books:</p>
+                            <p>Total Amount:</p>
+                            <p>Discount:</p>
+                            <p>Shipping Amount:</p>
+                            <p>Tax:</p>
+                            <hr>
+                            <p class="font-weight-bold">Gross Total:</p>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <p><strong>10</strong></p>
+                            <p><strong>$100</strong></p>
+                            <p><strong>$10</strong></p>
+                            <p><strong>$5</strong></p>
+                            <p><strong>$8</strong></p>
+                            <hr>
+                            <p class="font-weight-bold">$123</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-100 d-flex justify-content-end align-items-md-start me-5 mt-5">
+
+                <button class="btn-lg btn-primary">
+                    Proceed to checkout
+                </button>
+
             </div>
         </div>
     </div>
 </div>
-@foreach (var obj in Model.addtocarts.ToList())
-{
-
-    <div class=" bg-white d-flex  d-md-none  p-3 vw-100  shadow" style="margin-top:5px">
-        <div class="d-flex align-items-center me-3">
-            <img src="~/BookListCollections/@obj.Book.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Book.Bookphoto">
-        </div>
-        <div class="w-100">
-            <h6 class="d-flex align-items-center  fw-bolder">    Book Name: @obj.Book.Title </h6>
-            <h6 class="my-2 ">    Price:@obj.Book.Price </h6>
-            <div class="d-flex justify-content-end align-baseline gap-2  bottom-0">
-                <button class="btn btn-warning" onclick="GetOrderDatailsPage(@obj.Bookid)">Confirm Order</button>
-                <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove from cart</button>
-            </div>
-        </div>
-       
-    </div>
-
-
-}
 
 <div id="ModalAction"></div>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
-<script>
+@* <script>
     $(document).ready(function () {
         var table = $('#MyCartTable').DataTable({
-            "pagingType": "full_numbers",
+            "pagingType": "simple", // Use simple pagination
             "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
             "pageLength": 5,
             language: {
@@ -83,10 +144,64 @@
                     sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
                     sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
                 }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>'
+        });
+
+        // Hide the default pagination controls
+        $('.dataTables_paginate').hide();
+
+        // Append custom pagination controls
+        var customPagination = $('<ul class="pagination justify-content-center">' +
+            '<li class="paginate_button page-item previous" id="MyCartTable_first"><a href="#" class="page-link">First</a></li>' +
+            '<li class="paginate_button page-item previous" id="MyCartTable_previous"><a href="#" class="page-link"><i class="bi bi-caret-left-fill text-info"></i></a></li>' +
+            '<li class="paginate_button page-item next" id="MyCartTable_next"><a href="#" class="page-link"><i class="bi bi-caret-right-fill text-info"></i></a></li>' +
+            '<li class="paginate_button page-item next" id="MyCartTable_last"><a href="#" class="page-link">Last</a></li>' +
+            '</ul>');
+        customPagination.appendTo('#MyCartTable_wrapper .dataTables_length').css('float', 'right');
+
+        // Handle pagination events
+        $('#MyCartTable_first').click(function () {
+            table.page('first').draw('page');
+        });
+        $('#MyCartTable_previous').click(function () {
+            table.page('previous').draw('page');
+        });
+        $('#MyCartTable_next').click(function () {
+            table.page('next').draw('page');
+        });
+        $('#MyCartTable_last').click(function () {
+            table.page('last').draw('page');
+        });
+    });
+</script>
+ *@
+<script>
+    function getAddToMyCart(bookId, cartId) {
+        event.preventDefault();
+        var quantity = $('.quantity2').val();
+        $.ajax({
+            method: "GET",
+            url: "/Home/getAddToCart",
+            data: { bookId: bookId, cartId: cartId, quantity: quantity },
+
+
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: " Added To Cart",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    getCartList();
+                }
+
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
         });
-        $('.dataTables_filter').hide();
-        $('#book-Table_first').hide();
-        $('#book-Table_last').hide();
-    });
+    }
 </script>

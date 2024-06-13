@@ -57,6 +57,10 @@ public partial class Book
     [Column("isdeleted")]
     public bool? Isdeleted { get; set; }
 
+    [Column("avg_rating")]
+    [Precision(10, 2)]
+    public decimal? AvgRating { get; set; }
+
     [InverseProperty("Book")]
     public virtual ICollection<Addtocart> Addtocarts { get; set; } = new List<Addtocart>();
 
@@ -74,4 +78,7 @@ public partial class Book
     [ForeignKey("Publisherid")]
     [InverseProperty("Books")]
     public virtual Publisher? Publisher { get; set; }
+
+    [InverseProperty("Book")]
+    public virtual ICollection<RatingReview> RatingReviews { get; set; } = new List<RatingReview>();
 }

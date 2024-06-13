@@ -81,7 +81,7 @@ namespace Online_Bookstore_Management_System.Controllers
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             Customer_MainPage model = new Customer_MainPage();
             int pageNumber = 0;
-            model = _customerRepo.getdata(model,userId,pageNumber);
+            model = _customerRepo.getdata(model, userId, pageNumber);
             return View(model);
         }
         public IActionResult getcustDash(Customer_MainPage model)
@@ -89,14 +89,14 @@ namespace Online_Bookstore_Management_System.Controllers
 
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             int pageNumber = 1;
-            _customerRepo.getdata(model,userId, pageNumber);
+            _customerRepo.getdata(model, userId, pageNumber);
             return PartialView("_CustomerMainPage", model);
         }
         public IActionResult getDashboardData(int pageNumber)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            Customer_MainPage model =new Customer_MainPage();
-            _customerRepo.getdata(model,userId, pageNumber);
+            Customer_MainPage model = new Customer_MainPage();
+            _customerRepo.getdata(model, userId, pageNumber);
             return Json(model.bookList);
         }
 
@@ -162,10 +162,10 @@ namespace Online_Bookstore_Management_System.Controllers
             OrderData model = _customerRepo.getOrderDetails(bookId, userId);
             return PartialView("_OrderBook", model);
         }
-        public IActionResult getAddToCart(int bookId, int cartId)
+        public IActionResult getAddToCart(int bookId, int cartId, int quantity)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            _customerRepo.GetAddToCart(bookId, userId, cartId);
+            _customerRepo.GetAddToCart(bookId, userId, cartId, quantity);
             return Json(new { code = 401 });
         }
         public IActionResult getRemoveFromCart(int cartId)
@@ -229,9 +229,19 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult getCartList()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            CartListModel model =  _customerRepo.getCartList( userId);
+            CartListModel model = _customerRepo.getCartList(userId);
             _httpcontext.HttpContext.Session.SetInt32("itemCount", (int)model.itemCount);
             return PartialView("_MyCartList", model);
         }
+        public IActionResult submitReviewAndRating(viewBookModel model)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            _customerRepo.getSubmitReviewAndRating(model, userId);
+            return Ok(model.bookId);
+
+
+        }
+
+
     }
 }
