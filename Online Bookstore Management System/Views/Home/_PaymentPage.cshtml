@@ -1,0 +1,110 @@
+﻿@model DataAccess.CustomModels.OrderData;
+
+<style>
+    /* Customize here */
+    .card-info, .upi-info {
+        display: none;
+    }
+
+    .payment-option {
+        cursor: pointer;
+    }
+</style>
+<div class="container mt-5">
+    <input type="text" asp-for="@Model.Orderid" />
+    <h2>Select Payment Method</h2>
+    <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action payment-option" data-option="card">
+            Credit/Debit Card
+        </a>
+        <a href="#" class="list-group-item list-group-item-action payment-option" data-option="upi">
+            UPI (Unified Payment Interface)
+        </a>
+        <a href="#" class="list-group-item list-group-item-action payment-option" data-option="cod">
+            Cash on Delivery
+        </a>
+    </div>
+
+    <div class="card mt-3 card-info">
+        <div class="card-body">
+            <h5 class="card-title">Enter Card Details</h5>
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" class="form-control" id="cardNumber" placeholder="Enter card number">
+            </div>
+            <button class=" btn btn-primary " onclick="getPaymentDone('Card' , @Model.Orderid)">
+                Done With Cash On delivary
+            </button>
+        </div>
+    </div>
+
+    <div class="card mt-3 upi-info">
+        <div class="card-body">
+            <h5 class="card-title">UPI QR Code</h5>
+            <img src="path_to_qr_code_image" alt="UPI QR Code" class="img-fluid">
+        </div>
+        <button class=" btn btn-primary " onclick="getPaymentDone('UPI' , @Model.Orderid)">
+            Done With Cash On delivary
+        </button>
+    </div>
+    <div class="card mt-3 cod-info">
+        <div class="card-body">
+            <h5 class="card-title">Cash on Delivary</h5>
+            <button class=" btn btn-primary " onclick="getPaymentDone('Cash On Delivery' , @Model.Orderid)">
+                Done With Cash On delivary
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // Toggle display of card information or UPI QR code based on selection
+    $('.payment-option').click(function () {
+        var option = $(this).data('option');
+        if (option === 'card') {
+            $('.card-info').show();
+            $('.upi-info').hide();
+            $('.cod-info').hide();
+
+        } else if (option === 'upi') {
+            $('.upi-info').show();
+            $('.card-info').hide();
+            $('.cod-info').hide();
+
+        } else {
+
+            $('.card-info').hide();
+            $('.upi-info').hide();
+            $('.cod-info').show();
+        }
+    });
+
+    function getPaymentDone(paymentType, Orderid) {
+        event.preventDefault();
+        $.ajax({
+            method: "POST",
+            url: "/Home/getPaymentDone",
+            data: { paymentType: paymentType, Orderid: Orderid },
+
+
+            success: function (result) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Order Placed",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    getcustDash();
+                });
+
+            
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+</script>

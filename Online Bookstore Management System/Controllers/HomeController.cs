@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interface;
+﻿
+using BusinessLogic.Interface;
 using BusinessLogic.Repository;
 using DataAccess.CustomModels;
 using DataAccess.DataModels;
@@ -174,13 +175,7 @@ namespace Online_Bookstore_Management_System.Controllers
             _customerRepo.GetRemoveFromCart(cartId, userId);
             return Ok();
         }
-        public IActionResult getOrderConfirmation(OrderData data)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            _customerRepo.confirmOrder(data, userId);
-            return Ok(data.bookId);
-        }
-
+    
         public IActionResult Logout()
         {
             _httpcontext.HttpContext.Session.Clear();
@@ -229,7 +224,7 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult getCartList()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            CartListModel model = _customerRepo.getCartList(userId);
+            OrderData model = _customerRepo.getCartList(userId);
             _httpcontext.HttpContext.Session.SetInt32("itemCount", (int)model.itemCount);
             return PartialView("_MyCartList", model);
         }
@@ -242,6 +237,48 @@ namespace Online_Bookstore_Management_System.Controllers
 
         }
 
+        public IActionResult getCheckout(OrderData data)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            int orderId = _customerRepo.confirmOrder(data, userId);
+            data.Orderid = orderId;
+            return PartialView("_ConfirmOrder", data);
+        }
+        public IActionResult getCheckout2(OrderData data)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+           data= _customerRepo.getCartList( userId);
+            return PartialView("_ConfirmOrder", data);
+        }
+        public IActionResult getPayment(int Orderid)
+        {
+
+            OrderData data = new OrderData();
+            data.Orderid = Orderid;
+
+            return PartialView("_PaymentPage",data);
+        }  
+        public IActionResult getPayment2(OrderData data)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+
+            int orderId = _customerRepo.confirmOrder2(data, userId);
+            data.Orderid = orderId;
+            return PartialView("_PaymentPage",data);
+        }   
+        public IActionResult getPaymentDone(string paymentType, int OrderId)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            bool status = _customerRepo.getPaymentDone(paymentType, OrderId, userId);
+
+            return Ok();
+        }
+
+    
+        public IActionResult PaymentBill()
+        {
+            return View();
+        }
 
     }
 }

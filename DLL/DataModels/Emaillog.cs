@@ -20,13 +20,13 @@ public partial class Emaillog
     [Column("userid")]
     public int? Userid { get; set; }
 
-    [Column("message")]
-    [StringLength(500)]
-    public string? Message { get; set; }
-
     [Column("issent")]
     public bool? Issent { get; set; }
 
     [Column("senddate", TypeName = "timestamp without time zone")]
     public DateTime? Senddate { get; set; }
+
+    [Column("subject")]
+    [StringLength(255)]
+    public string? Subject { get; set; }
 }

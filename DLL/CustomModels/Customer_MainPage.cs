@@ -66,8 +66,26 @@ namespace DataAccess.CustomModels
 
     public class OrderData
     {
+        public List<Order> Orders { get; set; }
+        public List<Orderdetail> orderdetails { get; set; }
+        public List<Payment> payment { get; set; }
+        public List<Addtocart>? addtocarts { get; set; }
+        public List<Category>? categories { get; set; }
+        public List<Book>? bookList { get; set; }
+        public List<Author>? Authors { get; set; }
+        public List<Publisher>? publishers { get; set; }
+
+        public int? itemCount { get; set; }
+
+        public decimal? totalBooks { get; set; }
+        public decimal? totalAmount { get; set; }
+        public decimal? discountPercentage { get; set; }
+        public decimal? shippingAmount { get; set; }
+        public decimal? Grosstotal { get; set; }
+        public decimal? tax { get; set; }
         public int? bookId { get; set; }
         public int? customerId { get; set; }
+        public int? Orderid { get; set; }
         public string? OrderAddress { get; set; }
         public string? updateCity { get; set; }
         public string? CustomerName { get; set; }
@@ -81,6 +99,8 @@ namespace DataAccess.CustomModels
 
         public string? city { get; set; }
 
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Phone number must be 10 digits")]
+        public int? zipCode { get; set; }
         public string? PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
@@ -93,12 +113,16 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage = "This field is required")]
         [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone number must be 10 digits")]
         public string? UpdatePhoneNumber { get; set; }
+        [Required(ErrorMessage ="This is requred")]
+        public string? paymentType { get; set; }
 
         public int? Quantity { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int? UpdateQuantity { get; set; }
+
+     
     }
 
     public class ResetPasswordModel
@@ -118,11 +142,6 @@ namespace DataAccess.CustomModels
 
     public class CartListModel
     {
-        public List<Addtocart>? addtocarts { get; set; }
-        public List<Category>? categories { get; set; }
-        public List<Book>? bookList { get; set; }
-        public List<Author>? Authors { get; set; }
-        public List<Publisher>? publishers { get; set; }
-        public int? itemCount { get; set; }  
+   
     }
 }

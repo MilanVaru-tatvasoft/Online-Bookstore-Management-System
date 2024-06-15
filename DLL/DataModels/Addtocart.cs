@@ -39,6 +39,9 @@ public partial class Addtocart
     [Column("updated_date", TypeName = "timestamp without time zone")]
     public DateTime? UpdatedDate { get; set; }
 
+    [Column("checkout")]
+    public bool? Checkout { get; set; }
+
     [ForeignKey("Bookid")]
     [InverseProperty("Addtocarts")]
     public virtual Book Book { get; set; } = null!;

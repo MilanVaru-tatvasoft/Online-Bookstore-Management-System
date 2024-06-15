@@ -62,7 +62,10 @@ public partial class User
     public string? Gender { get; set; }
 
     [InverseProperty("CreatedbyNavigation")]
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<Order> OrderCreatedbyNavigations { get; set; } = new List<Order>();
+
+    [InverseProperty("ModifiedbyNavigation")]
+    public virtual ICollection<Order> OrderModifiedbyNavigations { get; set; } = new List<Order>();
 
     [ForeignKey("Roleid")]
     [InverseProperty("Users")]

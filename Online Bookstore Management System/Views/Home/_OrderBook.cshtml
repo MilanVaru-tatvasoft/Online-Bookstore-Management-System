@@ -28,6 +28,9 @@
 
             <div class="modal-body">
                 <form class="" id="confirmOrderForm">
+                    <input type="text" asp-for="Orders" hidden />
+                    <input type="text" asp-for="orderdetails" hidden />
+
                     <input type="text" asp-for="@Model.bookId" hidden />
                     <input type="text" asp-for="@Model.customerId" hidden />
                     <div class="row mb-3">
@@ -84,7 +87,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="editCustomerName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="editCustomerName" name="updateCustomerName" value="@Model.UpdateCustomerName">
+                                    <input type="text" class="form-control" id="editCustomerName"  name="updateCustomerName" value="@Model.UpdateCustomerName">
                                 </div>
                                 <div class="form-group">
                                     <label for="editAddress" class="form-label">Address</label>
@@ -126,12 +129,13 @@
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editQuantityform">Cancel</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="getOrderConfirmation()">Confirm order</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmationModal"
+                    onclick="getOrderConfirmation()">Confirm order
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -212,5 +216,7 @@
     $('#btnEditQuantity').on('click', function () {
         $('#editForm').collapse('hide');
     });
+
+
 
 </script>

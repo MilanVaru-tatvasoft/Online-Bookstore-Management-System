@@ -19,7 +19,7 @@
                 <div class="form-group col-md-3 col-6">
                     <input type="email" class="form-control" id="email" name="email" placeholder="email ">
                 </div>
-               
+
                 <div class="form-group col-md-3 col-6">
                     <input type="text" class="form-control" id="city" name="city" placeholder="City">
                 </div>
@@ -65,10 +65,10 @@
                 @if (Model.orders.Count() != 0)
                 {
 
-                    @foreach (var i in Model.orders.OrderBy(x=>x.Orderdate))
+                    @foreach (var i in Model.orders.OrderBy(x => x.Orderdate))
                     {
                         var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
-                        <tr>
+                        <tr class="text-center">
                             <td>@i.Orderid</td>
                             <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Orderdate.ToString("yyyy-MM-dd")</td>
                             <td>-</td>
@@ -82,12 +82,41 @@
                             <td>@getStatus(statusid)</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
-                                    <button class="btn btn-info">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="btn btn-danger">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                    @if (i.Orderstatusid == 1)
+                                    {
+                                        <button class="btn btn-info" onclick="getacceptOrder(@i.Orderid,@i.Customerid)">
+                                            <i class="bi bi-clipboard-check-fill"></i>
+                                        </button>
+                                    }
+                                    else if (i.Orderstatusid == 2)
+                                    {
+                                        <button class="btn btn-warning" onclick="getShippedOrder(@i.Orderid,@i.Customerid)">
+                                            <i class="bi bi-truck"></i>
+                                        </button>
+                                    }
+                                    else if (i.Orderstatusid == 3)
+                                    {
+                                        <button class="btn btn-success" onclick="getDeliveredOrder(@i.Orderid,@i.Customerid)">
+                                            <i class="bi bi-check2-square"></i>
+                                        </button>
+                                    }
+
+                                    @if (i.Orderstatusid != 4)
+                                    {
+
+                                        <button class="btn btn-danger" onclick="getDeleteOrder(@i.Orderid,@i.Customerid)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-dark">
+                                            <i class="bi bi-file-earmark-check-fill"></i>
+                                        </button>
+                                        <button class="btn btn-secondary">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    }
                                 </div>
 
                             </td>
@@ -109,8 +138,8 @@
     $(document).ready(function () {
         var table = $('#ordersTable').DataTable({
             "pagingType": "full_numbers",
-            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
-            "pageLength": 5,
+            "lengthMenu": [[10, 20, -1], [10, 20, "All"]],
+            "pageLength": 10,
             language: {
                 oPaginate: {
                     sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
@@ -158,4 +187,146 @@
     function getStatus(value) {
         $('#statusname').val(value);
     }
+    function getacceptOrder(orderId, customerId) {
+        $.ajax({
+            method: "GET",
+            url: "/Admin/getacceptOrder",
+            data: { orderId: orderId, customerId: customerId },
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "order accepted",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+
+                        GetOrderList();
+                    })
+                } else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "order not accepted",
+                        showConfirmButton: true,
+                    }).then(() => {
+
+                        GetOrderList()
+                    });
+                }
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+    function getShippedOrder(orderId, customerId) {
+        $.ajax({
+            method: "GET",
+            url: "/Admin/getShippedOrder",
+            data: { orderId: orderId, customerId: customerId },
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "order Shipped",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+
+                        GetOrderList();
+                    })
+                } else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "order not Shipped",
+                        showConfirmButton: true,
+                    }).then(() => {
+
+                        GetOrderList()
+                    });
+                }
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+
+    function getDeliveredOrder(orderId, customerId) {
+        $.ajax({
+            method: "GET",
+            url: "/Admin/getDeliveredOrder",
+            data: { orderId: orderId, customerId: customerId },
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "order Delivered",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+
+                        GetOrderList();
+                    })
+                } else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "order not Delivered",
+                        showConfirmButton: true,
+                    }).then(() => {
+
+                        GetOrderList()
+                    });
+                }
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+    function getDeleteOrder(orderId, customerId) {
+        $.ajax({
+            method: "GET",
+            url: "/Admin/getDeleteOrder",
+            data: { orderId: orderId, customerId: customerId },
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "order Deleted",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+
+                        GetOrderList();
+                    })
+                } else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "order not Deleted",
+                        showConfirmButton: true,
+                    }).then(() => {
+
+                        GetOrderList()
+                    });
+                }
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
+
 </script>

@@ -1,4 +1,4 @@
-﻿@model DataAccess.CustomModels.CartListModel
+﻿@model DataAccess.CustomModels.OrderData
 
 <div class=" w-100 p-1 p-md-3 ">
     <div class="">
@@ -36,7 +36,7 @@
                                     <td>@obj.Book.Title</td>
                                     <td>@obj.Book.Price</td>
                                     <td>
-                                        <input type="number" class="quantity2" asp-for="@obj.Quantity" value="@obj.Quantity">
+                                        <input type="number" class="quantity2" id="quantity@(obj.Bookid)" asp-for="@obj.Quantity">
                                     </td>
                                     <td>
                                         @obj.Totalamount
@@ -44,7 +44,8 @@
                                     <td>
                                         <div class="d-flex gap-2">
                                             <button class="btn btn-warning" onclick="getAddToMyCart(@obj.Bookid,@obj.Cartid)">
-                                                add quantity</button>
+                                                add quantity
+                                            </button>
                                             <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">Remove </button>
                                         </div>
                                     </td>
@@ -72,13 +73,13 @@
                         Total Amount:  @obj.Totalamount
                     </h6>
                     <div class="w-100">
-                        <input type="number" class="quantity2  w-25"  asp-for="@obj.Quantity" value="@obj.Quantity" >
+                        <input type="number" class="quantity2  w-25" id="quantity@(obj.Bookid)" asp-for="@obj.Quantity" >
                     </div>
                     <div class="d-flex justify-content-end align-items-end gap-2  bottom-0">
                         <button class="btn btn-success" onclick="getAddToMyCart(@obj.Bookid,@obj.Cartid)">
                             <i class="bi-plus"></i>
 
-                            </button>
+                        </button>
                         <button class="btn btn-danger" onclick="getRemoveFromMyCart(@obj.Bookid,@obj.Cartid)">
                             <i class="bi-trash-fill"></i>
                         </button>
@@ -106,20 +107,20 @@
                             <p class="font-weight-bold">Gross Total:</p>
                         </div>
                         <div class="col-sm-6 text-right">
-                            <p><strong>10</strong></p>
-                            <p><strong>$100</strong></p>
-                            <p><strong>$10</strong></p>
-                            <p><strong>$5</strong></p>
-                            <p><strong>$8</strong></p>
+                            <p><strong>@Model.totalBooks</strong></p>
+                            <p><strong>$@Model.totalAmount</strong></p>
+                            <p><strong>@Model.discountPercentage %</strong></p>
+                            <p><strong>$@Model.shippingAmount</strong></p>
+                            <p><strong>@Model.tax %</strong></p>
                             <hr>
-                            <p class="font-weight-bold">$123</p>
+                            <p class="font-weight-bold">$@Model.Grosstotal</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="w-100 d-flex justify-content-end align-items-md-start me-5 mt-5">
 
-                <button class="btn-lg btn-primary">
+                <button class="btn-lg btn-primary" onclick="getCheckout()">
                     Proceed to checkout
                 </button>
 
@@ -130,61 +131,35 @@
 
 <div id="ModalAction"></div>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
-@* <script>
-    $(document).ready(function () {
-        var table = $('#MyCartTable').DataTable({
-            "pagingType": "simple", // Use simple pagination
-            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
-            "pageLength": 5,
-            language: {
-                oPaginate: {
-                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
-                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
-                }
-            },
-            "dom": '<"top"lf>rt<"bottom"ip>'
-        });
 
-        // Hide the default pagination controls
-        $('.dataTables_paginate').hide();
-
-        // Append custom pagination controls
-        var customPagination = $('<ul class="pagination justify-content-center">' +
-            '<li class="paginate_button page-item previous" id="MyCartTable_first"><a href="#" class="page-link">First</a></li>' +
-            '<li class="paginate_button page-item previous" id="MyCartTable_previous"><a href="#" class="page-link"><i class="bi bi-caret-left-fill text-info"></i></a></li>' +
-            '<li class="paginate_button page-item next" id="MyCartTable_next"><a href="#" class="page-link"><i class="bi bi-caret-right-fill text-info"></i></a></li>' +
-            '<li class="paginate_button page-item next" id="MyCartTable_last"><a href="#" class="page-link">Last</a></li>' +
-            '</ul>');
-        customPagination.appendTo('#MyCartTable_wrapper .dataTables_length').css('float', 'right');
-
-        // Handle pagination events
-        $('#MyCartTable_first').click(function () {
-            table.page('first').draw('page');
-        });
-        $('#MyCartTable_previous').click(function () {
-            table.page('previous').draw('page');
-        });
-        $('#MyCartTable_next').click(function () {
-            table.page('next').draw('page');
-        });
-        $('#MyCartTable_last').click(function () {
-            table.page('last').draw('page');
-        });
-    });
-</script>
- *@
 <script>
+    function getCheckout() {
+        event.preventDefault();
+       
+        $.ajax({
+            method: "GET",
+            url: "/Home/getCheckout2",
+
+
+            success: function (result) {
+                $('#custDashboard').empty()
+                $('#UserProfile').empty()
+                $('#UserProfile').html(result)
+
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
     function getAddToMyCart(bookId, cartId) {
         event.preventDefault();
-        var quantity = $('.quantity2').val();
+        var quantity = $(`#quantity${bookId}`).val();
         $.ajax({
             method: "GET",
             url: "/Home/getAddToCart",
             data: { bookId: bookId, cartId: cartId, quantity: quantity },
-
 
             success: function (result) {
                 if (result.code == 401) {
@@ -194,8 +169,9 @@
                         title: " Added To Cart",
                         showConfirmButton: false,
                         timer: 1500
-                    })
-                    getCartList();
+                    }).then(() => {
+                        getCartList();
+                    });
                 }
 
             },

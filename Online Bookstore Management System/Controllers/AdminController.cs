@@ -234,5 +234,50 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(new { MonthlySales = model.monthlySales, categoryList = model.categorties, NumberOfBooks = model.noofbooks });
 
         }
+        public IActionResult getAcceptOrder(int orderId, int customerId)
+        {
+            if(_adminDashboard.getAcceptorder(orderId, customerId))
+            {
+                return Json(new { code = 401 });
+            }
+            else
+            {
+                return Json(new { code = 402 });
+            }
+        }
+        public IActionResult getShippedOrder(int orderId, int customerId)
+        {
+            if(_adminDashboard.getShippedorder(orderId, customerId))
+            {
+                return Json(new { code = 401 });
+            }
+            else
+            {
+                return Json(new { code = 402 });
+            }
+        }
+        public IActionResult getDeliveredOrder(int orderId, int customerId)
+        {
+            if(_adminDashboard.getDeliveredOrder(orderId, customerId))
+            {
+                return Json(new { code = 401 });
+            }
+            else
+            {
+                return Json(new { code = 402 });
+            }
+        }
+        public IActionResult getDeleteOrder(int orderId, int customerId)
+        {
+            if (_adminDashboard.getDeletedOrder(orderId, customerId))
+            {
+                return Json(new { code = 401 });
+            }
+            else
+            {
+                return Json(new { code = 402 });
+            }
+        }
+
     }
 }

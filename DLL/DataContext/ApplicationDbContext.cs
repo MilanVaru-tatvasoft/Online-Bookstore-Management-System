@@ -34,6 +34,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Orderdetail> Orderdetails { get; set; }
 
+    public virtual DbSet<Payment> Payments { get; set; }
+
     public virtual DbSet<Publisher> Publishers { get; set; }
 
     public virtual DbSet<RatingReview> RatingReviews { get; set; }
@@ -54,6 +56,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Cartid).HasName("addtocart_pkey");
 
+            entity.Property(e => e.Checkout).HasDefaultValueSql("false");
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -123,9 +126,11 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.Orders).HasConstraintName("orders_createdby_fkey");
+            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.OrderCreatedbyNavigations).HasConstraintName("orders_createdby_fkey");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("orders_customerid_fkey");
+
+            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.OrderModifiedbyNavigations).HasConstraintName("orders_modifiedby_fkey");
         });
 
         modelBuilder.Entity<Orderdetail>(entity =>
@@ -137,6 +142,21 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Book).WithMany(p => p.Orderdetails).HasConstraintName("orderdetails_bookid_fkey");
 
             entity.HasOne(d => d.Order).WithMany(p => p.Orderdetails).HasConstraintName("orderdetails_orderid_fkey");
+        });
+
+        modelBuilder.Entity<Payment>(entity =>
+        {
+            entity.HasKey(e => e.PaymentId).HasName("payment_pkey");
+
+            entity.Property(e => e.PaymentDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Payments)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("payment_customer_id_fkey");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.Payments)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("payment_order_id_fkey");
         });
 
         modelBuilder.Entity<Publisher>(entity =>

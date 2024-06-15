@@ -19,10 +19,14 @@ namespace BusinessLogic.Repository
     public class AdminDashboardRepo : IAdminDashboardRepo
     {
         private readonly ApplicationDbContext _context;
-        public AdminDashboardRepo(ApplicationDbContext context)
+        private readonly IAuthentication _authentication;
+        private readonly IHttpContextAccessor _httpContext;
+
+        public AdminDashboardRepo(ApplicationDbContext context, IAuthentication authentication, IHttpContextAccessor httpContext)
         {
             _context = context;
-
+            _authentication = authentication;
+            _httpContext = httpContext;
         }
         public AdminDashboardModel getAdminData()
         {
@@ -40,27 +44,27 @@ namespace BusinessLogic.Repository
             model.ProcessingOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 2)?.OrderCount ?? 0;
             model.shippedOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 3)?.OrderCount ?? 0;
             model.deliveredOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 4)?.OrderCount ?? 0;
-            model.numberOfBooks = _context.Books.Where(x=>x.Isdeleted != true).Count();
+            model.numberOfBooks = _context.Books.Where(x => x.Isdeleted != true).Count();
             model.numberOfCustomer = _context.Customers.Count();
 
-                decimal sellofThisMonth = 0;
-            
-                var date = DateTime.Today;
-                var monthlyOrders = _context.Orders
-                   .Where(o => o.Orderdate.Year == date.Year && o.Orderdate.Month == date.Month)
-                   .OrderBy(o => o.Orderid)
-                   .ToList();
+            decimal sellofThisMonth = 0;
 
-                if (monthlyOrders != null && monthlyOrders.Count > 0)
-                {
+            var date = DateTime.Today;
+            var monthlyOrders = _context.Orders
+               .Where(o => o.Orderdate.Year == date.Year && o.Orderdate.Month == date.Month)
+               .OrderBy(o => o.Orderid)
+               .ToList();
+
+            if (monthlyOrders != null && monthlyOrders.Count > 0)
+            {
                 sellofThisMonth = monthlyOrders.Sum(o => o.Totalamount);
-                }
+            }
 
 
 
             model.sellofThisMonth = sellofThisMonth;
             return model;
-            
+
         }
         public OrderListModel getOrderListData()
         {
@@ -543,6 +547,143 @@ namespace BusinessLogic.Repository
             model.noofbooks = booksSoldPerCategory;
 
             return model;
+        }
+
+     
+
+        public bool getAcceptorder(int orderId, int customerId)
+        {
+            if (orderId != 0 && customerId != 0)
+            {
+                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
+
+                if (ord != null)
+                {
+                    ord.Orderstatusid = 2;
+                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
+                    ord.Modifieddate = DateTime.Now;
+                    _context.SaveChanges();
+
+                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
+                    if (customer != null)
+                    {
+                        string recipientEmail = customer.Email;
+                        string status = "Your order has been accepted by the admin. It will be delivered to you very soon.";
+                        string body = _authentication.ordermessage(status);
+                        string subject = "Order Acceptance";
+
+                        _authentication.emailSender(recipientEmail, subject, body);
+                    }
+
+                }
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool getShippedorder(int orderId, int customerId)
+        {
+            if (orderId != 0 && customerId != 0)
+            {
+                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
+
+                if (ord != null)
+                {
+                    ord.Orderstatusid = 3;
+                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
+                    ord.Modifieddate = DateTime.Now;
+                    _context.SaveChanges();
+
+                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
+                    if (customer != null)
+                    {
+                        string recipientEmail = customer.Email;
+                        string status = "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
+                        string body = _authentication.ordermessage(status);
+                        string subject = "Order Shipped";
+
+                        _authentication.emailSender(recipientEmail, subject, body);
+                    }
+
+                }
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool getDeliveredOrder(int orderId, int customerId)
+        {
+            if (orderId != 0 && customerId != 0)
+            {
+                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
+
+                if (ord != null)
+                {
+                    ord.Orderstatusid = 4;
+                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
+                    ord.Modifieddate = DateTime.Now;
+                    _context.SaveChanges();
+
+                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
+                    if (customer != null)
+                    {
+                        string recipientEmail = customer.Email;
+                        string status = "Your order has been  delivered to you. we hope You received Order!";
+                        string body = _authentication.ordermessage(status);
+                        string subject = "Order Delivered";
+
+                        _authentication.emailSender(recipientEmail, subject, body);
+                    }
+
+                }
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool getDeletedOrder(int orderId, int customerId)
+        {
+            if (orderId != 0 && customerId != 0)
+            {
+                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
+
+                if (ord != null)
+                {
+                    ord.Isdeleted = true;
+                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
+                    ord.Modifieddate = DateTime.Now;
+                    _context.SaveChanges();
+
+                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
+                    if (customer != null)
+                    {
+                        string recipientEmail = customer.Email;
+                        string status = "Your order has been  Deleted as per your request!";
+                        string body = _authentication.ordermessage(status);
+                        string subject = "Order Deleted";
+
+                        _authentication.emailSender(recipientEmail, subject, body);
+                    }
+
+                }
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
         }
 
 

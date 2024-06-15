@@ -13,19 +13,21 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogic.Repository
 {
     public class CustomerRepo : ICustomerRepo
     {
         private readonly ApplicationDbContext _context;
-        public CustomerRepo(ApplicationDbContext context)
+        private readonly IAuthentication _authentication;
+        public CustomerRepo(ApplicationDbContext context, IAuthentication authentication)
         {
             _context = context;
-
+            _authentication = authentication;
         }
 
-       
+
 
         public Customer_MainPage getdata(Customer_MainPage model, int? userId, int pageNumber)
         {
@@ -39,7 +41,7 @@ namespace BusinessLogic.Repository
 
             model.UserId = (int?)userId;
 
-          
+
 
             if (model.search1 != null)
             {
@@ -200,8 +202,8 @@ namespace BusinessLogic.Repository
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
                 itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved != true).ToList().Count(),
-                reviews = _context.RatingReviews.Where(x=>x.BookId == bookId).OrderByDescending(x=>x.RatingDate).ToList(),
-                customers =_context.Customers.ToList(),
+                reviews = _context.RatingReviews.Where(x => x.BookId == bookId).OrderByDescending(x => x.RatingDate).ToList(),
+                customers = _context.Customers.ToList(),
 
 
             };
@@ -232,6 +234,8 @@ namespace BusinessLogic.Repository
                 UpdateOrderAddress = customer.Address,
                 updateCity = customer.City,
                 UpdateQuantity = 1,
+                orderdetails = _context.Orderdetails.ToList(),
+                Orders = _context.Orders.Where(x => x.Isdeleted != true).ToList(),
             };
 
             return orderdata;
@@ -241,6 +245,8 @@ namespace BusinessLogic.Repository
         {
             int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
             var cartData = _context.Addtocarts.FirstOrDefault(x => x.Cartid == cartId);
+            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == bookId);
+
             if (quantity == null && quantity == 0)
             {
                 quantity = 1;
@@ -258,9 +264,7 @@ namespace BusinessLogic.Repository
                     Totalamount = quantity * price,
                     Isremoved = false,
                     CreatedDate = DateTime.Now,
-
-
-
+                    Checkout = false,
                 };
                 _context.Addtocarts.Add(addtocart);
                 _context.SaveChanges();
@@ -273,6 +277,10 @@ namespace BusinessLogic.Repository
                 cartData.UpdatedDate = DateTime.Now;
                 _context.SaveChanges();
             }
+
+
+            book.Stockquantity -= (int)quantity;
+            _context.Update(book);
         }
         public void GetRemoveFromCart(int cartId, int? userId)
         {
@@ -283,74 +291,181 @@ namespace BusinessLogic.Repository
             cartData.UpdatedDate = DateTime.Now;
             _context.SaveChanges();
 
+            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == cartData.Bookid);
+
+
+            book.Stockquantity += (int)cartData.Quantity;
+            _context.Update(book);
+
         }
-        public void confirmOrder(OrderData data, int? userId)
+
+        public int confirmOrder(OrderData data, int? userId)
         {
             int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
             Book? book = _context.Books.FirstOrDefault(x => x.Bookid == data.bookId);
 
-            if (custId != null && book != null)
+            data.Quantity = data.Quantity ?? 0;
+            decimal quantity = (decimal)data.Quantity;
+            decimal totalAmount = (decimal)(data.Price * quantity);
+
+
+            Order order = new Order()
             {
-                decimal quantity = (decimal)data.Quantity;
-                decimal totalAmount = (decimal)(data.Price * quantity);
+                Customerid = custId,
+                Customername = data.CustomerName,
+                Email = data.Email,
+                Phonenumber = data.PhoneNumber,
+                Address = data.OrderAddress,
+                City = data.city,
+                Orderdate = DateTime.Today.Date,
+                Orderstatusid = 1,
+                Createdby = userId,
+                Createddate = DateTime.Now,
+                Isdeleted = false,
+                Totalamount = totalAmount
+            };
 
-                Order order = new Order()
-                {
-                    Customername = data.CustomerName,
-                    Email = data.Email,
-                    Phonenumber = data.PhoneNumber,
-                    Address = data.OrderAddress,
-                    City = data.city,
-                    Customerid = custId,
-                    Orderdate = DateTime.Today.Date,
-                    Orderstatusid = 1,
-                    Createdby = userId,
-                    Createddate = DateTime.Now,
-                    Isdeleted = false,
-                    Totalamount = totalAmount
-                };
 
-                _context.Orders.Add(order);
+            _context.Orders.Add(order);
+            _context.SaveChanges();
 
-                Orderdetail orderdetail = new Orderdetail()
-                {
-                    Orderid = order.Orderid,
-                    Bookid = data.bookId,
-                    Price = book.Price,
-                    Quantity = (int)data.Quantity,
-                    Totalamount = totalAmount,
-                    Createdby = userId.ToString(),
-                    Createddate = DateTime.Now
-                };
+            Orderdetail orderdetail = new Orderdetail()
+            {
+                Orderid = order.Orderid,
+                Bookid = data.bookId,
+                Price = book.Price,
+                Quantity = (int)data.Quantity,
+                Totalamount = totalAmount,
+                Createdby = userId.ToString(),
+                Createddate = DateTime.Now
+            };
 
-                _context.Orderdetails.Add(orderdetail);
+            _context.Orderdetails.Add(orderdetail);
 
-                book.Stockquantity -= (int)data.Quantity;
-                _context.Update(book);
+            book.Stockquantity -= (int)data.Quantity;
+            _context.Update(book);
 
-                _context.SaveChanges();
-            }
+            _context.SaveChanges();
+
+            data.Orders = _context.Orders.Where(x => x.Orderid == order.Orderid).ToList();
+            return order.Orderid;
+
+
+        }
+        public int confirmOrder2(OrderData data, int? userId)
+        {
+            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == data.bookId);
+
+            var customerId = _context.Customers
+    .Where(x => x.Userid == userId)
+    .Select(x => x.Customerid)
+    .FirstOrDefault();
+
+            var addtocart = _context.Addtocarts
+                .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
+                .Include(a => a.Book)
+                .ToList();
+
+
+            Order order = new Order()
+            {
+                Customerid = customerId,
+                Customername = data.CustomerName,
+                Email = data.Email,
+                Phonenumber = data.PhoneNumber,
+                Address = data.OrderAddress,
+                City = data.city,
+                Orderdate = DateTime.Today.Date,
+                Orderstatusid = 1,
+                Createdby = userId,
+                Createddate = DateTime.Now,
+                Isdeleted = false,
+                //Totalamount = totalAmount
+            };
+
+
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+            Orderdetail orderdetail = new Orderdetail()
+            {
+                Orderid = order.Orderid,
+                Bookid = data.bookId,
+                Price = book.Price,
+                Quantity = (int)data.Quantity,
+                //Totalamount = totalAmount,
+                Createdby = userId.ToString(),
+                Createddate = DateTime.Now
+            };
+
+            _context.Orderdetails.Add(orderdetail);
+
+            book.Stockquantity -= (int)data.Quantity;
+            _context.Update(book);
+
+            _context.SaveChanges();
+
+            data.Orders = _context.Orders.Where(x => x.Orderid == order.Orderid).ToList();
+            return order.Orderid;
 
 
         }
 
-        public CartListModel getCartList(int? UserId)
-        {
-            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == UserId)?.Customerid ?? 0;
-            var addtocart = _context.Addtocarts
-                .Where(x => x.Customerid == customerId && x.Isremoved != true)
-                .Include(a => a.Book)
-                .ToList(); 
 
-            var model = new CartListModel
+
+        public OrderData getCartList(int? UserId)
+        {
+            var customerId = _context.Customers
+     .Where(x => x.Userid == UserId)
+     .Select(x => x.Customerid)
+     .FirstOrDefault();
+
+            var addtocart = _context.Addtocarts
+                .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
+                .Include(a => a.Book)
+                .ToList();
+
+            var totalBooks = addtocart.Sum(a => a.Quantity);
+            var totalAmount = addtocart.Sum(a => a.Quantity * a.Book.Price);
+            var tax = 3m;
+            var discountPercentage = 5m;
+            var shippingAmount = 10m;
+
+            var model = new OrderData
             {
                 categories = _context.Categories.ToList(),
-                Authors = _context.Authors.ToList(), 
-                publishers = _context.Publishers.ToList(), 
+                Authors = _context.Authors.ToList(),
+                publishers = _context.Publishers.ToList(),
                 addtocarts = addtocart,
-                bookList = addtocart.Select(a => a.Book).ToList(), 
-                itemCount = addtocart.Count()
+                bookList = addtocart.Select(a => a.Book).ToList(),
+                itemCount = addtocart.Count(),
+                totalBooks = totalBooks,
+                totalAmount = totalAmount,
+                discountPercentage = discountPercentage,
+                shippingAmount = shippingAmount,
+                tax = tax,
+
+
             };
+
+            if (totalBooks > 0)
+            {
+                var discount = totalAmount * (discountPercentage / 100);
+                var taxAmount = totalAmount * (tax / 100);
+                var grossTotal = totalAmount + taxAmount + shippingAmount - discount;
+
+                model.tax = taxAmount;
+                model.Grosstotal = grossTotal;
+            }
+            else
+            {
+                model.discountPercentage = 0;
+                model.tax = 0;
+                model.Grosstotal = 0;
+                model.shippingAmount = 0;
+            }
+
+
             return model;
 
         }
@@ -370,22 +485,53 @@ namespace BusinessLogic.Repository
             }
             else
             {
-            RatingReview rate = new RatingReview()
-            {
-                CustomerId = customerId,
-                BookId = (int)model.bookId,
-                Rating = model.ratingValue,
-                Reviews = model.reviewNote,
-                RatingDate = DateTime.Now,
+                RatingReview rate = new RatingReview()
+                {
+                    CustomerId = customerId,
+                    BookId = (int)model.bookId,
+                    Rating = model.ratingValue,
+                    Reviews = model.reviewNote,
+                    RatingDate = DateTime.Now,
 
-            };
+                };
                 _context.RatingReviews.Add(rate);
                 _context.SaveChanges();
-                
+
             }
         }
 
-       
+        public bool getPaymentDone(string paymentType, int OrderId, int? userId)
+        {
+            var customer = _context.Customers.FirstOrDefault(x => x.Userid == userId);
+            var order = _context.Orders.FirstOrDefault(x => x.Orderid == OrderId);
+            if (customer.Customerid != 0)
+            {
+
+                Payment payment = new Payment()
+                {
+                    CustomerId = customer.Customerid,
+                    OrderId = (int)OrderId,
+                    PaymentMethod = paymentType,
+                    PaymentDate = DateTime.Now,
+                    Amount = order.Totalamount,
+                    PaymentStatus = "Payment Done",
+
+                };
+                _context.Payments.Add(payment);
+                _context.SaveChanges(true);
+
+                string recipientEmail = customer.Email;
+                string status = "Your order has been  placed , ThankYou.";
+                string body = _authentication.ordermessage(status);
+                string subject = "Order Placed";
+
+                _authentication.emailSender(recipientEmail, subject, body);
+
+                return true;
+            }
+            return false;
+        }
+
 
     }
 }

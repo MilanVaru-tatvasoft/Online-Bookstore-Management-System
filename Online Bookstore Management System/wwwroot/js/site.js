@@ -135,21 +135,21 @@ function getCartList() {
     });
 }
 function getcustDash() {
-  
-        var formData = $('#searchForm').serialize();
-        $.ajax({
-            method: "POST",
-            url: "/Home/getcustDash",
-            data: formData,
-            success: function (result) {
-                $('#custDashboard').html(result);
-                $('#UserProfile').empty();
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-        });
-   
+
+    var formData = $('#searchForm').serialize();
+    $.ajax({
+        method: "POST",
+        url: "/Home/getcustDash",
+        data: formData,
+        success: function (result) {
+            $('#custDashboard').html(result);
+            $('#UserProfile').empty();
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+
 
     $('#loader2').show();
 
@@ -320,23 +320,19 @@ function getOrderConfirmation() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/getOrderConfirmation",
+        url: "/Home/getCheckout",
         data: $('#confirmOrderForm').serialize(),
 
 
         success: function (result) {
 
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Order Confirmed",
-                showConfirmButton: false,
-                timer: 1500
-            })
-            $('#orderDetailsModal').modal('hide').on('hidden.bs.modal', function () {
-                ViewBooksPage(result);
-            });
         
+            $('#orderDetailsModal').modal('hide');
+            $('#custDashboard').empty()
+            $('#UserProfile').empty()
+            $('#UserProfile').html(result)     
+      
+
 
         },
         error: function () {
@@ -344,6 +340,23 @@ function getOrderConfirmation() {
         }
     });
 }
+
+//function getCheckOutPage(result)
+//{
+//    console.log(result);
+//    $.ajax({
+//        method: "POST",
+//        url: "/Home/getCheckout",
+//        data: result,
+//        success: function (response) {
+//            $('#custDashboard').empty()
+//            $('#UserProfile').empty()
+//            $('#UserProfile').html(result)        },
+//        error: function () {
+//            alert('Error loading checkout page');
+//        }
+//    });
+//}
 
 function AdminDashboard() {
     $.ajax({
@@ -882,10 +895,10 @@ function getRemoveFromMyCart(bookId, cartId) {
                         icon: "success",
                         showConfirmButton: false,
                         timer: 1500
-
+                    }).then(() => {
+                        cartCount(0);
+                        getCartList();
                     });
-                    cartCount(0);
-                    getCartList();
 
                 },
                 error: function () {

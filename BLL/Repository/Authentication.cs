@@ -11,6 +11,7 @@ using DataAccess.CustomModels;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Net.Mail;
 using System.Net;
+using System.Collections;
 
 namespace BusinessLogic.Repository
 {
@@ -72,50 +73,93 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Email == Email);
             if (user != null)
             {
-                string senderEmail = "tatva.dotnet.milanvaru@outlook.com";
-                string senderPassword = "vpgozcxbptbunspz";
+                
                 string recipientEmail = Email;
                 string resetPasswordLink = "https://localhost:44369/home/ResetPasswordPage?email=" + recipientEmail;
                 string body = $"Click the link below to reset your password:<br/><a href='{resetPasswordLink}'>click Here</a>";
                 string subject = "Reset Your Password";
                 int result;
 
-                var client = new SmtpClient("smtp.office365.com", 587)
-                {
-                    EnableSsl = true,
-                    Credentials = new NetworkCredential(senderEmail, senderPassword),
-
-                };
-
-                MailMessage mailMessage = new MailMessage(from: senderEmail, to: recipientEmail, subject, body);
-                mailMessage.IsBodyHtml = true;
-
-                try
-                {
-                    client.SendMailAsync(mailMessage);
-                    result = 1;
-                    Console.WriteLine("Email sent successfully!");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to send email: {ex.Message}");
-                    result = 0;
-                }
-
-                Emaillog emaillog = new Emaillog()
-                {
-                    Emailid = user.Email,
-                    Message = body,
-                    Userid = user.Userid,
-                    Senddate = DateTime.Now,
-                    Issent = result == 1 ? true : false,
-                };
-                _context.Emaillogs.Add(emaillog);
-                _context.SaveChanges();
+               emailSender(Email,subject,body);
 
                 return true;
             }
             return false;
+        }
+
+        public void emailSender(string email,string subject, string message)
+        {
+            var mail = "tatva.dotnet.milanvaru@outlook.com";
+            var password = "vpgozcxbptbunspz";
+            int value;
+            var client = new SmtpClient("smtp.office365.com", 587)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(mail, password)
+            };
+            MailMessage mailMessage = new MailMessage(from: mail, to: email, subject, message);
+            mailMessage.IsBodyHtml = true;
+            try
+            {
+                client.SendMailAsync(mailMessage);
+                value = 1;
+
+            }
+            catch (Exception ex)
+            {
+                value = 0;
+            }
+            emailLogData(email, subject, value);
+
+        }
+        public void emailLogData(string email, string subject, int sentvalue)
+        {
+            var user = _context.Users.FirstOrDefault(x=>x.Email ==  email);
+            Emaillog emaillog = new Emaillog()
+            {
+                Emailid = email,
+                Userid = user.Userid,
+                Subject = subject,
+                Senddate = DateTime.Now,
+                Issent = sentvalue == 1 ? true : false,
+            };
+            _context.Emaillogs.Add(emaillog);
+            _context.SaveChanges();
+           
+        }
+        public string ordermessage(string status)
+        {
+            string message = @"
+        <html>
+        <head>
+            <style>
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    border-radius: 10px;
+                }
+                h3 {
+                    color: #333333;
+                }
+             
+             
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+             
+                <h3>BookStore</h3>
+                <p>Your order status:</p>
+                <p class='status'>" + status + @"</p>
+                <p>Thank you for shopping with us!</p>
+                <h4>Best regards,</h4>
+                <h4>The BookStore Team</h4>
+            </div>
+        </body>
+        </html>";
+            return message;
         }
     }
     public class Authorize : Attribute, IAuthorizationFilter

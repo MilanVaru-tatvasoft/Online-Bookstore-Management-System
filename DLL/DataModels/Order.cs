@@ -62,13 +62,20 @@ public partial class Order
     public DateTime? Modifieddate { get; set; }
 
     [ForeignKey("Createdby")]
-    [InverseProperty("Orders")]
+    [InverseProperty("OrderCreatedbyNavigations")]
     public virtual User? CreatedbyNavigation { get; set; }
 
     [ForeignKey("Customerid")]
     [InverseProperty("Orders")]
     public virtual Customer? Customer { get; set; }
 
+    [ForeignKey("Modifiedby")]
+    [InverseProperty("OrderModifiedbyNavigations")]
+    public virtual User? ModifiedbyNavigation { get; set; }
+
     [InverseProperty("Order")]
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
+
+    [InverseProperty("Order")]
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }
