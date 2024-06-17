@@ -1,140 +1,130 @@
-﻿
-    <style>
-        /* Custom Styles */
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+﻿@model DataAccess.CustomModels.PaymentBillDetails
+<style>
+    /* Custom Styles */
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .bill-header,
+    .bill-details,
+    .bill-summary {
+        background-color: #f8f9fa;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+        .bill-header h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        .bill-details h3 {
+            margin-top: 0;
         }
 
-        .bill-header,
-        .bill-details,
-        .bill-summary {
-            background-color: #f8f9fa;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+        .bill-details p {
+            margin: 5px 0;
         }
 
-            .bill-header h2 {
-                margin-top: 0;
-                margin-bottom: 10px;
-                text-align: center;
-            }
+        .bill-summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-            .bill-details h3 {
-                margin-top: 0;
-            }
+        .bill-summary th,
+        .bill-summary td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
 
-            .bill-details p {
-                margin: 5px 0;
-            }
+        .bill-summary th {
+            background-color: #f2f2f2;
+        }
 
-            .bill-summary table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .bill-summary th,
-            .bill-summary td {
-                padding: 8px;
-                border-bottom: 1px solid #ddd;
-                text-align: left;
-            }
-
-            .bill-summary th {
-                background-color: #f2f2f2;
-            }
-
-            .bill-summary tfoot {
-                font-weight: bold;
-            }
-    </style>
+        .bill-summary tfoot {
+            font-weight: bold;
+        }
+</style>
 <
-    <div class="container">
-        <div class="bill-header">
-            <h2>Bookstore Bill</h2>
-        </div>
-        <div class="bill-details">
-            <h4>Billing Details</h4>
-            <p><strong>Name:</strong> John Doe</p>
-            <p><strong>Address:</strong> 1234 Main St, Apartment 101, New York, NY, 10001</p>
-            <p><strong>Email:</strong> abc@gmail.com</p>
-            <p><strong>Phone Number:</strong> 9999999999</p>
-            <hr />
-      
-            <h3>Your Orders</h3>
-            <table class=" table spinner-bordered">
-                <thead>
-                    <tr>
-                        <th>Book Title</th>
-                        <th>Author</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Book Title 1</td>
-                        <td>Author 1</td>
-                        <td>$12</td>
-                        <td>2</td>
-                        <td>$24</td>
-                    </tr>
-                    <tr>
-                        <td>Book Title 2</td>
-                        <td>Author 2</td>
-                        <td>$12</td>
-                        <td>2</td>
-                        <td>$24</td>
-                    </tr>
-                    <tr>
-                        <td>Book Title 3</td>
-                        <td>Author 3</td>
-                        <td>$12</td>
-                        <td>2</td>
-                        <td>$24</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3">Subtotal</td>
-                        <td>6</td>
-                        <td>$25</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">Discount</td>
-                        <td>$2</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">Shipping Charge</td>
-                        <td>$5</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">Gross Total</td>
-                        <td>6</td>
-                        <td>$28</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        <div>
-            <h5>Thank You for Shopping!...</h5>
-            <h4 class="fw-bolder">BookStore Team</h4>
-        </div>
+<div class="container">
+    <div class="bill-header">
+        <h2>Bookstore Bill</h2>
     </div>
+    <div class="bill-details">
+        <h4>Billing Details</h4>
+        <p><strong>Name:</strong> @Model.Orders.Customername</p>
+        <p><strong>Address:</strong> @Model.Orders.Address</p>
+        <p><strong>Email:</strong> @Model.Orders.Email</p>
+        <p><strong>Phone Number:</strong> @Model.Orders.Phonenumber</p>
+        <hr />
+
+        <h3>Your Orders</h3>
+        <table class=" table spinner-bordered">
+            <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.bookList)
+                {
+                    <tr>
+                        <td>@o.Title</td>
+                        <td>@o.Author.Name</td>
+                        <td>$@o.Price</td>
+                        <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Quantity</td>
+                        <td>$@Model.orderdetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Totalamount</td>
+                    </tr>
+                }
+
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Subtotal</td>
+
+                    <td>@Model.totalBooks</td>
+                    <td>$@Model.TotalAmount
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">Discount</td>
+                    <td>@Model.discountPercentage %</td>
+                </tr>
+                <tr>
+                    <td colspan="4">Shipping Charge</td>
+                    <td>$@Model.shippingAmount</td>
+                </tr>
+                <tr>
+                    <td colspan="4">Tax</td>
+                    <td>$@Model.tax</td>
+                </tr>
+                <tr>
+                    <td colspan="3">Gross Total</td>
+                    <td>@Model.totalBooks</td>
+                    <td>$@Model.Grosstotal</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div>
+        <h5>Thank You for Shopping!...</h5>
+        <h4 class="fw-bolder">BookStore Team</h4>
+    </div>
+</div>
 
 

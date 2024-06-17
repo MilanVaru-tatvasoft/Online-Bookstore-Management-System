@@ -5,6 +5,16 @@
         string? status = Model.statuses?.FirstOrDefault(c => c.StatusId == statusId).StatusName;
         return status;
     }
+    public int totalquantity(int orderId)
+    {
+        int i = 0;
+        if(orderId!= 0)
+        {
+            i = Model.orderdetails.Where(x => x.Orderid == orderId).Sum(x => x.Quantity);
+        }
+
+        return i;
+    }
 }
 <div class="container-fluid">
 
@@ -67,18 +77,18 @@
 
                     @foreach (var i in Model.orders.OrderBy(x => x.Orderdate))
                     {
-                        var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
+                        var statusid =i.Orderstatusid;
                         <tr class="text-center">
                             <td>@i.Orderid</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Orderdate.ToString("yyyy-MM-dd")</td>
-                            <td>-</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Customername</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Email</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Phonenumber</td>
+                            <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
+                            <td>@i.Orderdate.AddDays(6).ToString("yyyy-MM-dd")</td>
+                            <td>@i.Customername</td>
+                            <td>@i.Email</td>
+                            <td>@i.Phonenumber</td>
 
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Address</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).City</td>
-                            <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
+                            <td>@i.Address</td>
+                            <td>@i.City</td>
+                            <td>@totalquantity(i.Orderid)/ $ @i.Totalamount</td>
                             <td>@getStatus(statusid)</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
