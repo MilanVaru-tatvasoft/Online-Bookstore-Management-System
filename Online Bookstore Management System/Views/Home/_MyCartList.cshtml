@@ -108,7 +108,7 @@
                         </div>
                         <div class="col-sm-6 text-right">
                             <p><strong>@Model.totalBooks</strong></p>
-                            <p><strong>$@Model.totalAmount</strong></p>
+                            <p><strong>$@Model.TotalAmount</strong></p>
                             <p><strong>@Model.discountPercentage %</strong></p>
                             <p><strong>$@Model.shippingAmount</strong></p>
                             <p><strong>@Model.tax %</strong></p>
@@ -139,7 +139,8 @@
        
         $.ajax({
             method: "GET",
-            url: "/Home/getCheckout2",
+            url: "/Home/getCheckout",
+
 
 
             success: function (result) {

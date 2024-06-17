@@ -1,64 +1,25 @@
 ﻿@model DataAccess.CustomModels.Customer_MainPage;
+
 @functions {
     public bool ischecked(int AuthorId)
     {
-        if (Model.search2 != null)
-        {
-            if (Model.search2.Contains(AuthorId))
-            {
-                return true;
-            }
-        }
-        return false;
-
+        return Model.search2 != null && Model.search2.Contains(AuthorId);
     }
+
     public bool ischecked2(int catId)
     {
-        if (Model.search2 != null)
-        {
-            if (Model.search3.Contains(catId))
-            {
-                return true;
-            }
-        }
-        return false;
-
+        return Model.search3 != null && Model.search3.Contains(catId);
     }
+
     public bool ischecked3(int pubId)
     {
-        if (Model.search4 != null)
-        {
-            if (Model.search4.Contains(pubId))
-            {
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-    public decimal calculateAvgRating(int bookId)
-    {
-        var reviews = Model.reviews.Where(x => x.BookId == bookId).Select(i => i.Rating).ToList();
-
-        if (reviews.Any())
-        {
-            decimal avgRating = (decimal)reviews.Average();
-            return  avgRating;
-        }
-        else
-        {
-            return 0;
-        }
+        return Model.search4 != null && Model.search4.Contains(pubId);
     }
 }
-@* dropdown css *@
-<style>
-    /* Inside your ASP.NET Core MVC CSS file */
 
+<style>
     .dropdown {
         position: relative;
-        font-size: 14px;
         color: #333;
     }
 
@@ -120,9 +81,6 @@
         margin-right: 4px;
     }
 
-</style>
-@* pagination css *@
-<style>
     #pagination {
         margin-top: 20px;
         display: flex;
@@ -134,31 +92,27 @@
         cursor: pointer;
     }
 
-    .active {
-        font-weight: bold;
+    #loader {
+        text-align: center;
+        margin-top: 20px;
     }
-
 </style>
 
-
-
-<div id="custDashboard2 p-1 p-md-5" >
+<div id="custDashboard2">
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
-    <div class="mx-0 my-3  p-3">
+    <div class="mx-0 my-3 p-3">
         <div class="searchbar">
-            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="SearchParamsbooks()">
-                <div class=" col-md-3  col-6">
-                    <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
+            <form id="searchForm" class="mb-2 gy-2 row" onsubmit="Searchbooks()">
+                <div class="col-md-3 col-6">
+                    <input asp-for=@Model.search1 type="text" class="w-100" id="bookTitle" placeholder="Book Title">
                 </div>
                 <div class="form-group col-md-3 col-6">
-                    <div class="dropdown " data-control="checkbox-dropdown">
+                    <div class="dropdown" data-control="checkbox-dropdown">
                         <input type="text" asp-for="@Model.search2" hidden>
-                        <label class="dropdown-label p-2 ">Authors</label>
-
+                        <label class="dropdown-label p-2">Authors</label>
                         <div class="dropdown-list">
-
                             @foreach (var i in Model.Authors)
                             {
                                 <label class="dropdown-option">
@@ -168,17 +122,12 @@
                             }
                         </div>
                     </div>
-
                 </div>
-
-
-                <div class="form-group col-md-3  col-6">
-                    <div class="dropdown " data-control="checkbox-dropdown">
+                <div class="form-group col-md-3 col-6">
+                    <div class="dropdown" data-control="checkbox-dropdown">
                         <input type="text" asp-for="@Model.search3" hidden>
                         <label class="dropdown-label p-2">Categories</label>
-
-                        <div class="dropdown-list ">
-
+                        <div class="dropdown-list">
                             @foreach (var i in Model.categories)
                             {
                                 <label class="dropdown-option">
@@ -188,17 +137,12 @@
                             }
                         </div>
                     </div>
-
                 </div>
-
-
-                <div class="form-group col-md-3  col-6">
-                    <div class="dropdown " data-control="checkbox-dropdown">
+                <div class="form-group col-md-3 col-6">
+                    <div class="dropdown" data-control="checkbox-dropdown">
                         <input type="text" asp-for="@Model.search3" hidden>
-                        <label class="dropdown-label p-2">publishers</label>
-
-                        <div class="dropdown-list ">
-
+                        <label class="dropdown-label p-2">Publishers</label>
+                        <div class="dropdown-list">
                             @foreach (var i in Model.publishers)
                             {
                                 <label class="dropdown-option">
@@ -211,166 +155,143 @@
                 </div>
                 <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
                     <button type="submit" class="btn btn-primary">Search</button>
-                    <button type="reset" class="btn btn-secondary" onclick="getcustDash()">Reset</button>
+                    <button type="reset" class="btn btn-secondary" onclick="AdminBookList()">Reset</button>
                 </div>
             </form>
             <hr class="m-0 w-100" />
         </div>
     </div>
-    <div class="table row container-fluid px-sm-3" >
-        <!-- Books will be dynamically inserted here -->
-        @if (Model.bookList.Count() != 0)
-        {
-            @foreach (var obj in Model.bookList)
-            {
-                decimal avgRating = calculateAvgRating(obj.Bookid);
-                <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
-                    <div class="card border-0 h-100 shadow">
-                        <img src="~/BookListCollections/@obj.Bookphoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.Bookphoto">
-                        <div class="card-body">
-                            <h5 class="card-title text-truncate">@obj.Title</h5>
-                            <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
-                            <p class="card-text text-truncate px-1">Author: @Model.Authors?.FirstOrDefault(x=>x.Authorid == obj.Authorid).Name</p>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            
-                            <span class="text-warning fs-4">
-                                
-                                @for (decimal i = 1m; i <= 5m; i += 1)
-                                {
-                                    @if (i <= avgRating)
-                                    {
-                                        <i class="bi bi-star-fill"></i>
-                                    }
-                                    else if ((i - 0.5m) == avgRating)
-                                    {
-                                        <i class="bi bi-star-half"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-star"></i>
-                                    }
-                                }
-                            </span>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.Bookid)">View More</buttton>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <p class="text-center w-100">No Data</p>
-        }
+    <div class="container-fluid">
+        <div class="d-flex justify-content-end m-2 w-100">
+            <button class="btn btn-primary" onclick="getAddbookmodal()">Add Book</button>
+        </div>
+        <div class="table-responsive">
+            <table id="book-table" class="table">
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Available Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="book-tbody">
+                    @foreach (var obj in Model.bookList)
+                    {
+                        <tr>
+                            <td>
+                                <img src="~/BookListCollections/@obj.Bookphoto" class="p-0" width="100" height="150" alt="@obj.Bookphoto">
+                            </td>
+                            <td><span class="text-wrap fs-5">@obj.Title</span></td>
+                            <td>@Model.Authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
+                            <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
+                            <td>@obj.Price $</td>
+                            <td>@obj.Stockquantity</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View</button>
+                                    <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit</button>
+                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="loader" style="display:none;">
+            <img src="~/backgroundImages/loader.gif" height="50" width="50" alt="Loading..." />
+        </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        var pageNumber = 1;
+        var isLoading = false;
 
-        var table = $('#book-list').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
-            "pageLength": 5,
-            language: {
-                oPaginate: {
-                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
-                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+        function isScrolledToBottom() {
+            return $(window).scrollTop() + $(window).height() >= $(document).height();
+        }
+
+        function fetchMoreData(pageNumber) {
+            if (isLoading) return;
+            isLoading = true;
+            $('#loader').show();
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/getDashboardData",
+                data: { pageNumber: pageNumber },
+                success: function (result) {
+                    $('#loader').hide();
+                    $('#book-tbody').append(result);
+                    isLoading = false;
+                },
+                error: function () {
+                    $('#loader').hide();
+                    alert('Error loading partial view');
+                    isLoading = false;
                 }
+            });
+        }
 
+        $(window).scroll(function () {
+            if (isScrolledToBottom()) {
+                pageNumber++;
+                fetchMoreData(pageNumber);
             }
         });
-        $('.dataTables_filter').hide();
-        $('#book-Table_first').hide();
-        $('#book-Table_last').hide();
-
-    })
-</script>
-
-<script>
+    });
 
     (function ($) {
-        // Define the CheckboxDropdown constructor function
         var CheckboxDropdown = function (el) {
             var _this = this;
             this.$el = $(el);
             this.$label = this.$el.find('.dropdown-label');
             this.$inputs = this.$el.find('[type="checkbox"]');
 
-
-            // Event listener for clicking the dropdown label
             this.$label.on('click', function (e) {
                 e.preventDefault();
                 _this.toggleOpen();
             });
 
-            // Event listener for checkbox change
             this.$inputs.on('change', function (e) {
                 _this.onCheckBox();
             });
         };
 
-        // Method to update dropdown status based on checkbox selection
         CheckboxDropdown.prototype.onCheckBox = function () {
             this.updateStatus();
         };
 
-        // Method to update dropdown status based on checkbox selection
         CheckboxDropdown.prototype.updateStatus = function () {
             var checked = this.$el.find(':checked');
-
-
-
         };
 
-        // Method to handle "Check All" functionality
-        CheckboxDropdown.prototype.onCheckAll = function (checkAll) {
-            if (!this.areAllChecked || checkAll) {
-                this.areAllChecked = true;
-                this.$checkAll.html('Uncheck All');
-                this.$inputs.prop('checked', true);
-            }
-            else {
-                this.areAllChecked = false;
-                this.$checkAll.html('Check All');
-                this.$inputs.prop('checked', false);
-            }
-
-            this.updateStatus();
-        };
-
-        // Method to toggle dropdown open/closed state
         CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
             var _this = this;
-
-            if (!this.isOpen || forceOpen) {
-                this.isOpen = true;
+            if (!this.$el.hasClass('on')) {
                 this.$el.addClass('on');
                 $(document).on('click', function (e) {
                     if (!$(e.target).closest('[data-control]').length) {
                         _this.toggleOpen();
                     }
                 });
-            }
-            else {
-                this.isOpen = false;
+            } else if (this.$el.hasClass('on')) {
                 this.$el.removeClass('on');
                 $(document).off('click');
             }
         };
 
-        // Initialize CheckboxDropdown for each dropdown with data-control="checkbox-dropdown"
         var checkboxesDropdowns = document.querySelectorAll('[data-control="checkbox-dropdown"]');
         for (var i = 0, length = checkboxesDropdowns.length; i < length; i++) {
             new CheckboxDropdown(checkboxesDropdowns[i]);
         }
     })(jQuery);
-
-
 </script>
 
-
-
-
+<div id="Modaldata"></div>

@@ -78,7 +78,6 @@ namespace DataAccess.CustomModels
         public int? itemCount { get; set; }
 
         public decimal? totalBooks { get; set; }
-        public decimal? totalAmount { get; set; }
         public decimal? discountPercentage { get; set; }
         public decimal? shippingAmount { get; set; }
         public decimal? Grosstotal { get; set; }
@@ -140,8 +139,24 @@ namespace DataAccess.CustomModels
         public string Password2 { get; set; }
     }
 
-    public class CartListModel
+    public class PaymentBillDetails
     {
-   
+        public string? CustomerName { get; set; }
+        public int? Orderid { get; set; }
+        public Order? Orders { get; set; }
+        public List<Orderdetail> orderdetails { get; set; }
+        public List<Category>? categories { get; set; }
+        public List<Book>? bookList { get; set; }
+        public List<Author>? Authors { get; set; }
+        public List<Publisher>? publishers { get; set; }
+        public decimal? TotalAmount { get; set; }
+
+        public decimal? totalBooks { get; set; }
+        public decimal? discountPercentage { get; set; }
+        public decimal? shippingAmount { get; set; }
+        public decimal? Grosstotal { get; set; }
+        public decimal? tax { get; set; }
     }
+
+    
 }

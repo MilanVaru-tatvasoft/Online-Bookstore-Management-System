@@ -316,11 +316,11 @@ function getRemoveFromCart(bookId, cartId) {
     });
 
 }
-function getOrderConfirmation() {
+function getBuyNow() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/getCheckout",
+        url: "/Home/getBuyNow",
         data: $('#confirmOrderForm').serialize(),
 
 
@@ -341,22 +341,7 @@ function getOrderConfirmation() {
     });
 }
 
-//function getCheckOutPage(result)
-//{
-//    console.log(result);
-//    $.ajax({
-//        method: "POST",
-//        url: "/Home/getCheckout",
-//        data: result,
-//        success: function (response) {
-//            $('#custDashboard').empty()
-//            $('#UserProfile').empty()
-//            $('#UserProfile').html(result)        },
-//        error: function () {
-//            alert('Error loading checkout page');
-//        }
-//    });
-//}
+
 
 function AdminDashboard() {
     $.ajax({
@@ -910,7 +895,29 @@ function getRemoveFromMyCart(bookId, cartId) {
 
 }
 
+function GetBillDownload(orderId)
+{
 
+    Swal.fire({
+        text: "Bill generated succesfully!",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Download!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Downloaded!",
+                text: "Bill file has been downloaded.",
+                position: "top-end",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            window.location.href = './GeneratePDF?orderId=' + orderId;
+        }
+    });
+}
 
 
 
