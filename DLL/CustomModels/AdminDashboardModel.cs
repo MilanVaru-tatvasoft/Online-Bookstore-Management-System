@@ -62,29 +62,29 @@ namespace DataAccess.CustomModels
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        public string? FirstName { get; set; }
-        public string? Password { get; set; }
-        public string? Password2 { get; set; }
+        public string? firstName { get; set; }
+        public string? password { get; set; }
+        public string? confirmPassword { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        public string? LastName { get; set; }
+        public string? lastName { get; set; }
         public string? gender { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         [EmailAddress(ErrorMessage = "enter valid email")]
-        public string Email { get; set; }
+        public string email { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         [DataType(DataType.PhoneNumber)]
-        public string? Contact { get; set; }
+        public string? contact { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        public DateTime? birthdate { get; set; }
+        public DateTime? birthDate { get; set; }
 
         public string? role { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        public string? Address { get; set; }
+        public string? address { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         public string? city { get; set; }

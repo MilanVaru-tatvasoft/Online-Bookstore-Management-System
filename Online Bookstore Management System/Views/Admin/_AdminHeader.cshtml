@@ -6,6 +6,10 @@
         font-size: 1.5rem;
     }
 
+    a {
+        cursor: pointer;
+    }
+
     .navbar-nav .nav-link {
         margin-right: 1rem;
         font-weight: 500;
@@ -64,26 +68,26 @@
                 <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-                <hr class="m-0 d-flex d-md-none " />
+            <hr class="m-0 d-flex d-md-none " />
             <div class="offcanvas-body d-flex align-items-md-center">
                 <ul class="navbar-nav w-100">
                     <li class="nav-item">
-                        <a class="nav-link active text-dark" aria-current="page" onclick="AdminDashboard()" style="cursor:pointer;">Dashboard</a>
+                        <a class="nav-link active text-dark" aria-current="page" onclick="AdminDashboard()">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="AdminBookList()" style="cursor:pointer;">BookList</a>
+                        <a class="nav-link text-dark" onclick="AdminBookList()">BookList</a>
                     </li>
                     <li class="nav-item d-flex d-md-none">
-                        <a class="nav-link text-dark" onclick="GetAdminProfile()" style="cursor:pointer;">My Profile</a>
+                        <a class="nav-link text-dark" onclick="GetAdminProfile()">My Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetCategoryList()" style="cursor:pointer;">Categories</a>
+                        <a class="nav-link text-dark" onclick="GetCategoryList()">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetOrderList()" style="cursor:pointer;">Orders</a>
+                        <a class="nav-link text-dark" onclick="GetOrderList()">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetAuthorsList()" style="cursor:pointer;">Authors</a>
+                        <a class="nav-link text-dark" onclick="GetAuthorsList()">Authors</a>
                     </li>
                     <li class="nav-item d-flex d-md-none">
                         <a class="nav-link text-dark" asp-action="logout" asp-controller="Home">Logout</a>
@@ -98,7 +102,7 @@
                         <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
                             <li><a class="dropdown-item text-dark" href="#">Add Account</a></li>
                             <li>
-                                <a class="dropdown-item text-dark" onclick="GetAdminProfile()" style="cursor:pointer;">My Profile</a>
+                                <a class="dropdown-item text-dark" onclick="GetAdminProfile()">My Profile</a>
                             </li>
                             <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
                         </ul>

@@ -1,6 +1,4 @@
 ﻿
-
-
 function RegisterPost() {
     event.preventDefault();
     $.ajax({
@@ -37,7 +35,7 @@ function RegisterPost() {
         }
     });
 }
-function resetpassword() {
+function ResetPassword() {
     event.preventDefault();
 
     $.ajax({
@@ -118,7 +116,7 @@ function SearchParamsbooks() {
         }
     });
 }
-function getCartList() {
+function GetCartList() {
     $.ajax({
         method: "GET",
         url: "/Home/getCartList",
@@ -134,7 +132,7 @@ function getCartList() {
         }
     });
 }
-function getcustDash() {
+function GetCustomerDashboard() {
 
     var formData = $('#searchForm').serialize();
     $.ajax({
@@ -169,8 +167,22 @@ function GetUserProfile() {
         }
     });
 }
+function GetOrderHistory() {
+    $.ajax({
+        method: "GET",
+        url: "/Home/GetOrderHistory",
 
-function editUserProfile() {
+        success: function (result) {
+            $('#custDashboard').empty()
+            $('#UserProfile').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function EditUserProfile() {
     event.preventDefault();
     $.ajax({
         method: "POST",
@@ -236,7 +248,7 @@ function GetOrderDatailsPage(bookId) {
     });
 }
 
-function cartCount(id) {
+function CartCount(id) {
 
     var cartcount = $('.itemCountInCart').val();
     if (id == 1) {
@@ -248,7 +260,7 @@ function cartCount(id) {
     }
 
 }
-function getAddToCart(bookId, cartId) {
+function GetAddToCart(bookId, cartId) {
     event.preventDefault();
     var quantity = $('#quantity').val();
     $.ajax({
@@ -266,7 +278,7 @@ function getAddToCart(bookId, cartId) {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                cartCount(1)
+                CartCount(1)
                 ViewBooksPage(bookId);
             }
 
@@ -277,7 +289,7 @@ function getAddToCart(bookId, cartId) {
     });
 }
 
-function getRemoveFromCart(bookId, cartId) {
+function GetRemoveFromCart(bookId, cartId) {
     event.preventDefault();
     Swal.fire({
         title: "Are you sure?",
@@ -303,7 +315,7 @@ function getRemoveFromCart(bookId, cartId) {
                         timer: 1500
 
                     });
-                    cartCount(0)
+                    CartCount(0)
 
                     ViewBooksPage(bookId);
 
@@ -316,7 +328,7 @@ function getRemoveFromCart(bookId, cartId) {
     });
 
 }
-function getBuyNow() {
+function GetBuyNow() {
     event.preventDefault();
     $.ajax({
         method: "POST",
@@ -340,8 +352,6 @@ function getBuyNow() {
         }
     });
 }
-
-
 
 function AdminDashboard() {
     $.ajax({
@@ -387,7 +397,7 @@ function AdminBookList() {
     });
 }
 
-function Addbook() {
+function AddBook() {
     event.preventDefault();
     var formdata = new FormData($('#addBookdetails')[0]);
 
@@ -424,7 +434,7 @@ function Addbook() {
         }
     });
 }
-function Updatebook() {
+function UpdateBook() {
     event.preventDefault();
     var formdata = new FormData($('#addBookdetails')[0]);
 
@@ -519,7 +529,7 @@ function GetAdminProfile() {
     });
 }
 
-function editAdminProfile() {
+function EditAdminProfile() {
     event.preventDefault();
     $.ajax({
         method: "POST",
@@ -586,7 +596,7 @@ function GetCategoryList() {
     });
 }
 
-function getAddorUpdateAuthor(AuthorId) {
+function GetAddorUpdateAuthor(AuthorId) {
     $.ajax({
         method: "get",
         url: "/Admin/getAddAuthor",
@@ -600,6 +610,47 @@ function getAddorUpdateAuthor(AuthorId) {
         },
         error: function () {
             console.error('Error loading partial view');
+            alert('Error loading partial view');
+        }
+    });
+}
+function AddOrUpdateAuthor() {
+    event.preventDefault();
+
+    $.ajax({
+        method: "POST",
+        url: "/Admin/addOrUpdateAuthor",
+        data: $('#addUpdateAuthorForm').serialize(),
+
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Done",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
+                    GetAuthorsList();
+                });
+
+
+
+            } else if (result.code == 402) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Author exist",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $('#addAuthorModal').modal('hide');
+                GetAuthorsList();
+
+            }
+        },
+        error: function () {
             alert('Error loading partial view');
         }
     });
@@ -643,7 +694,7 @@ function DeleteAuthor(AuthorId) {
 
 }
 
-function getAddorUpdateCategory(categoryId) {
+function GetAddorUpdateCategory(categoryId) {
     $.ajax({
         method: "get",
         url: "/Admin/getAddCategory",
@@ -657,87 +708,6 @@ function getAddorUpdateCategory(categoryId) {
         },
         error: function () {
             console.error('Error loading partial view');
-            alert('Error loading partial view');
-        }
-    });
-}
-
-function DeleteCategory(categoryId) {
-    event.preventDefault();
-    Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, remove It"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                method: "GET",
-                url: "/Admin/getDeleteCategory",
-                data: { categoryId: categoryId },
-
-                success: function (result) {
-                    if (result.code == 401)
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: "Removed",
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            GetCategoryList();
-                        });
-
-
-                },
-                error: function () {
-                    alert('Error loading partial view');
-                }
-            });
-        }
-    });
-
-}
-
-function AddOrUpdateAuthor() {
-    event.preventDefault();
-
-    $.ajax({
-        method: "POST",
-        url: "/Admin/addOrUpdateAuthor",
-        data: $('#addUpdateAuthorForm').serialize(),
-
-        success: function (result) {
-            if (result.code == 401) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Done",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
-                    GetAuthorsList();
-                });
-
-
-
-            } else if (result.code == 402) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Author exist",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                $('#addAuthorModal').modal('hide');
-                GetAuthorsList();
-
-            }
-        },
-        error: function () {
             alert('Error loading partial view');
         }
     });
@@ -784,6 +754,46 @@ function AddOrUpdateCategory() {
         }
     });
 }
+function DeleteCategory(categoryId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/getDeleteCategory",
+                data: { categoryId: categoryId },
+
+                success: function (result) {
+                    if (result.code == 401)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Removed",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            GetCategoryList();
+                        });
+
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
+
+
 
 function getForgotPassword() {
     var email = $('#fpasswordEmail').val();
@@ -840,7 +850,7 @@ function Passwordlength() {
     }
 }
 
-function comparePassword() {
+function ComparePassword() {
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirmPassword").value;
 
@@ -856,7 +866,7 @@ function comparePassword() {
     }
 }
 
-function getRemoveFromMyCart(bookId, cartId) {
+function GetRemoveFromMyCart(bookId, cartId) {
     event.preventDefault();
     Swal.fire({
         title: "Are you sure?",
@@ -881,8 +891,8 @@ function getRemoveFromMyCart(bookId, cartId) {
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        cartCount(0);
-                        getCartList();
+                        CartCount(0);
+                        GetCartList();
                     });
 
                 },

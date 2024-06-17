@@ -1,0 +1,61 @@
+﻿@model DataAccess.CustomModels.OrderData;
+
+<div class="container">
+    <div class="mt-4">
+        <h2 class="text-center mb-4">My Orders</h2>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            @foreach (var order in Model.Orders)
+            {
+                <div class="card mb-4">
+                    <div class="card-header bg-info d-flex justify-content-between text-white">
+                        <h5 class="mb-0">
+                            Order @order.Orderid 
+                        </h5>
+                        <h5 class="mb-0">
+                            @order.Orderdate.ToString("MMM dd, yyyy") 
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Order Details</h5>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var detail in Model.orderdetails.Where(d => d.Orderid == order.Orderid))
+                                    {
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <img src="~/BookListCollections/@detail.Book.Bookphoto" class="img-fluid rounded" alt="Book Image">
+                                                </div>
+                                                <div class="col-9">
+                                                    <h6>@detail.Book.Title</h6>
+                                                    <p class="mb-1">@detail.Book.Author.Name</p>
+                                                    <p class="mb-1 text-muted">price: $@detail.Price /  Quantity: @detail.Quantity </p>
+                                                    <p class="mb-0 text-danger">Total: $@detail.Totalamount</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Payment Information</h5>
+                                <div class="card">
+                                    <div class="card-body">
+
+                                        <p class="mb-1">Total Payment :<span class="text-danger"> $@Model.orderdetails.Where(x=>x.Orderid == order.Orderid).Sum(c=>c.Totalamount)</span></p>
+                                        <p class="mb-1">Delivery Date: @order.Orderdate.AddDays(6).ToString("MMM dd, yyyy")</p>
+                                        <p class="mb-1">Payment Method: @Model.payment?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentMethod</p>
+                                        <p class="mb-1">Payment Status: @Model.payment?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentStatus</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

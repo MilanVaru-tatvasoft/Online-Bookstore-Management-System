@@ -125,7 +125,7 @@
                                 <input type="text" class="form-control" id="editQuantity" name="updateQuantity" value="@Model.UpdateQuantity">
                             </div>
                             <div>
-                                <button class="btn btn-warning" onclick="updateQuantity()">Add</button>
+                                <button class="btn btn-warning" onclick="UpdateQuantity()">Add</button>
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editQuantityform">Cancel</button>
                             </div>
                         </div>
@@ -143,9 +143,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        // Function to show the modal
 
-        // Function to handle form submission
         $('#editCustomerForm').on('submit', function (e) {
             e.preventDefault();
             var editcustName = $('#editCustomerName').val();
@@ -175,12 +173,11 @@
 
 
                 console.log(editcustName)
-                // You can add similar lines for other fields if you need to update them
 
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Data updated", // Corrected spelling of Data
+                    title: "Data updated", 
                     showConfirmButton: false,
                     timer: 1500
                 });
@@ -190,11 +187,11 @@
         });
     });
 
-    function updateQuantity() {
+    function UpdateQuantity() {
 
 
-        var editQuantity = $('#editQuantity').val(); // Corrected variable name from editQantity to editQuantity
-        var price = $('#inpBookPrice').val(); // Corrected variable name from editQantity to editQuantity
+        var editQuantity = $('#editQuantity').val();
+        var price = $('#inpBookPrice').val();
         $('#txtQantity').text(editQuantity);
         $('#inpQantity').val(editQuantity);
 

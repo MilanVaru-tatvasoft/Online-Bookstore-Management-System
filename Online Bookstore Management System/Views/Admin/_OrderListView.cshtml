@@ -84,19 +84,19 @@
                                 <div class="d-flex justify-content-center gap-2 w-auto">
                                     @if (i.Orderstatusid == 1)
                                     {
-                                        <button class="btn btn-info" onclick="getacceptOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-info" onclick="GetAcceptOrder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-clipboard-check-fill"></i>
                                         </button>
                                     }
                                     else if (i.Orderstatusid == 2)
                                     {
-                                        <button class="btn btn-warning" onclick="getShippedOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-warning" onclick="GetShippedOrder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-truck"></i>
                                         </button>
                                     }
                                     else if (i.Orderstatusid == 3)
                                     {
-                                        <button class="btn btn-success" onclick="getDeliveredOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-success" onclick="GetDeliveredOrder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-check2-square"></i>
                                         </button>
                                     }
@@ -104,7 +104,7 @@
                                     @if (i.Orderstatusid != 4)
                                     {
 
-                                        <button class="btn btn-danger" onclick="getDeleteOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-danger" onclick="GetDeleteOrder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
                                     }
@@ -170,7 +170,7 @@
     });
 </script>
 <script>
-    function getViewOrder(orderDetailId) {
+    function GetViewOrder(orderDetailId) {
         $.ajax({
             method: "GET",
             url: "/Admin/getViewOrder",
@@ -184,10 +184,10 @@
             }
         });
     }
-    function getStatus(value) {
+    function GetStatus(value) {
         $('#statusname').val(value);
     }
-    function getacceptOrder(orderId, customerId) {
+    function GetAcceptOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
             url: "/Admin/getacceptOrder",
@@ -222,7 +222,7 @@
             }
         });
     }
-    function getShippedOrder(orderId, customerId) {
+    function GetShippedOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
             url: "/Admin/getShippedOrder",
@@ -258,7 +258,7 @@
         });
     }
 
-    function getDeliveredOrder(orderId, customerId) {
+    function GetDeliveredOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
             url: "/Admin/getDeliveredOrder",
@@ -293,7 +293,7 @@
             }
         });
     }
-    function getDeleteOrder(orderId, customerId) {
+    function GetDeleteOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
             url: "/Admin/getDeleteOrder",

@@ -91,12 +91,13 @@ namespace Online_Bookstore_Management_System.Controllers
             _customerRepo.getdata(model, userId, pageNumber);
             return PartialView("_CustomerMainPage", model);
         }
+        [HttpPost]
         public IActionResult getDashboardData(int pageNumber)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             Customer_MainPage model = new Customer_MainPage();
             _customerRepo.getdata(model, userId, pageNumber);
-            return Json(model);
+            return Ok(Json( new { data= model.bookList}));
         }
 
         public IActionResult getregistrationform()
@@ -115,6 +116,13 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 401 });
             }
             return Json(new { code = 402 });
+        }
+        public IActionResult GetOrderHistory()
+        {
+          int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            //OrderData model = _customerRepo.GetOrderHistoy(userId);
+                return PartialView("_MyOrdersPage");
+            
         }
         public IActionResult getUserProfile()
         {
@@ -256,14 +264,24 @@ namespace Online_Bookstore_Management_System.Controllers
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (data.BookName == null)
             {
-                data = _customerRepo.getCartList(userId);
+               OrderData model = _customerRepo.getCartList(userId);
+                model = data;
+                int orderId = _customerRepo.confirmOrder(model, userId);
+                model.Orderid = orderId;
+                return PartialView("_PaymentPage", data);
+            }
+            else
+            {
+                int orderId = _customerRepo.confirmOrder(data, userId);
+                data.Orderid = orderId;
+                return PartialView("_PaymentPage", data);
             }
 
 
-            int orderId = _customerRepo.confirmOrder(data, userId);
-            data.Orderid = orderId;
-            return PartialView("_PaymentPage", data);
+          
         }
+
+       
 
         public IActionResult getPaymentDone(string paymentType, int OrderId)
         {

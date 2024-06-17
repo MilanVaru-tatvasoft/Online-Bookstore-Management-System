@@ -209,34 +209,12 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        var pageNumber = 1;
         var isLoading = false;
+        var pageNumber = 1;
+    $(document).ready(function () {
 
         function isScrolledToBottom() {
             return $(window).scrollTop() + $(window).height() >= $(document).height();
-        }
-
-        function fetchMoreData(pageNumber) {
-            if (isLoading) return;
-            isLoading = true;
-            $('#loader').show();
-
-            $.ajax({
-                method: "POST",
-                url: "/Home/getDashboardData",
-                data: { pageNumber: pageNumber },
-                success: function (result) {
-                    $('#loader').hide();
-                    $('#book-tbody').append(result);
-                    isLoading = false;
-                },
-                error: function () {
-                    $('#loader').hide();
-                    alert('Error loading partial view');
-                    isLoading = false;
-                }
-            });
         }
 
         $(window).scroll(function () {
@@ -254,6 +232,8 @@
             this.$label = this.$el.find('.dropdown-label');
             this.$inputs = this.$el.find('[type="checkbox"]');
 
+
+            // Event listener for clicking the dropdown label
             this.$label.on('click', function (e) {
                 e.preventDefault();
                 _this.toggleOpen();
@@ -270,6 +250,25 @@
 
         CheckboxDropdown.prototype.updateStatus = function () {
             var checked = this.$el.find(':checked');
+
+
+
+        };
+
+        // Method to handle "Check All" functionality
+        CheckboxDropdown.prototype.onCheckAll = function (checkAll) {
+            if (!this.areAllChecked || checkAll) {
+                this.areAllChecked = true;
+                this.$checkAll.html('Uncheck All');
+                this.$inputs.prop('checked', true);
+            }
+            else {
+                this.areAllChecked = false;
+                this.$checkAll.html('Check All');
+                this.$inputs.prop('checked', false);
+            }
+
+            this.updateStatus();
         };
 
         CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
@@ -292,6 +291,35 @@
             new CheckboxDropdown(checkboxesDropdowns[i]);
         }
     })(jQuery);
+
+
+    function fetchMoreData(pageNum) {
+        if (isLoading) return;
+        isLoading = true;
+        $('#loader').show();
+
+        $.ajax({
+            url: "/Home/getDashboardData",
+            type: "POST",
+            data: JSON.stringify({ pageNumber: 1 }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                debugger;
+                $('#loader').hide();
+                // $('#book-tbody').append(result);
+                //$("#").html('').html(result);
+                $.each(result.bookList, function (index, item) {
+                })
+                isLoading = false;
+            },
+            error: function (err, xhr, a) {
+                debugger
+                $('#loader').hide();
+                alert('Error loading partial view');
+                isLoading = false;
+            }
+        });
+    }
 </script>
 
 <div id="Modaldata"></div>

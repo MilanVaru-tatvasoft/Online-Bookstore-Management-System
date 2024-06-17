@@ -31,23 +31,23 @@
         <div class="row">
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingInputFirstName" asp-for="FirstName" placeholder="First Name" disabled>
+                    <input type="text" class="form-control" id="floatingInputFirstName" asp-for="firstName" placeholder="First Name" disabled>
                     <label for="floatingInputFirstName">First Name</label>
-                    <span class="text-danger" asp-validation-for="FirstName"></span>
+                    <span class="text-danger" asp-validation-for="firstName"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingInputLastName" asp-for="LastName" placeholder="Last Name" disabled>
+                    <input type="text" class="form-control" id="floatingInputLastName" asp-for="lastName" placeholder="Last Name" disabled>
                     <label for="floatingInputLastName">Last Name</label>
-                    <span class="text-danger" asp-validation-for="LastName"></span>
+                    <span class="text-danger" asp-validation-for="lastName"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthdate" placeholder="Birth Date" disabled>
+                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthDate" placeholder="Birth Date" disabled>
                     <label for="floatingBirthDate">Birth Date</label>
-                    <span class="text-danger" asp-validation-for="birthdate"></span>
+                    <span class="text-danger" asp-validation-for="birthDate"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
@@ -61,16 +61,16 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="email" class="form-control" id="floatingEmail" asp-for="Email" placeholder="Email Address" disabled>
+                    <input type="email" class="form-control" id="floatingEmail" asp-for="email" placeholder="Email Address" disabled>
                     <label for="floatingEmail">Email Address</label>
-                    <span class="text-danger" asp-validation-for="Email"></span>
+                    <span class="text-danger" asp-validation-for="email"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingContact" asp-for="Contact" placeholder="Contact" disabled>
+                    <input type="text" class="form-control" id="floatingContact" asp-for="contact" placeholder="Contact" disabled>
                     <label for="floatingContact">Contact</label>
-                    <span class="text-danger" asp-validation-for="Contact"></span>
+                    <span class="text-danger" asp-validation-for="contact"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
@@ -82,9 +82,9 @@
             </div>
             <div class="col-12">
                 <div class="form-floating my-2">
-                    <textarea class="form-control" id="floatingAddress" asp-for="Address" placeholder="Address" style="height: 100px;" disabled></textarea>
+                    <textarea class="form-control" id="floatingAddress" asp-for="address" placeholder="Address" style="height: 100px;" disabled></textarea>
                     <label for="floatingAddress">Address</label>
-                    <span class="text-danger" asp-validation-for="Address"></span>
+                    <span class="text-danger" asp-validation-for="address"></span>
                 </div>
             </div>
         </div>
@@ -95,8 +95,8 @@
                 </button>
             </div>
                 <div class="d-flex gap-2 ">
-                    <button id="edit" class="btn btn-primary p-2 px-3" onclick="actionEdit()">Edit</button>
-                    <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="editAdminProfile()">Submit</button>
+                    <button id="edit" class="btn btn-primary p-2 px-3" onclick="ActionEdit()">Edit</button>
+                    <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="EditAdminProfile()">Submit</button>
                     <a id="reset" class="btn btn-secondary p-2 px-3" style="display: none;" onclick="GetAdminProfile()">cancle</a>
                 </div>
             
@@ -108,11 +108,11 @@
         <form id="resetForm" method="post" class="d-flex">
             <div class="row w-100">
                 <div class="col-12 col-md-3">
-                    <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" required oninput="return Passwordlength()">
+                    <input type="password" asp-for="password" class="form-control" id="password" placeholder="Password" required oninput="return PasswordLength()">
                     <span class="text-danger" id="error"></span>
                 </div>
                 <div class="col-12 col-md-3">
-                    <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return comparePassword()">
+                    <input type="password" asp-for="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
                     <span class="text-danger" id="error2"></span>
                 </div>
 
@@ -122,7 +122,7 @@
                 </div>
             </div>
 
-            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="email" />
             <input type="hidden" asp-for="UserId" />
         </form>
     </div>
@@ -132,7 +132,7 @@
 <!-- Custom JS -->
 <script>
 
-    function actionEdit() {
+    function ActionEdit() {
         event.preventDefault();
         const editButton = document.getElementById('edit');
 
@@ -151,7 +151,7 @@
     }
 
 
-    function getAdminResetPasswordPage() {
+    function GetAdminResetPasswordPage() {
       
             event.preventDefault();
             $('#resetAdminpassword').toggleClass('d-block d-none');

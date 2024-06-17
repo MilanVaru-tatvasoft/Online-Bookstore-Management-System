@@ -65,11 +65,11 @@
                                            asp-for="@Model.password"
                                            id="loginpassword"
                                            placeholder="Password"
-                                           required oninput="return checkPasswordlength()" />
+                                           required oninput="return ChkPasswordLength()" />
                                 </div>
                                 <span id="error" class="text-danger"></span>
                                 <div class="d-flex justify-content-end">
-                                    <a class="text-decoration-none text-primary" onclick="forgotPasswordmail()" style="cursor:pointer;">Forgot Password</a>
+                                    <a class="text-decoration-none text-primary" onclick="ForgotPasswordMail()" style="cursor:pointer;">Forgot Password</a>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center align-items-center gap-1">
@@ -94,7 +94,7 @@
 </div>
 <div id="UserProfile"></div>
 <script>
-    function forgotPasswordmail() {
+    function ForgotPasswordMail() {
         $.ajax({
             method: "get",
             url: "/Home/ForgotPasswordModal",
@@ -112,7 +112,7 @@
         });
     }
 
-    function checkPasswordlength() {
+    function ChkPasswordLength() {
         var password = document.getElementById("loginpassword").value;
 
         if (password.length < 6) {
