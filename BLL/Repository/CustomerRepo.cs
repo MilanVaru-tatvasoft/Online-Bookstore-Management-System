@@ -36,7 +36,7 @@ namespace BusinessLogic.Repository
             model.categories = _context.Categories.ToList();
             model.Authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
-            model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true).ToList();
+            model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true).ToList();
             List<Book> booksList = _context.Books.Where(x => x.Isdeleted != true).ToList();
             List<RatingReview> reviews = _context.RatingReviews.ToList();
 
@@ -300,9 +300,6 @@ namespace BusinessLogic.Repository
 
         }
 
-
-
-
         public int confirmOrder(OrderData data, int? userId)
         {
             int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
@@ -411,10 +408,6 @@ namespace BusinessLogic.Repository
                 return order.Orderid;
             }
         }
-
-
-
-
 
         public OrderData getCartList(int? UserId)
         {
@@ -536,7 +529,6 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-
         public PaymentBillDetails getBillDetails(int orderId)
         {
             Order order = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
@@ -570,6 +562,30 @@ namespace BusinessLogic.Repository
             return bill;
 
 
+        }
+
+        public OrderData GetOrderHistoy( int? userId)
+        {   
+            Customer? customer =_context.Customers.FirstOrDefault(x=>x.Userid == userId);
+            List<Order> order = _context.Orders.Where(x=>x.Customerid == customer.Customerid && x.Isdeleted !=true).OrderBy(r=>r.Orderdate).ToList();
+            List<Orderdetail> orderDetails = _context.Orderdetails.ToList();
+            List<Book> books = _context.Books.ToList();
+            List<Author> author = _context.Authors.ToList();
+            List<Category> categories = _context.Categories.ToList();
+            List<Payment> payments = _context.Payments.ToList();
+
+            OrderData orderData = new OrderData()
+            {
+                orderdetails = orderDetails,
+                Orders = order,
+                payment = payments,
+                categories = categories,
+                bookList = books,
+                Authors = author,
+                customerId = customer.Customerid,
+            };
+
+            return orderData;
         }
     }
 }

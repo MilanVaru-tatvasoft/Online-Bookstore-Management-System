@@ -23,10 +23,13 @@
             <div class="offcanvas-body d-flex">
                 <ul class="navbar-nav w-100">
                     <li class="nav-item ">
-                        <a class="nav-link text-dark"  onclick="getcustDash()" >Home</a>
+                        <a class="nav-link text-dark"  onclick="GetCustomerDashboard()" >Home</a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link  d-flex text-dark w-100" href="#" onclick="GetUserProfile()">My Profile</a>
+                        <a class="nav-link  d-flex text-dark w-100"  onclick="GetUserProfile()">My Profile</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link  d-flex text-dark w-100" onclick="GetOrderHistory()"> My Order</a>
                     </li>
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
@@ -44,7 +47,7 @@
                         Welcome: <strong class="bg-light">@context.HttpContext.Session.GetString("UserName")</strong>
                     </h5>
                     <div style="position: relative;" class="d-none d-md-block">
-                        <button class="btn bg-transparent border rounded-1 position-relative" onclick="getCartList()">
+                        <button class="btn bg-transparent border rounded-1 position-relative" onclick="GetCartList()">
                             <span class="bi-cart text-dark bi fw-bold"></span>
                         </button>
                         <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">@Model.addtocarts.Count()</div>

@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <form id="addUpdateAuthorForm">
                     <div class="mb-3">
-                        <input type="hidden" asp-for="@Model.AuthorId" />
+                        <input type="text" asp-for="@Model.AuthorId" hidden />
                         <label for="AuthorName" class="form-label">Author Name</label>
                         <input type="text" asp-for=AuthorName class="form-control" id="AuthorName" placeholder="Enter Author name">
                     </div>

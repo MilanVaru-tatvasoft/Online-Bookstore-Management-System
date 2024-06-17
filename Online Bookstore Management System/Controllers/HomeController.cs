@@ -116,6 +116,13 @@ namespace Online_Bookstore_Management_System.Controllers
             }
             return Json(new { code = 402 });
         }
+        public IActionResult GetOrderHistory()
+        {
+          int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            OrderData model = _customerRepo.GetOrderHistoy(userId);
+                return PartialView("_MyOrdersPage" ,model);
+            
+        }
         public IActionResult getUserProfile()
         {
             int? uId = _httpcontext.HttpContext.Session.GetInt32("UserId");
@@ -256,14 +263,24 @@ namespace Online_Bookstore_Management_System.Controllers
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (data.BookName == null)
             {
-                data = _customerRepo.getCartList(userId);
+               OrderData model = _customerRepo.getCartList(userId);
+                model = data;
+                int orderId = _customerRepo.confirmOrder(model, userId);
+                model.Orderid = orderId;
+                return PartialView("_PaymentPage", data);
+            }
+            else
+            {
+                int orderId = _customerRepo.confirmOrder(data, userId);
+                data.Orderid = orderId;
+                return PartialView("_PaymentPage", data);
             }
 
 
-            int orderId = _customerRepo.confirmOrder(data, userId);
-            data.Orderid = orderId;
-            return PartialView("_PaymentPage", data);
+          
         }
+
+       
 
         public IActionResult getPaymentDone(string paymentType, int OrderId)
         {

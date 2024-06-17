@@ -37,6 +37,7 @@
 
     }
 }
+
 <style>
 
     .dropdown {
@@ -117,14 +118,13 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 
-
 <div class="" id="custDashboard2">
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
     <div class="mx-0 my-3  p-3">
         <div class="searchbar">
-            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="Searchbooks()">
+            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="SearchBooks()">
                 <div class=" col-md-3  col-6">
                     <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
                 </div>
@@ -195,7 +195,7 @@
     </div>
     <div class="container-fluid">
         <div class="d-flex justify-content-end m-2   w-100">
-            <button class="btn btn-primary " onclick="getAddbookmodal()">    Add Book </button>
+            <button class="btn btn-primary " onclick="GetAddBookModal()">    Add Book </button>
          
         </div>
         <div class="table-responsive">
@@ -227,7 +227,7 @@
                             <td>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
-                                    <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit </button>
+                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.Bookid)">Edit </button>
                                     <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
                                 </div>
                             </td>
@@ -321,7 +321,7 @@
             }
         })(jQuery);
 
-    function Searchbooks() {
+    function SearchBooks() {
         event.preventDefault();
 
         // Get all checked checkboxes with class "AuthorData"
@@ -345,16 +345,14 @@
 
         });
 
-        console.log(search2); // Output the selected values to console
 
 
-        console.log(formData);
         $.ajax({
             method: "POST",
             url: "/Admin/searchBooks",
             contentType: false,
             processData: false,
-            data: formData, // Convert formData to query string
+            data: formData, 
             success: function (result) {
                 $('#AdminDash').html(result);
 
@@ -380,7 +378,7 @@
         });
     }
 
-    function getAddbookmodal() {
+    function GetAddBookModal() {
         $.ajax({
             method: "get",
             url: "/Admin/getAddBook",
@@ -397,7 +395,7 @@
         });
     }
 
-    function getEditBook(bookId) {
+    function GetEditBook(bookId) {
         $.ajax({
             method: "get",
             url: "/Admin/getEditBook",

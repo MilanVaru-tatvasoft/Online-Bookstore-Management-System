@@ -119,13 +119,13 @@
         </div>
         <div class="d-flex justify-content-between">
             <div class=" ">
-                <button class="btn btn-dark px-3 ms-5 mb-2  " onclick="getResetPassword()">
+                <button class="btn btn-dark px-3 ms-5 mb-2  " onclick="GetResetPassword()">
                     Reset password
                 </button>
             </div>
             <div class="d-flex gap-2 ">
-                <button id="edit" class="btn btn-primary p-2 px-3" onclick="actionEdit()">Edit</button>
-                <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="editUserProfile()">Submit</button>
+                <button id="edit" class="btn btn-primary p-2 px-3" onclick="ActionEdit()">Edit</button>
+                <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="EditUserProfile()">Submit</button>
                 <a id="reset" class="btn btn-secondary p-2 px-3" style="display: none;" onclick="GetUserProfile()">cancle</a>
             </div>
         </div>
@@ -137,15 +137,15 @@
         <form id="resetForm" method="post" class="d-flex">
             <div class="row w-100">
                 <div class="col-12 col-md-3">
-                    <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" required oninput="return Passwordlength()">
+                    <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" required oninput="return ChkPasswordLength()">
                     <span class="text-danger" id="error"></span>
                 </div>
                 <div class="col-12 col-md-3">
-                    <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return comparePassword()">
+                    <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
                     <span class="text-danger" id="error2"></span>
                 </div>
                 <div class=" col-12 col-md-3 d-flex  gap-2">
-                    <button type="submit" class="btn btn-primary" id="submitbtn" onclick="resetpassword()" disabled>Submit</button>
+                    <button type="submit" class="btn btn-primary" id="submitbtn" onclick="ResetPassword()" disabled>Submit</button>
                     <button type="button" class="btn btn-secondary" onclick="GetUserProfile()">Reset</button>
                 </div>
             </div>
@@ -164,7 +164,7 @@
 <!-- Custom JS -->
 <script>
 
-    function actionEdit() {
+    function ActionEdit() {
         event.preventDefault();
         // Get the edit button
         const editButton = document.getElementById('edit');
@@ -188,7 +188,7 @@
     }
 
 
-    function getResetPassword() {
+    function GetResetPassword() {
         event.preventDefault();
         $('#resetpassword').toggleClass('d-block d-none');
 

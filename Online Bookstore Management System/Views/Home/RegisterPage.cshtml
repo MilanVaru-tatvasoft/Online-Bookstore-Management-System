@@ -132,25 +132,19 @@
 
 <!-- Custom JS -->
 <script>
-    // Get the reset button
     const resetButton = document.querySelector('form #reset');
 
-    // Add event listener to the reset button
     resetButton.addEventListener('click', function (event) {
-        // Prevent the default form reset behavior
         event.preventDefault();
 
-        // Get all input fields within the form
         const inputFields = document.querySelectorAll('form input, form textarea, form select');
 
-        // Loop through each input field and clear its value
         inputFields.forEach(function (input) {
             input.value = '';
         });
 
-        // Clear the selected option in the gender dropdown
         const genderDropdown = document.querySelector('form select[name="gender"]');
-        genderDropdown.selectedIndex = 0; // Select the first option (Male)
+        genderDropdown.selectedIndex = 0;
     });
 
     function comparePassword() {

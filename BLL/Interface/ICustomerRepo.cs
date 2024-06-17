@@ -26,6 +26,8 @@ namespace BusinessLogic.Interface
         public void getSubmitReviewAndRating(viewBookModel model, int? userId);
         public bool getPaymentDone(string paymentType, int OrderId, int? userId);
         public PaymentBillDetails getBillDetails(int orderId);
+        public OrderData GetOrderHistoy(int? userId);
+
 
 
     }

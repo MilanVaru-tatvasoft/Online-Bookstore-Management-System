@@ -314,12 +314,12 @@ namespace BusinessLogic.Repository
             AdminProfileModel Profile = new AdminProfileModel()
             {
                 UserId = user.Userid,
-                FirstName = user.Firstname,
-                LastName = user.Lastname,
-                Email = user.Email,
-                Contact = user.Phonenumber,
-                Address = user.Address,
-                birthdate = user.Birthdate,
+                firstName = user.Firstname,
+                lastName = user.Lastname,
+                email = user.Email,
+                contact = user.Phonenumber,
+                address = user.Address,
+                birthDate = user.Birthdate,
                 city = user.City,
                 gender = user.Gender,
 
@@ -331,27 +331,27 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
-                user.Firstname = profile.FirstName;
-                user.Address = profile.Address;
-                user.Lastname = profile.LastName;
-                user.Email = profile.Email;
-                user.Birthdate = profile.birthdate;
+                user.Firstname = profile.firstName;
+                user.Address = profile.address;
+                user.Lastname = profile.lastName;
+                user.Email = profile.email;
+                user.Birthdate = profile.birthDate;
                 user.City = profile.city;
                 user.Gender = profile.gender;
-                user.Phonenumber = profile.Contact;
+                user.Phonenumber = profile.contact;
                 _context.Users.Update(user);
                 _context.SaveChanges();
 
                 Admin? admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
                 if (admin != null)
                 {
-                    admin.Firstname = profile.FirstName;
-                    admin.Lastname = profile.LastName;
-                    admin.Address = profile.Address;
-                    admin.Email = profile.Email;
+                    admin.Firstname = profile.firstName;
+                    admin.Lastname = profile.lastName;
+                    admin.Address = profile.address;
+                    admin.Email = profile.email;
                     admin.City = profile.city;
                     admin.Gender = profile.gender;
-                    admin.Phonenumber = profile.Contact;
+                    admin.Phonenumber = profile.contact;
                     _context.Admins.Update(admin);
                     _context.SaveChanges();
                 }

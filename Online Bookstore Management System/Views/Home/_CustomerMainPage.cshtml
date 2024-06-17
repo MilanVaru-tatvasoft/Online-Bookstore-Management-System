@@ -292,7 +292,6 @@
 <script>
 
     (function ($) {
-        // Define the CheckboxDropdown constructor function
         var CheckboxDropdown = function (el) {
             var _this = this;
             this.$el = $(el);
@@ -300,24 +299,20 @@
             this.$inputs = this.$el.find('[type="checkbox"]');
 
 
-            // Event listener for clicking the dropdown label
             this.$label.on('click', function (e) {
                 e.preventDefault();
                 _this.toggleOpen();
             });
 
-            // Event listener for checkbox change
             this.$inputs.on('change', function (e) {
                 _this.onCheckBox();
             });
         };
 
-        // Method to update dropdown status based on checkbox selection
         CheckboxDropdown.prototype.onCheckBox = function () {
             this.updateStatus();
         };
 
-        // Method to update dropdown status based on checkbox selection
         CheckboxDropdown.prototype.updateStatus = function () {
             var checked = this.$el.find(':checked');
 
@@ -325,7 +320,6 @@
 
         };
 
-        // Method to handle "Check All" functionality
         CheckboxDropdown.prototype.onCheckAll = function (checkAll) {
             if (!this.areAllChecked || checkAll) {
                 this.areAllChecked = true;
@@ -341,7 +335,6 @@
             this.updateStatus();
         };
 
-        // Method to toggle dropdown open/closed state
         CheckboxDropdown.prototype.toggleOpen = function (forceOpen) {
             var _this = this;
 
@@ -361,7 +354,6 @@
             }
         };
 
-        // Initialize CheckboxDropdown for each dropdown with data-control="checkbox-dropdown"
         var checkboxesDropdowns = document.querySelectorAll('[data-control="checkbox-dropdown"]');
         for (var i = 0, length = checkboxesDropdowns.length; i < length; i++) {
             new CheckboxDropdown(checkboxesDropdowns[i]);
