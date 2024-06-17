@@ -42,6 +42,7 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_AdminDashData", model);
         }
         public IActionResult GetOrderList()
+
         {
             OrderListModel model = new OrderListModel();
             model = _adminDashboard.getOrderListData();
