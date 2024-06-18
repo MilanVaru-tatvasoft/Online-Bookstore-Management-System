@@ -16,11 +16,11 @@
         return Model.search4 != null && Model.search4.Contains(pubId);
     }
 }
-
 <style>
     .dropdown {
         position: relative;
         color: #333;
+        margin-bottom: 10px;
     }
 
         .dropdown .dropdown-list {
@@ -28,90 +28,75 @@
             background: #fff;
             position: absolute;
             top: 30px;
-            left: 2px;
-            right: 2px;
+            left: 0;
+            right: 0;
             box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .15);
             transform-origin: 50% 0;
             transform: scale(1, 0);
             transition: transform .15s ease-in-out .15s;
-            max-height: 66vh;
-            overflow-y: scroll;
+            max-height: 200px;
+            overflow-y: auto;
             z-index: 1;
         }
 
         .dropdown .dropdown-option {
             display: block;
             padding: 8px 12px;
-            opacity: 0;
-            transition: opacity .15s ease-in-out;
         }
 
         .dropdown .dropdown-label {
             display: block;
-            height: 100%;
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 4px;
             line-height: 1;
             cursor: pointer;
+            padding: 8px 12px;
         }
-
-            .dropdown .dropdown-label:before {
-                content: '▼';
-                float: right;
-            }
 
         .dropdown.on .dropdown-list {
             transform: scale(1, 1);
             transition-delay: 0s;
         }
 
-            .dropdown.on .dropdown-list .dropdown-option {
-                opacity: 1;
-                transition-delay: .2s;
-            }
+        .dropdown .dropdown-label:before {
+            content: '▼';
+            float: right;
+        }
 
         .dropdown.on .dropdown-label:before {
             content: '▲';
         }
 
-    [type="checkbox"] {
-        position: relative;
-        top: -1px;
-        margin-right: 4px;
+    .searchbar {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
     }
 
-    #pagination {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
+    .form-group {
+        margin-bottom: 10px;
     }
 
-    .page {
-        margin: 0 5px;
-        cursor: pointer;
-    }
-
-    #loader {
-        text-align: center;
-        margin-top: 20px;
+    .btn-primary {
+        margin-right: 10px;
     }
 </style>
 
-<div id="custDashboard2">
+<div class="">
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
     <div class="mx-0 my-3 p-3">
         <div class="searchbar">
-            <form id="searchForm" class="mb-2 gy-2 row" onsubmit="Searchbooks()">
+            <form id="searchForm" class="mb-2 gy-2 row">
                 <div class="col-md-3 col-6">
-                    <input asp-for=@Model.search1 type="text" class="w-100" id="bookTitle" placeholder="Book Title">
+                    <input asp-for="@Model.search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
                 </div>
+
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown" data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search2" hidden>
-                        <label class="dropdown-label p-2">Authors</label>
+                        <label class="dropdown-label">Authors</label>
                         <div class="dropdown-list">
                             @foreach (var i in Model.Authors)
                             {
@@ -123,10 +108,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown" data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search3" hidden>
-                        <label class="dropdown-label p-2">Categories</label>
+                        <label class="dropdown-label">Categories</label>
                         <div class="dropdown-list">
                             @foreach (var i in Model.categories)
                             {
@@ -138,10 +123,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown" data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search3" hidden>
-                        <label class="dropdown-label p-2">Publishers</label>
+                        <label class="dropdown-label">Publishers</label>
                         <div class="dropdown-list">
                             @foreach (var i in Model.publishers)
                             {
@@ -153,20 +138,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
-                    <button type="submit" class="btn btn-primary">Search</button>
+
+                <div class="form-group d-flex justify-content-end col-md-12 mt-3">
+                    <button type="submit" class="btn btn-primary" onclick="SearchParamsbooks()">Search</button>
                     <button type="reset" class="btn btn-secondary" onclick="AdminBookList()">Reset</button>
                 </div>
             </form>
-            <hr class="m-0 w-100" />
         </div>
     </div>
-    <div class="container-fluid">
-        <div class="d-flex justify-content-end m-2 w-100">
-            <button class="btn btn-primary" onclick="getAddbookmodal()">Add Book</button>
-        </div>
-        <div class="table-responsive">
-            <table id="book-table" class="table">
+</div>
+<div class="container-fluid">
+    <div id="dashTable">
+        <div class="table-responsive ">
+            <table id="book-table" class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Book</th>
@@ -174,27 +158,23 @@
                         <th>Author</th>
                         <th>Category</th>
                         <th>Price</th>
-                        <th>Available Quantity</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="book-tbody">
-                    @foreach (var obj in Model.bookList)
+                    @foreach (var obj in Model.dashboardLists.ToList())
                     {
                         <tr>
                             <td>
-                                <img src="~/BookListCollections/@obj.Bookphoto" class="p-0" width="100" height="150" alt="@obj.Bookphoto">
+                                <img src="~/BookListCollections/@obj.bookPhoto" class="p-0" width="100" height="150" alt="@obj.bookPhoto">
                             </td>
-                            <td><span class="text-wrap fs-5">@obj.Title</span></td>
-                            <td>@Model.Authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
-                            <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
-                            <td>@obj.Price $</td>
-                            <td>@obj.Stockquantity</td>
+                            <td><span class="text-wrap fs-5">@obj.title</span></td>
+                            <td>@obj.authorName</td>
+                            <td>@obj.categoryName</td>
+                            <td>@obj.price $</td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View</button>
-                                    <button class="btn btn-warning" onclick="getEditBook(@obj.Bookid)">Edit</button>
-                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete</button>
+                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.bookId)">View More</buttton>
                                 </div>
                             </td>
                         </tr>
@@ -202,28 +182,57 @@
                 </tbody>
             </table>
         </div>
-        <div id="loader" style="display:none;">
-            <img src="~/backgroundImages/loader.gif" height="50" width="50" alt="Loading..." />
-        </div>
+
     </div>
 </div>
 
+<div id="loader" style="display: none;">
+    <img src="~/backgroundImages/loader.gif" height="100" width="100" alt="Loading..." />
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
 <script>
-        var isLoading = false;
-        var pageNumber = 1;
-    $(document).ready(function () {
+    function SearchParamsbooks() {
+        event.preventDefault();
 
-        function isScrolledToBottom() {
-            return $(window).scrollTop() + $(window).height() >= $(document).height();
-        }
+        let checkboxes = document.querySelectorAll(".AuthorData:checked");
+        let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
+        let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
+        const search2 = [];
 
-        $(window).scroll(function () {
-            if (isScrolledToBottom()) {
-                pageNumber++;
-                fetchMoreData(pageNumber);
+        var formData = new FormData($('#searchForm')[0]);
+        checkboxes.forEach(function (checkbox) {
+            formData.append('search2', checkbox.value);
+
+        });
+        checkboxes2.forEach(function (checkbox) {
+            formData.append('search3', checkbox.value);
+
+        });
+        checkboxes3.forEach(function (checkbox) {
+            formData.append('search4', checkbox.value);
+
+        });
+
+        console.log(formData);
+        $.ajax({
+            method: "POST",
+            url: "/Home/HandleSearch",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#custDashboard').html(result);
+
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
         });
-    });
+    }
+
 
     (function ($) {
         var CheckboxDropdown = function (el) {
@@ -233,7 +242,7 @@
             this.$inputs = this.$el.find('[type="checkbox"]');
 
 
-            // Event listener for clicking the dropdown label
+
             this.$label.on('click', function (e) {
                 e.preventDefault();
                 _this.toggleOpen();
@@ -293,33 +302,79 @@
     })(jQuery);
 
 
-    function fetchMoreData(pageNum) {
-        if (isLoading) return;
-        isLoading = true;
-        $('#loader').show();
+    $(document).ready(function () {
+        var isLoading = false;
 
-        $.ajax({
-            url: "/Home/getDashboardData",
-            type: "POST",
-            data: JSON.stringify({ pageNumber: 1 }),
-            contentType: "application/json; charset=utf-8",
-            success: function (result) {
-                debugger;
-                $('#loader').hide();
-                // $('#book-tbody').append(result);
-                //$("#").html('').html(result);
-                $.each(result.bookList, function (index, item) {
-                })
-                isLoading = false;
-            },
-            error: function (err, xhr, a) {
-                debugger
-                $('#loader').hide();
-                alert('Error loading partial view');
-                isLoading = false;
+        function isScrolledToBottom() {
+            return $(window).scrollTop() + $(window).height() >= $(document).height();
+        }
+
+        var pageNumber = 1;
+        $(window).scroll(function () {
+            if (isScrolledToBottom()) {
+                if (pageNumber < 5) {
+                    pageNumber++;
+                    fetchMoreData(pageNumber);
+                }
+
             }
         });
-    }
+
+        function fetchMoreData(pageNumber) {
+            console.log(pageNumber)
+
+            if (isLoading) return;
+            isLoading = true;
+            $('#loader').show();
+
+
+            setTimeout(function () {
+                $.ajax({
+                    url: "/Home/CustomerDashboardTable",
+                    type: "POST",
+                    data: { pageNumber: pageNumber },
+                    // contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#loader').hide();
+                        $.each(result, function (index, obj) {
+                            console.log(obj)
+                            var html = `
+                                                        <tr>
+                                                            <td>
+                                                                <img src="/BookListCollections/${obj.bookPhoto}" class="p-0" width="100" height="150" alt="${obj.bookPhoto}">
+                                                            </td>
+                                                            <td><span class="text-wrap fs-5">${obj.title}</span></td>
+                                                            <td>${obj.authorName}</td>
+                                                            <td>${obj.categoryName}</td>
+                                                            <td>${obj.price} $</td>
+                                                            <td>
+                                                                <div class="d-flex gap-2">
+                                                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(${obj.bookId})">View More</buttton>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    `;
+                            $('#book-table tbody').append(html);
+                        });
+                        isLoading = false;
+
+                        $('#loader').hide();
+
+                    },
+                    error: function (err, xhr, a) {
+                        $('#loader').hide();
+                        alert('Error loading partial view');
+                        isLoading = false;
+                    }
+                });
+            }, 2000);
+
+        }
+
+
+    });
+
+
 </script>
 
 <div id="Modaldata"></div>

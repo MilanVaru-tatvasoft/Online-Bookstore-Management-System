@@ -16,6 +16,7 @@ namespace DataAccess.CustomModels
         public List<Publisher> publishers { get; set; }
         public List<Addtocart>? addtocarts { get; set; }
         public List<RatingReview>? reviews { get; set; }
+        public List<DashboardList>? dashboardLists { get; set; }
 
         public int? UserId { get; set; }
 
@@ -24,11 +25,20 @@ namespace DataAccess.CustomModels
         public List<int>? search3 { get; set; }
         public List<int> search4 { get; set; }
 
-        // Pagination properties
-        public bool hasMoreItems { get; set; }
-        public int pageNumber { get; set; }
-        public int pageSize { get; set; }
-        public int totalCount { get; set; }
+   
+    }
+    public class DashboardList
+    {
+        public int bookId { get; set; }
+        public string title { get; set; }
+        public string authorName { get; set; }
+        public string categoryName { get; set; }
+        public int categoryId { get; set; }
+        public int authorId { get; set; }
+        public string bookPhoto { get; set;}
+        public decimal price { get; set;}
+       
+
     }
 
     public class UserProfile

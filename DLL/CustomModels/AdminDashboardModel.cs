@@ -49,12 +49,7 @@ namespace DataAccess.CustomModels
         public List<int>? search3 { get; set; }
         public List<int> search4 { get; set; }
 
-        // Pagination properties
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public int PageSize { get; set; }
-        public int TotalItems { get; set; }
-
+  
         
     }
     public class AdminProfileModel

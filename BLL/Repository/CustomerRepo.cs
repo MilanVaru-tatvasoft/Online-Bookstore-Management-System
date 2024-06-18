@@ -32,17 +32,25 @@ namespace BusinessLogic.Repository
 
         public Customer_MainPage getdata(Customer_MainPage model, int? userId, int pageNumber)
         {
-            int pageSize = 5; // Number of books per page
-            int? customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
+            Customer_MainPage _MainPage = new Customer_MainPage();
 
-            model.categories = _context.Categories.ToList();
-            model.Authors = _context.Authors.ToList();
-            model.publishers = _context.Publishers.ToList();
-            model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true).ToList();
-            List<Book> booksList = _context.Books.Where(x => x.Isdeleted != true).ToList();
-            List<RatingReview> reviews = _context.RatingReviews.ToList();
+            int? customerId = _context.Customers
+                                     .FirstOrDefault(x => x.Userid == userId)
+                                     ?.Customerid;
 
-            model.UserId = (int?)userId;
+            var categories = _context.Categories.ToList();
+            var authors = _context.Authors.ToList();
+            var publishers = _context.Publishers.ToList();
+
+            var addtocarts = _context.Addtocarts
+                                     .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
+                                     .ToList();
+            int pageSize = 5;
+
+            var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
+                                   .Where(x => x.Isdeleted != true).OrderBy(c=>c.Bookid);
+
+            var booksList = booksQuery.ToList();
 
             // Filtering based on search criteria
             if (!string.IsNullOrEmpty(model.search1))
@@ -65,13 +73,66 @@ namespace BusinessLogic.Repository
                 booksList = booksList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
             }
 
-            // Pagination
-            model.bookList = booksList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            model.reviews = reviews;
+            List<DashboardList> dashboardList = new List<DashboardList>();
+            foreach (var book in booksList)
+            {
+                DashboardList item = new DashboardList();
 
-            return model;
+                item.bookId = book.Bookid;
+                item.title = book.Title;
+                item.bookPhoto = book.Bookphoto;
+                item.authorId = (int)book.Authorid;
+                item.authorName = book.Author.Name;
+                item.categoryId = (int)book.Categoryid;
+                item.categoryName = book.Category.Categoryname;
+                item.price = book.Price;
+
+                dashboardList.Add(item);
+
+            }
+            dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(); _MainPage.addtocarts = addtocarts;
+
+            _MainPage.Authors = authors;
+            _MainPage.categories = categories;
+            _MainPage.publishers = publishers;
+            _MainPage.UserId = userId;
+            _MainPage.dashboardLists = dashboardList;
+
+
+
+            return _MainPage;
         }
+        public List<DashboardList> getTableData(int? userId, int pageNumber)
+        {
+            int pageSize = 5;
 
+            var booksQuery = _context.Books.Include(x=>x.Author).Include(y=>y.Category)
+                                   .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
+
+            var booksList = booksQuery.ToList();
+
+            List<DashboardList> dashboardList = new List<DashboardList>();
+
+            foreach (var book in booksList)
+            {
+                DashboardList item = new DashboardList();
+
+                item.bookId = book.Bookid;
+                item.title = book.Title;
+                item.bookPhoto = book.Bookphoto;
+                item.authorId = (int)book.Authorid;
+                item.authorName = book.Author.Name;
+                item.categoryId = (int)book.Categoryid;
+                item.categoryName = book.Category.Categoryname;
+                item.price = book.Price;
+
+                dashboardList.Add(item);
+
+            }
+            dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return dashboardList;
+        }
 
         public Admin getAdminData(string email)
         {
@@ -197,6 +258,7 @@ namespace BusinessLogic.Repository
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 bookPic = book.Bookphoto,
+                Stockquantity = book.Stockquantity,
                 quantity = 1,
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
@@ -562,10 +624,10 @@ namespace BusinessLogic.Repository
 
         }
 
-        public OrderData GetOrderHistoy( int? userId)
-        {   
-            Customer? customer =_context.Customers.FirstOrDefault(x=>x.Userid == userId);
-            List<Order> order = _context.Orders.Where(x=>x.Customerid == customer.Customerid && x.Isdeleted !=true).OrderBy(r=>r.Orderdate).ToList();
+        public OrderData GetOrderHistoy(int? userId)
+        {
+            Customer? customer = _context.Customers.FirstOrDefault(x => x.Userid == userId);
+            List<Order> order = _context.Orders.Where(x => x.Customerid == customer.Customerid && x.Isdeleted != true).OrderBy(r => r.Orderdate).ToList();
             List<Orderdetail> orderDetails = _context.Orderdetails.ToList();
             List<Book> books = _context.Books.ToList();
             List<Author> author = _context.Authors.ToList();

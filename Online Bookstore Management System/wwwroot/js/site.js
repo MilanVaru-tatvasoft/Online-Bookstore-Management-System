@@ -76,45 +76,27 @@ function ResetPassword() {
     });
 }
 
-function SearchParamsbooks() {
-    event.preventDefault();
-
-    let checkboxes = document.querySelectorAll(".AuthorData:checked");
-    let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
-    let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
-    const search2 = [];
-
-    var formData = new FormData($('#searchForm')[0]);
-    checkboxes.forEach(function (checkbox) {
-        formData.append('search2', checkbox.value);
-
-    });
-    checkboxes2.forEach(function (checkbox) {
-        formData.append('search3', checkbox.value);
-
-    });
-    checkboxes3.forEach(function (checkbox) {
-        formData.append('search4', checkbox.value);
-
-    });
-
-
-
-    console.log(formData);
+function GetCustomerDashboard() {
+    var pageNum = 1;
     $.ajax({
         method: "POST",
-        url: "/Home/searchBooks",
-        contentType: false,
-        processData: false,
-        data: formData,
+        url: "/Home/CustomerDashboard2",
+        data: { pageNumber:pageNum }
+,
         success: function (result) {
             $('#custDashboard').html(result);
-
+            $('#UserProfile').empty();
         },
         error: function () {
-            alert('Error loading partial view');
+            console.log("fgiudsviy");
+            alert('Error loading  view');
         }
     });
+
+
+    $('#loader2').show();
+
+
 }
 function GetCartList() {
     $.ajax({
@@ -132,27 +114,7 @@ function GetCartList() {
         }
     });
 }
-function GetCustomerDashboard() {
 
-    var formData = $('#searchForm').serialize();
-    $.ajax({
-        method: "POST",
-        url: "/Home/getcustDash",
-        data: formData,
-        success: function (result) {
-            $('#custDashboard').html(result);
-            $('#UserProfile').empty();
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
-
-
-    $('#loader2').show();
-
-
-}
 function GetUserProfile() {
     $.ajax({
         method: "GET",

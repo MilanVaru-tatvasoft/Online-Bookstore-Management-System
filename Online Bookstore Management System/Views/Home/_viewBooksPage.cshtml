@@ -72,6 +72,7 @@
             <h5>Price:<span class="text-danger">&nbsp;@Model.price $</span></h5>
             <h6>Pages: @Model.pageNumber</h6>
             <h6>Publisher: @Model.publisherName</h6>
+            <input type="text" asp-for="@Model.Stockquantity" id="bookStockQuantity" hidden />
             <div class="d-flex gap-2">
                 <button class="btn btn-success" onclick="GetOrderDatailsPage(@Model.bookId)">Buy</button>
                 @if (Model.cartId != 0 && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Isremoved == false)
@@ -80,8 +81,10 @@
                 }
                 else
                 {
-                    <input type="number" asp-for="@Model.quantity" id="quantity">
+                    <input type="number" asp-for="@Model.quantity" id="quantity" oninput="isAvlQuantity(this.value)">
                     <button class="btn btn-primary" onclick="GetAddToCart(@Model.bookId, @Model.cartId)">Add to Cart</button>
+                    <br />
+                    <span id="errQuantity" class="text-danger"></span>
                 }
             </div>
         </div>
@@ -174,6 +177,24 @@
     </div>
 </div>
 <script>
+    function isAvlQuantity(value) {
+        var stockQuantity = parseInt($('#bookStockQuantity').val()); 
+        var errQuantitySpan = $('#errQuantity');
+        if (value == "") {
+            errQuantitySpan.text("Please! Select A value");
+        }
+        else if (stockQuantity==0) {
+            alert("Stock quantity is not available. Please try again later.");
+        }
+        else if (value > stockQuantity) {
+            errQuantitySpan.text("Not enough stock available. Please wait or reduce the quantity.");
+        }
+        else {
+            errQuantitySpan.empty();
+        }
+    }
+
+   
     function SubmitReview(event) {
         event.preventDefault();
         var reviewRating = parseFloat(document.querySelector('input[name="rating"]:checked').value);

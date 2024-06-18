@@ -1,14 +1,18 @@
 ﻿<style>
- 
+
 </style>
 
-    <partial name="_header"  />
+<partial name="_header" />
+
 <div id="hello" class="position-absolute w-100">
-    <div id="custDashboard" class="position-absolute">
-        <partial name="_CustomerMainPage" />
+    <div id="custDashboard" class="position-absolute w-100">
     </div>
     <div id="UserProfile">
     </div>
 </div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        GetCustomerDashboard();
+    });
+</script>
 

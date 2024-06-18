@@ -75,30 +75,39 @@ namespace Online_Bookstore_Management_System.Controllers
         }
 
         [Authorize("customer")]
-        public IActionResult CustomerDashboard()
+        public IActionResult customerDashboard()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            Customer_MainPage model = new Customer_MainPage();
-            int pageNumber = 0;
-            model = _customerRepo.getdata(model, userId, pageNumber);
-            return View(model);
-        }
-        public IActionResult getcustDash(Customer_MainPage model)
-        {
 
+            Customer_MainPage dashData = new Customer_MainPage();
+            dashData = _customerRepo.getdata(dashData, userId, 1);
+
+            return View(dashData);
+        }
+
+        public IActionResult CustomerDashboard2(int pageNumber = 1)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            Customer_MainPage dashData = new Customer_MainPage();
+            dashData = _customerRepo.getdata(dashData, userId, pageNumber);
+            return PartialView("_CustomerMainPage", dashData);
+        }
+
+        public IActionResult CustomerDashboardTable(int pageNumber)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            List<DashboardList> list = _customerRepo.getTableData(userId, pageNumber);
+            return Json(list);
+        }
+
+        public IActionResult HandleSearch(Customer_MainPage model)
+        {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             int pageNumber = 1;
-            _customerRepo.getdata(model, userId, pageNumber);
-            return PartialView("_CustomerMainPage", model);
+            Customer_MainPage dashData = _customerRepo.getdata(model, userId, pageNumber);
+            return PartialView("_CustomerMainPage", dashData);
         }
-        [HttpPost]
-        public IActionResult getDashboardData(int pageNumber)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            Customer_MainPage model = new Customer_MainPage();
-            _customerRepo.getdata(model, userId, pageNumber);
-            return Ok(Json( new { data= model.bookList}));
-        }
+
 
         public IActionResult getregistrationform()
         {
@@ -119,10 +128,10 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult GetOrderHistory()
         {
-          int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            //OrderData model = _customerRepo.GetOrderHistoy(userId);
-                return PartialView("_MyOrdersPage");
-            
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            OrderData model = _customerRepo.GetOrderHistoy(userId);
+            return PartialView("_MyOrdersPage", model);
+
         }
         public IActionResult getUserProfile()
         {
@@ -155,13 +164,7 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_viewBooksPage", model);
         }
 
-        public IActionResult searchBooks(Customer_MainPage model)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            int pageNumber = 1;
-            _customerRepo.getdata(model, userId, pageNumber);
-            return PartialView("_CustomerMainPage", model);
-        }
+
 
         public IActionResult getAddToCart(int bookId, int cartId, int quantity)
         {
@@ -264,7 +267,7 @@ namespace Online_Bookstore_Management_System.Controllers
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (data.BookName == null)
             {
-               OrderData model = _customerRepo.getCartList(userId);
+                OrderData model = _customerRepo.getCartList(userId);
                 model = data;
                 int orderId = _customerRepo.confirmOrder(model, userId);
                 model.Orderid = orderId;
@@ -278,10 +281,10 @@ namespace Online_Bookstore_Management_System.Controllers
             }
 
 
-          
+
         }
 
-       
+
 
         public IActionResult getPaymentDone(string paymentType, int OrderId)
         {

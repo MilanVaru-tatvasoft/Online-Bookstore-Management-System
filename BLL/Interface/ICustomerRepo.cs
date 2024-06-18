@@ -11,6 +11,7 @@ namespace BusinessLogic.Interface
     public interface ICustomerRepo
     {
         public Customer_MainPage getdata(Customer_MainPage model, int? userId, int pageNumber);
+        public List<DashboardList> getTableData( int? userId, int pageNumber);
 
         public Admin getAdminData(string email);
         public Customer getCustomerData(string email);
