@@ -213,23 +213,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var obj in Model.bookList)
+                    @foreach (var obj in Model.adminBookLists)
                     {
                         <tr>
                             <td>
-                                <img src="~/BookListCollections/@obj.Bookphoto" class="  p-0" width="100" height="150" alt="@obj.Bookphoto">
+                                <img src="~/BookListCollections/@obj.BookPhoto" class="  p-0" width="100" height="150" alt="@obj.BookPhoto">
                             </td>
                             <td><span class="text-wrap fs-5">@obj.Title</span></td>
-                            <td>@Model.Authors?.FirstOrDefault(x => x.Authorid == obj.Authorid).Name</td>
-                            <td>@Model.categories?.FirstOrDefault(x => x.Categoryid == obj.Categoryid).Categoryname</td>
+                            <td>@obj.AuthorName</td>
+                            <td>@obj.CategoryName</td>
                             <td>@obj.Price $</td>
-                            <td>@obj.Stockquantity </td>
+                            <td>@obj.stock </td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.Bookid)">View </button>
-                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.Bookid)">Edit </button>
-                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.Bookid)">Delete </button>
-                                </div>
+                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.BookId)">View </button>
+                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.BookId)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.BookId)">Delete </button>
+                                    </div>
                             </td>
                         </tr>
                     }

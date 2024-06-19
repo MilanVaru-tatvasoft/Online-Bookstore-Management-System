@@ -1,4 +1,4 @@
-﻿@model DataAccess.CustomModels.Customer_MainPage;
+﻿@model DataAccess.CustomModels.CustomerMainPage;
 @inject IHttpContextAccessor context
 <style>
     .dropdown-menu{
@@ -33,9 +33,9 @@
                     </li>
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
-                            <input type="text" value="@Model.addtocarts.Count()" hidden id="modelcountdata" />
+                            <input type="text" value="@Model.AddToCarts.Count()" hidden id="modelcountdata" />
                             <a class="nav-link text-dark" onclick="getCartList()">My Cart</a>
-                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;">@Model.addtocarts.Count()</div>
+                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;">@Model.AddToCarts.Count()</div>
                         </div>
                     </li>
                     <li>
@@ -50,7 +50,7 @@
                         <button class="btn bg-transparent border rounded-1 position-relative" onclick="GetCartList()">
                             <span class="bi-cart text-dark bi fw-bold"></span>
                         </button>
-                        <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">@Model.addtocarts.Count()</div>
+                        <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">@Model.AddToCarts.Count()</div>
                     </div>
                     <div class="dropdown overflow-hidden position-static d-none d-md-block">
                         <button class="btn bg-transparent border rounded-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">

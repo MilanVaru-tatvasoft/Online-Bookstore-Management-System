@@ -12,6 +12,7 @@ namespace DataAccess.CustomModels
     public class AdminDashboardModel
     {
         public List<decimal> monthlySales { get; set; } 
+        public List<decimal> dailySales { get; set; } 
         public List<string> categorties { get; set; } 
         public List<int> noofbooks { get; set; }
         
@@ -20,9 +21,9 @@ namespace DataAccess.CustomModels
         public int? shippedOrder { get; set; }
         public int? deliveredOrders { get; set; }
         public int? numberOfBooks { get; set; }
-        public int? totalSellBooks { get; set; }
+        public int? totalSalelBooks { get; set; }
         public int? numberOfCustomer { get; set; }
-        public decimal? sellofThisMonth { get; set; }
+        public decimal? salelofThisMonth { get; set; }
     }
     public class OrderListModel
     {
@@ -38,24 +39,26 @@ namespace DataAccess.CustomModels
     }
     public class AdminBookListmodel
     {
-        public List<Category>? categories { get; set; }
-        public List<Book>? bookList { get; set; }
         public List<Author>? Authors { get; set; }
         public List<Publisher>? publishers { get; set; }
-        public int UserId { get; set; }
-
+        public List<Category>? categories { get; set; }
         public string? search1 { get; set; }
         public List<int>? search2 { get; set; }
         public List<int>? search3 { get; set; }
-        public List<int> search4 { get; set; }
-
-        // Pagination properties
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public int PageSize { get; set; }
-        public int TotalItems { get; set; }
-
-        
+        public List<int> search4 { get; set; } 
+        public List<AdminBookList> adminBookLists { get; set; }
+    }
+    public class AdminBookList
+    {
+            public int BookId { get; set; }
+            public string Title { get; set; }
+            public string AuthorName { get; set; }
+            public string CategoryName { get; set; }
+            public int CategoryId { get; set; }
+            public int AuthorId { get; set; }
+            public int stock { get; set; }
+            public string BookPhoto { get; set; }
+            public decimal Price { get; set; }
     }
     public class AdminProfileModel
     {

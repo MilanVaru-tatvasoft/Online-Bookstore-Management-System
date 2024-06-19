@@ -70,14 +70,14 @@
                         var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
                         <tr class="text-center">
                             <td>@i.Orderid</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Orderdate.ToString("yyyy-MM-dd")</td>
-                            <td>-</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Customername</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Email</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Phonenumber</td>
+                            <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
+                            <td>@i.Orderdate.AddDays(6).ToString("yyyy-MM-dd")</td>
+                            <td>@i.Customername</td>
+                            <td>@i.Email</td>
+                            <td>@i.Phonenumber</td>
 
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).Address</td>
-                            <td>@Model.orders?.FirstOrDefault(x=>x.Orderid == i.Orderid).City</td>
+                            <td>@i.Address</td>
+                            <td>@i.City</td>
                             <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
                             <td>@getStatus(statusid)</td>
                             <td>

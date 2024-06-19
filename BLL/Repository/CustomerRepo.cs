@@ -30,48 +30,108 @@ namespace BusinessLogic.Repository
 
 
 
-        public Customer_MainPage getdata(Customer_MainPage model, int? userId, int pageNumber)
+        public CustomerMainPage getdata(CustomerMainPage model, int? userId, int pageNumber)
         {
-            int pageSize = 5; // Number of books per page
-            int? customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
+            CustomerMainPage _MainPage = new CustomerMainPage();
 
-            model.categories = _context.Categories.ToList();
-            model.Authors = _context.Authors.ToList();
-            model.publishers = _context.Publishers.ToList();
-            model.addtocarts = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true).ToList();
-            List<Book> booksList = _context.Books.Where(x => x.Isdeleted != true).ToList();
-            List<RatingReview> reviews = _context.RatingReviews.ToList();
+            int? customerId = _context.Customers
+                                     .FirstOrDefault(x => x.Userid == userId)
+                                     ?.Customerid;
 
-            model.UserId = (int?)userId;
+            var categories = _context.Categories.ToList();
+            var authors = _context.Authors.ToList();
+            var publishers = _context.Publishers.ToList();
 
-            // Filtering based on search criteria
-            if (!string.IsNullOrEmpty(model.search1))
+            var addtocarts = _context.Addtocarts
+                                     .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
+                                     .ToList();
+            int pageSize = 5;
+
+            var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
+                                   .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
+
+            var booksList = booksQuery.ToList();
+
+            if (!string.IsNullOrEmpty(model.Search1))
             {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.search1.Trim().ToLower())).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
             }
 
-            if (model.search2 != null && model.search2.Count != 0)
+            if (model.Search2 != null && model.Search2.Count != 0)
             {
-                booksList = booksList.Where(r => model.search2.Contains((int)r.Authorid)).ToList();
+                booksList = booksList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
             }
 
-            if (model.search3 != null && model.search3.Count != 0)
+            if (model.Search3 != null && model.Search3.Count != 0)
             {
-                booksList = booksList.Where(r => model.search3.Contains((int)r.Categoryid)).ToList();
+                booksList = booksList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
             }
 
-            if (model.search4 != null && model.search4.Count != 0)
+            if (model.Search4 != null && model.Search4.Count != 0)
             {
-                booksList = booksList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
+                booksList = booksList.Where(r => model.Search4.Contains((int)r.Publisherid)).ToList();
             }
 
-            // Pagination
-            model.bookList = booksList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            model.reviews = reviews;
+            List<DashboardList> dashboardList = new List<DashboardList>();
+            foreach (var book in booksList)
+            {
+                DashboardList item = new DashboardList();
 
-            return model;
+                item.BookId = book.Bookid;
+                item.Title = book.Title;
+                item.BookPhoto = book.Bookphoto;
+                item.AuthorId = (int)book.Authorid;
+                item.AuthorName = book.Author.Name;
+                item.CategoryId = (int)book.Categoryid;
+                item.CategoryName = book.Category.Categoryname;
+                item.Price = book.Price;
+
+                dashboardList.Add(item);
+
+            }
+            dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(); _MainPage.AddToCarts = addtocarts;
+
+            _MainPage.Authors = authors;
+            _MainPage.Categories = categories;
+            _MainPage.Publishers = publishers;
+            _MainPage.UserId = userId;
+            _MainPage.DashboardLists = dashboardList;
+            _MainPage.BookCount = booksList.Count();
+
+
+
+            return _MainPage;
         }
+        public List<DashboardList> getTableData(int? userId, int pageNumber)
+        {
+            int pageSize = 5;
 
+            var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
+                                   .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
+
+            var booksList = booksQuery.ToList();
+
+            List<DashboardList> dashboardList = new List<DashboardList>();
+
+            foreach (var book in booksList)
+            {
+                DashboardList item = new DashboardList();
+
+                item.BookId = book.Bookid;
+                item.Title = book.Title;
+                item.BookPhoto = book.Bookphoto;
+                item.AuthorId = (int)book.Authorid;
+                item.AuthorName = book.Author.Name;
+                item.CategoryId = (int)book.Categoryid;
+                item.CategoryName = book.Category.Categoryname;
+                item.Price = book.Price;
+
+                dashboardList.Add(item);
+            }
+            dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return dashboardList;
+        }
 
         public Admin getAdminData(string email)
         {
@@ -140,9 +200,9 @@ namespace BusinessLogic.Repository
                 Email = user.Email,
                 Contact = user.Phonenumber,
                 Address = user.Address,
-                birthdate = user.Birthdate,
-                city = user.City,
-                gender = user.Gender,
+                Birthdate = user.Birthdate,
+                City = user.City,
+                Gender = user.Gender,
 
             };
             return userProfile;
@@ -156,9 +216,9 @@ namespace BusinessLogic.Repository
                 user.Address = profile.Address;
                 user.Lastname = profile.LastName;
                 user.Email = profile.Email;
-                user.Birthdate = profile.birthdate;
-                user.City = profile.city;
-                user.Gender = profile.gender;
+                user.Birthdate = profile.Birthdate;
+                user.City = profile.City;
+                user.Gender = profile.Gender;
                 user.Phonenumber = profile.Contact;
                 _context.Users.Update(user);
                 _context.SaveChanges();
@@ -169,7 +229,7 @@ namespace BusinessLogic.Repository
                     customer.Name = profile.FirstName + " " + profile.LastName;
                     customer.Address = profile.Address;
                     customer.Email = profile.Email;
-                    customer.City = profile.city;
+                    customer.City = profile.City;
                     //customer.Gender = profile.gender;
                     customer.Phonenumber = profile.Contact;
                     _context.Customers.Update(customer);
@@ -197,6 +257,7 @@ namespace BusinessLogic.Repository
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
                 publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
                 bookPic = book.Bookphoto,
+                Stockquantity = book.Stockquantity,
                 quantity = 1,
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
@@ -215,25 +276,25 @@ namespace BusinessLogic.Repository
 
             OrderData orderdata = new OrderData()
             {
-                bookId = bookId,
+                BookId = bookId,
                 BookName = book.Title,
                 Price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(i => i.Authorid == book.Authorid).Name,
-                customerId = customer.Customerid,
+                CustomerId = customer.Customerid,
                 CustomerName = customer.Name,
                 Email = customer.Email,
                 PhoneNumber = customer.Phonenumber,
                 OrderAddress = customer.Address,
-                city = customer.City,
+                City = customer.City,
                 Quantity = 1,
                 TotalAmount = book.Price,
                 UpdateCustomerName = customer.Name,
                 UpdateEmail = customer.Email,
                 UpdatePhoneNumber = customer.Phonenumber,
                 UpdateOrderAddress = customer.Address,
-                updateCity = customer.City,
+                UpdateCity = customer.City,
                 UpdateQuantity = 1,
-                orderdetails = _context.Orderdetails.ToList(),
+                OrderDetails = _context.Orderdetails.ToList(),
                 Orders = _context.Orders.Where(x => x.Isdeleted != true).ToList(),
             };
 
@@ -273,6 +334,7 @@ namespace BusinessLogic.Repository
                 cartData.Quantity = quantity;
                 cartData.Totalamount = (decimal)(quantity * cartData.Price);
                 cartData.Isremoved = false;
+                cartData.Checkout = false;
                 cartData.UpdatedDate = DateTime.Now;
                 _context.SaveChanges();
             }
@@ -301,9 +363,9 @@ namespace BusinessLogic.Repository
         public int confirmOrder(OrderData data, int? userId)
         {
             int? custId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid;
-            Book book = _context.Books.FirstOrDefault(x => x.Bookid == data.bookId);
+            Book book = _context.Books.FirstOrDefault(x => x.Bookid == data.BookId);
 
-            if (data.bookId != null && data.bookId != 0)
+            if (data.BookId != null && data.BookId != 0)
             {
                 data.Quantity = data.Quantity ?? 0;
                 decimal quantity = (decimal)data.Quantity;
@@ -316,7 +378,7 @@ namespace BusinessLogic.Repository
                     Email = data.Email,
                     Phonenumber = data.PhoneNumber,
                     Address = data.OrderAddress,
-                    City = data.city,
+                    City = data.City,
                     Orderdate = DateTime.Today.Date,
                     Orderstatusid = 1,
                     Createdby = userId,
@@ -331,7 +393,7 @@ namespace BusinessLogic.Repository
                 Orderdetail orderdetail = new Orderdetail()
                 {
                     Orderid = order.Orderid,
-                    Bookid = data.bookId,
+                    Bookid = data.BookId,
                     Price = book.Price,
                     Quantity = (int)data.Quantity,
                     Totalamount = totalAmount,
@@ -359,7 +421,7 @@ namespace BusinessLogic.Repository
                     Email = data.Email,
                     Phonenumber = data.PhoneNumber,
                     Address = data.OrderAddress,
-                    City = data.city,
+                    City = data.City,
                     Orderdate = DateTime.Today.Date,
                     Orderstatusid = 1,
                     Createdby = userId,
@@ -370,7 +432,7 @@ namespace BusinessLogic.Repository
                 _context.Orders.Add(order);
                 _context.SaveChanges(); // Save order
 
-                foreach (var cart in data.addtocarts)
+                foreach (var cart in data.AddToCarts)
                 {
                     Orderdetail orderdetail = new Orderdetail()
                     {
@@ -386,7 +448,7 @@ namespace BusinessLogic.Repository
                     _context.Orderdetails.Add(orderdetail);
                 }
 
-                foreach (var cart2 in data.addtocarts)
+                foreach (var cart2 in data.AddToCarts)
                 {
                     book = _context.Books.FirstOrDefault(x => x.Bookid == cart2.Bookid);
 
@@ -407,7 +469,7 @@ namespace BusinessLogic.Repository
             }
         }
 
-        public OrderData getCartList(int? UserId)
+        public OrderData getCartList(OrderData model, int? UserId)
         {
             var customerId = _context.Customers
      .Where(x => x.Userid == UserId)
@@ -425,20 +487,20 @@ namespace BusinessLogic.Repository
             var discountPercentage = 5m;
             var shippingAmount = 10m;
 
-            var model = new OrderData
+            var data = new OrderData
             {
 
-                categories = _context.Categories.ToList(),
+                Categories = _context.Categories.ToList(),
                 Authors = _context.Authors.ToList(),
-                publishers = _context.Publishers.ToList(),
-                addtocarts = addtocart,
-                bookList = addtocart.Select(a => a.Book).ToList(),
-                itemCount = addtocart.Count(),
-                totalBooks = totalBooks,
+                Publishers = _context.Publishers.ToList(),
+                AddToCarts = addtocart,
+                BookList = addtocart.Select(a => a.Book).ToList(),
+                ItemCount = addtocart.Count(),
+                TotalBooks = totalBooks,
                 TotalAmount = totalAmount,
-                discountPercentage = discountPercentage,
-                shippingAmount = shippingAmount,
-                tax = tax,
+                DiscountPercentage = discountPercentage,
+                ShippingAmount = shippingAmount,
+                Tax = tax,
 
 
             };
@@ -449,19 +511,27 @@ namespace BusinessLogic.Repository
                 var taxAmount = totalAmount * (tax / 100);
                 var grossTotal = totalAmount + taxAmount + shippingAmount - discount;
 
-                model.tax = taxAmount;
-                model.Grosstotal = grossTotal;
+                data.Tax = taxAmount;
+                data.GrossTotal = grossTotal;
             }
             else
             {
-                model.discountPercentage = 0;
-                model.tax = 0;
-                model.Grosstotal = 0;
-                model.shippingAmount = 0;
+                data.DiscountPercentage = 0;
+                data.Tax = 0;
+                data.GrossTotal = 0;
+                data.ShippingAmount = 0;
             }
 
+            if (model.CustomerName != null)
+            {
+                data.CustomerName = model.CustomerName;
+                data.OrderAddress = model.OrderAddress;
+                data.Email = model.Email;
+                data.PhoneNumber = model.PhoneNumber;
+                data.City = model.City;
+            }
 
-            return model;
+            return data;
 
         }
 
@@ -548,13 +618,13 @@ namespace BusinessLogic.Repository
                 bill.CustomerName = order.Customername;
                 bill.Orders = order;
                 bill.Authors = _context.Authors.ToList();
-                bill.orderdetails = orderDetails.ToList();
-                bill.tax = taxAmount;
-                bill.discountPercentage = discountPercentage;
-                bill.Grosstotal = grossTotal;
-                bill.totalBooks = totalBooks;
-                bill.shippingAmount = shippingAmount;
-                bill.bookList = _context.Books.Where(b => bookIds.Contains(b.Bookid)).ToList();
+                bill.OrderDetails = orderDetails.ToList();
+                bill.Tax = taxAmount;
+                bill.DiscountPercentage = discountPercentage;
+                bill.GrossTotal = grossTotal;
+                bill.TotalBooks = totalBooks;
+                bill.ShippingAmount = shippingAmount;
+                bill.BookList = _context.Books.Where(b => bookIds.Contains(b.Bookid)).ToList();
             }
 
             return bill;
@@ -562,25 +632,28 @@ namespace BusinessLogic.Repository
 
         }
 
-        public OrderData GetOrderHistoy( int? userId)
-        {   
-            Customer? customer =_context.Customers.FirstOrDefault(x=>x.Userid == userId);
-            List<Order> order = _context.Orders.Where(x=>x.Customerid == customer.Customerid && x.Isdeleted !=true).OrderBy(r=>r.Orderdate).ToList();
+        public OrderData GetOrderHistoy(int? userId)
+        {
+            Customer? customer = _context.Customers.FirstOrDefault(x => x.Userid == userId);
+            List<Order> order = _context.Orders.Where(x => x.Customerid == customer.Customerid && x.Isdeleted != true).OrderBy(r => r.Orderdate).ToList();
             List<Orderdetail> orderDetails = _context.Orderdetails.ToList();
             List<Book> books = _context.Books.ToList();
             List<Author> author = _context.Authors.ToList();
             List<Category> categories = _context.Categories.ToList();
             List<Payment> payments = _context.Payments.ToList();
+            List<Status> statuses = _context.Statuses.ToList();
 
             OrderData orderData = new OrderData()
             {
-                orderdetails = orderDetails,
+                OrderDetails = orderDetails,
                 Orders = order,
-                payment = payments,
-                categories = categories,
-                bookList = books,
+                Payments = payments,
+                Categories = categories,
+                BookList = books,
                 Authors = author,
-                customerId = customer.Customerid,
+                CustomerId = customer.Customerid,
+                Statuses = statuses,
+
             };
 
             return orderData;

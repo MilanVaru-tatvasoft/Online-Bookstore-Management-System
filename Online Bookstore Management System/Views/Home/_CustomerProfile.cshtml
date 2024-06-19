@@ -74,14 +74,14 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthdate" placeholder="Birth Date" disabled>
+                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.Birthdate" placeholder="Birth Date" disabled>
                     <label for="floatingBirthDate">Birth Date</label>
-                    <span class="text-danger" asp-validation-for="birthdate"></span>
+                    <span class="text-danger" asp-validation-for="Birthdate"></span>
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="my-2">
-                    <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="gender" disabled required>
+                    <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="Gender" disabled required>
                         <option value="male" selected>Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
@@ -104,9 +104,9 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingCity" asp-for="city" placeholder="City" disabled>
+                    <input type="text" class="form-control" id="floatingCity" asp-for="City" placeholder="City" disabled>
                     <label for="floatingCity">City</label>
-                    <span class="text-danger" asp-validation-for="city"></span>
+                    <span class="text-danger" asp-validation-for="City"></span>
                 </div>
             </div>
             <div class="col-12">

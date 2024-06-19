@@ -75,46 +75,26 @@ function ResetPassword() {
         }
     });
 }
-
-function SearchParamsbooks() {
-    event.preventDefault();
-
-    let checkboxes = document.querySelectorAll(".AuthorData:checked");
-    let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
-    let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
-    const search2 = [];
-
-    var formData = new FormData($('#searchForm')[0]);
-    checkboxes.forEach(function (checkbox) {
-        formData.append('search2', checkbox.value);
-
-    });
-    checkboxes2.forEach(function (checkbox) {
-        formData.append('search3', checkbox.value);
-
-    });
-    checkboxes3.forEach(function (checkbox) {
-        formData.append('search4', checkbox.value);
-
-    });
-
-
-
-    console.log(formData);
+function GetCustomerDashboard() {
+    var pageNum = 1;
     $.ajax({
         method: "POST",
-        url: "/Home/searchBooks",
-        contentType: false,
-        processData: false,
-        data: formData,
+        url: "/Home/CustomerDashboard2",
+        data: { pageNumber:pageNum }
+,
         success: function (result) {
             $('#custDashboard').html(result);
-
+            $('#UserProfile').empty();
         },
         error: function () {
-            alert('Error loading partial view');
+            alert('Error loading  view');
         }
     });
+
+
+    $('#loader2').show();
+
+
 }
 function GetCartList() {
     $.ajax({
@@ -131,27 +111,6 @@ function GetCartList() {
             alert('Error loading partial view');
         }
     });
-}
-function GetCustomerDashboard() {
-
-    var formData = $('#searchForm').serialize();
-    $.ajax({
-        method: "POST",
-        url: "/Home/getcustDash",
-        data: formData,
-        success: function (result) {
-            $('#custDashboard').html(result);
-            $('#UserProfile').empty();
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
-
-
-    $('#loader2').show();
-
-
 }
 function GetUserProfile() {
     $.ajax({
@@ -181,7 +140,6 @@ function GetOrderHistory() {
         }
     });
 }
-
 function EditUserProfile() {
     event.preventDefault();
     $.ajax({
@@ -231,23 +189,6 @@ function ViewBooksPage(bookId) {
         }
     });
 }
-
-function GetOrderDatailsPage(bookId) {
-    $.ajax({
-        method: "GET",
-        url: "/Home/GetOrderDatailsPage",
-        data: { bookId: bookId },
-
-        success: function (result) {
-            $('#ModalAction').html(result);
-            $('#orderDetailsModal').modal('show');
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
-}
-
 function CartCount(id) {
 
     var cartcount = $('.itemCountInCart').val();
@@ -288,7 +229,6 @@ function GetAddToCart(bookId, cartId) {
         }
     });
 }
-
 function GetRemoveFromCart(bookId, cartId) {
     event.preventDefault();
     Swal.fire({
@@ -338,13 +278,13 @@ function GetBuyNow() {
 
         success: function (result) {
 
-        
             $('#orderDetailsModal').modal('hide');
+            $('.modal-backdrop').remove(); 
+
             $('#custDashboard').empty()
             $('#UserProfile').empty()
-            $('#UserProfile').html(result)     
-      
 
+            $('#UserProfile').html(result)     
 
         },
         error: function () {
@@ -352,6 +292,8 @@ function GetBuyNow() {
         }
     });
 }
+
+
 
 function AdminDashboard() {
     $.ajax({
@@ -367,7 +309,6 @@ function AdminDashboard() {
         }
     });
 }
-
 function GetOrderList() {
     $.ajax({
         method: "get",
@@ -382,6 +323,7 @@ function GetOrderList() {
         }
     });
 }
+
 function AdminBookList() {
     $.ajax({
         method: "get",
@@ -396,7 +338,6 @@ function AdminBookList() {
         }
     });
 }
-
 function AddBook() {
     event.preventDefault();
     var formdata = new FormData($('#addBookdetails')[0]);
@@ -513,7 +454,6 @@ function DeleteBooksPage(bookId) {
 
 }
 
-
 function GetAdminProfile() {
     $.ajax({
         method: "GET",
@@ -528,7 +468,6 @@ function GetAdminProfile() {
         }
     });
 }
-
 function EditAdminProfile() {
     event.preventDefault();
     $.ajax({
@@ -580,22 +519,6 @@ function GetAuthorsList() {
         }
     });
 }
-
-function GetCategoryList() {
-    $.ajax({
-        method: "GET",
-        url: "/Admin/getCategoryList",
-
-        success: function (result) {
-            $('#AdminDash').empty()
-            $('#AdminDash').html(result)
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
-}
-
 function GetAddorUpdateAuthor(AuthorId) {
     $.ajax({
         method: "get",
@@ -694,6 +617,20 @@ function DeleteAuthor(AuthorId) {
 
 }
 
+function GetCategoryList() {
+    $.ajax({
+        method: "GET",
+        url: "/Admin/getCategoryList",
+
+        success: function (result) {
+            $('#AdminDash').empty()
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
 function GetAddorUpdateCategory(categoryId) {
     $.ajax({
         method: "get",
@@ -712,7 +649,6 @@ function GetAddorUpdateCategory(categoryId) {
         }
     });
 }
-
 function AddOrUpdateCategory() {
     event.preventDefault();
 
@@ -793,8 +729,6 @@ function DeleteCategory(categoryId) {
 
 }
 
-
-
 function getForgotPassword() {
     var email = $('#fpasswordEmail').val();
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -837,7 +771,6 @@ function getForgotPassword() {
         return false;
     }
 }
-
 function Passwordlength() {
     var password = document.getElementById("password").value;
 
@@ -849,7 +782,6 @@ function Passwordlength() {
         $('#error').hide();
     }
 }
-
 function ComparePassword() {
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirmPassword").value;
@@ -866,48 +798,33 @@ function ComparePassword() {
     }
 }
 
-function GetRemoveFromMyCart(bookId, cartId) {
+
+function GetPaymentDone(paymentType, Orderid) {
     event.preventDefault();
-    Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, remove It"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                method: "GET",
-                url: "/Home/getRemoveFromCart",
-                data: { cartId: cartId },
 
-                success: function (result) {
-
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Removed",
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        CartCount(0);
-                        GetCartList();
-                    });
-
-                },
-                error: function () {
-                    alert('Error loading partial view');
-                }
+    $.ajax({
+        method: "POST",
+        url: "/Home/getPaymentDone",
+        data: { paymentType: paymentType, Orderid: Orderid },
+        success: function (result) {
+            Swal.fire({
+                title: "Success!",
+                text: "Order Placed",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                GetBillDownload(Orderid);
+                GetCustomerDashboard();
             });
+        },
+        error: function () {
+            alert('Error loading partial view');
         }
     });
-
 }
-
 function GetBillDownload(orderId)
 {
-
     Swal.fire({
         text: "Bill generated succesfully!",
         icon: "success",
@@ -915,18 +832,21 @@ function GetBillDownload(orderId)
         confirmButtonText: "Download!"
     }).then((result) => {
         if (result.isConfirmed) {
-            event.preventDefault();
-            Swal.fire({
-                title: "Downloaded!",
-                text: "Bill file has been downloaded.",
-                position: "top-end",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500
-            });
-            window.location.href = './GeneratePDF?orderId=' + orderId;
+            GetGenerateBill(orderId)
         }
     });
+}
+function GetGenerateBill(orderId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Downloaded!",
+        text: "Bill file has been downloaded.",
+        position: "top-end",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+    });
+    window.location.href = './GeneratePDF?orderId=' + orderId;
 }
 
 
