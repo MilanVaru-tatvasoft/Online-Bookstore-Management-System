@@ -75,7 +75,7 @@
             <input type="text" asp-for="@Model.Stockquantity" id="bookStockQuantity" hidden />
             <div class="d-flex gap-2">
                 <button class="btn btn-success" onclick="GetOrderDatailsPage(@Model.bookId)">Buy</button>
-                @if (Model.cartId != 0 && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Isremoved == false)
+                @if (Model.cartId != 0 && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Isremoved == false && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Checkout!=true)
                 {
                     <button class="btn btn-danger" onclick="GetRemoveFromCart(@Model.bookId, @Model.cartId)">Remove From Cart</button>
                 }
@@ -92,7 +92,6 @@
 </div>
 <hr class="m-0 w-100" />
 
-<!-- Add Review Form -->
 <div class="d-flex justify-content-center mt-3 w-100">
 
     <div class="container-md shadow card p-3 mt-5 ">
@@ -135,7 +134,6 @@
     </div>
 </div>
 
-<!-- Review Section -->
 
 <div class="container-md shadow card p-3 mt-5">
     <h3 class="card-title">Reviews</h3>
@@ -176,6 +174,9 @@
         }
     </div>
 </div>
+
+
+
 <script>
     function isAvlQuantity(value) {
         var stockQuantity = parseInt($('#bookStockQuantity').val()); 
@@ -230,6 +231,21 @@
        
     }
 
+    function GetOrderDatailsPage(bookId) {
+        $.ajax({
+            method: "GET",
+            url: "/Home/GetOrderDatailsPage",
+            data: { bookId: bookId },
+
+            success: function (result) {
+                $('#ModalAction').html(result);
+                $('#orderDetailsModal').modal('show');
+            },
+            error: function () {
+                alert('Error loading partial view');
+            }
+        });
+    }
 </script>
 
 

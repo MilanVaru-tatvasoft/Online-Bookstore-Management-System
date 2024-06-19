@@ -33,8 +33,4 @@
     <ProjectReference Include="..\DLL\DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\backgroundImages\" />
-  </ItemGroup>
-
 </Project>

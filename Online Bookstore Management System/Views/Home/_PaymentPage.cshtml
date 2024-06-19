@@ -1,24 +1,32 @@
 ﻿@model DataAccess.CustomModels.OrderData;
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
-    /* Customize here */
-    .card-info, .upi-info {
+    .card-info, .upi-info, .cod-info {
         display: none;
     }
 
     .payment-option {
         cursor: pointer;
     }
+    .payment-logo {
+        margin:10px;
+    }
+
+        .payment-option img {
+            max-width: 30px;
+            margin-right: 10px;
+        }
 </style>
+
 <div class="container mt-5">
-    
     <h2>Select Payment Method</h2>
+    <input type="text" asp-for="@Model.OrderId" hidden/>
     <div class="list-group">
         <a href="#" class="list-group-item list-group-item-action payment-option" data-option="card">
-            Credit/Debit Card
+            <img src="~/backgroundImages/card.jpg" alt="Card Logo"> Credit/Debit Card
         </a>
         <a href="#" class="list-group-item list-group-item-action payment-option" data-option="upi">
-            UPI (Unified Payment Interface)
+            <img src="~/backgroundImages/upi.png" alt="UPI Logo"> UPI (Unified Payment Interface)
         </a>
         <a href="#" class="list-group-item list-group-item-action payment-option" data-option="cod">
             Cash on Delivery
@@ -32,79 +40,50 @@
                 <label for="cardNumber">Card Number</label>
                 <input type="text" class="form-control" id="cardNumber" placeholder="Enter card number">
             </div>
-            <button class=" btn btn-primary " onclick="GetPaymentDone('Card' , @Model.Orderid)">
-                Done With Cash On delivary
+            <button class="btn btn-primary" onclick="GetPaymentDone('Card', @Model.OrderId)">
+                Pay with Card
             </button>
         </div>
     </div>
 
     <div class="card mt-3 upi-info">
         <div class="card-body">
-            <h5 class="card-title">UPI QR Code</h5>
-            <img src="~/backgroundImages/Dummy_QrCode.png" class="img-fluid" width="100" height="100" alt="QR">
+            <h5 class="card-title">Select UPI App</h5>
+            <div class="mb-3">
+                <img src="~/backgroundImages/Img_GPay.png" alt="Google Pay" height="50" width="50" title="Google Pay" class="payment-logo">
+                <img src="~/backgroundImages/Img_PhonePe.png" alt="PhonePe" height="50" width="50" title="PhonePe" class="payment-logo">
+                <img src="~/backgroundImages/Img_PayTm.png" alt="Paytm" height="50" width="50" title="Paytm" class="payment-logo">
+            </div>
+            <button class="btn btn-primary" onclick="GetPaymentDone('UPI', @Model.OrderId)">
+                Pay with UPI
+            </button>
         </div>
-        <button class=" btn btn-primary " onclick="GetPaymentDone('UPI' , @Model.Orderid)">
-            Done With Cash On delivary
-        </button>
     </div>
+
     <div class="card mt-3 cod-info">
         <div class="card-body">
-            <h5 class="card-title">Cash on Delivary</h5>
-            <button class=" btn btn-primary " onclick="GetPaymentDone('Cash On Delivery' , @Model.Orderid)">
-                Done With Cash On delivary
+            <h5 class="card-title">Cash on Delivery</h5>
+            <button class="btn btn-primary" onclick="GetPaymentDone('Cash On Delivery', @Model.OrderId)">
+                Pay Cash on Delivery
             </button>
         </div>
     </div>
 </div>
 
 
-
 <script>
-    
     $('.payment-option').click(function () {
         var option = $(this).data('option');
+        $('.card-info, .upi-info, .cod-info').hide();
         if (option === 'card') {
             $('.card-info').show();
-            $('.upi-info').hide();
-            $('.cod-info').hide();
-
         } else if (option === 'upi') {
             $('.upi-info').show();
-            $('.card-info').hide();
-            $('.cod-info').hide();
-
         } else {
-
-            $('.card-info').hide();
-            $('.upi-info').hide();
             $('.cod-info').show();
         }
     });
 
-    function getPaymentDone(paymentType, Orderid) {
-        event.preventDefault();
-        $.ajax({
-            method: "POST",
-            url: "/Home/getPaymentDone",
-            data: { paymentType: paymentType, Orderid: Orderid },
-
-
-            success: function (result) {
-                Swal.fire({
-                    title: "Success!",
-                    text: "Order Placed",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    GetBillDownload(Orderid)
-                });
-
-                GetCustomerDashboard()
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-        });
-    }
+  
 </script>
+

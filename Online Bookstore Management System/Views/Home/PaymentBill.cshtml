@@ -54,7 +54,7 @@
             font-weight: bold;
         }
 </style>
-<
+
 <div class="container">
     <div class="bill-header">
         <h2>Bookstore Bill</h2>
@@ -79,14 +79,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var o in Model.bookList)
+                @foreach (var o in Model.BookList)
                 {
                     <tr>
                         <td>@o.Title</td>
                         <td>@o.Author.Name</td>
                         <td>$@o.Price</td>
-                        <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Quantity</td>
-                        <td>$@Model.orderdetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Totalamount</td>
+                        <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Quantity</td>
+                        <td>$@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Totalamount</td>
                     </tr>
                 }
 
@@ -96,26 +96,26 @@
                 <tr>
                     <td colspan="3">Subtotal</td>
 
-                    <td>@Model.totalBooks</td>
+                    <td>@Model.TotalBooks</td>
                     <td>$@Model.TotalAmount
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4">Discount</td>
-                    <td>@Model.discountPercentage %</td>
+                    <td>@Model.DiscountPercentage %</td>
                 </tr>
                 <tr>
                     <td colspan="4">Shipping Charge</td>
-                    <td>$@Model.shippingAmount</td>
+                    <td>$@Model.ShippingAmount</td>
                 </tr>
                 <tr>
                     <td colspan="4">Tax</td>
-                    <td>$@Model.tax</td>
+                    <td>$@Model.Tax</td>
                 </tr>
                 <tr>
                     <td colspan="3">Gross Total</td>
-                    <td>@Model.totalBooks</td>
-                    <td>$@Model.Grosstotal</td>
+                    <td>@Model.TotalBooks</td>
+                    <td>$@Model.GrossTotal</td>
                 </tr>
             </tfoot>
         </table>

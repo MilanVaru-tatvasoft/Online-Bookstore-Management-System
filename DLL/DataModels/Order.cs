@@ -76,6 +76,10 @@ public partial class Order
     [InverseProperty("Order")]
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
 
+    [ForeignKey("Orderstatusid")]
+    [InverseProperty("Orders")]
+    public virtual Status? Orderstatus { get; set; }
+
     [InverseProperty("Order")]
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

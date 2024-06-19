@@ -31,7 +31,7 @@ namespace BusinessLogic.Interface
         public bool AddOrUpdateAuthor(AuthorListmodel model);
         public bool AddOrUpdateCategory(CategoryListModel model);
 
-        public AdminDashboardModel getmonthSales(int year);
+        public AdminDashboardModel GetChartData(DateTime date);
          public bool getAcceptorder(int orderId,  int customerId);
          public bool getShippedorder(int orderId,  int customerId);
          public bool getDeliveredOrder(int orderId,  int customerId);

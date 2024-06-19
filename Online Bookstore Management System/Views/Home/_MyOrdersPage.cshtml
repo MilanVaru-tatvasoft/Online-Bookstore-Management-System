@@ -11,10 +11,10 @@
                 <div class="card mb-4">
                     <div class="card-header bg-info d-flex justify-content-between text-white">
                         <h5 class="mb-0">
-                            Order @order.Orderid 
+                            Order @order.Orderid
                         </h5>
                         <h5 class="mb-0">
-                            @order.Orderdate.ToString("MMM dd, yyyy") 
+                            @order.Orderdate.ToString("MMM dd, yyyy")
                         </h5>
                     </div>
                     <div class="card-body">
@@ -22,7 +22,7 @@
                             <div class="col-md-6">
                                 <h5>Order Details</h5>
                                 <ul class="list-group list-group-flush">
-                                    @foreach (var detail in Model.orderdetails.Where(d => d.Orderid == order.Orderid))
+                                    @foreach (var detail in Model.OrderDetails.Where(d => d.Orderid == order.Orderid))
                                     {
                                         <li class="list-group-item">
                                             <div class="row">
@@ -42,13 +42,17 @@
                             </div>
                             <div class="col-md-6">
                                 <h5>Payment Information</h5>
-                                <div class="card">
+                                <div class="card d-flex justify-content-between flex-row">
                                     <div class="card-body">
 
-                                        <p class="mb-1">Total Payment :<span class="text-danger"> $@Model.orderdetails.Where(x=>x.Orderid == order.Orderid).Sum(c=>c.Totalamount)</span></p>
+                                        <p class="mb-1">Order Status :<span class="text-primary"> @order.Orderstatus.StatusName </span></p>
+                                        <p class="mb-1">Total Payment :<span class="text-danger"> $@Model.OrderDetails.Where(x=>x.Orderid == order.Orderid).Sum(c=>c.Totalamount)</span></p>
                                         <p class="mb-1">Delivery Date: @order.Orderdate.AddDays(6).ToString("MMM dd, yyyy")</p>
-                                        <p class="mb-1">Payment Method: @Model.payment?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentMethod</p>
-                                        <p class="mb-1">Payment Status: @Model.payment?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentStatus</p>
+                                        <p class="mb-1">Payment Method: @Model.Payments?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentMethod</p>
+                                        <p class="mb-1">Payment Status: @Model.Payments?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentStatus</p>
+                                    </div>
+                                    <div class="m-1">
+                                        <a class=""onclick="GetGenerateBill(@order.Orderid)" >Download Bill</a>
                                     </div>
                                 </div>
                             </div>
@@ -59,3 +63,6 @@
         </div>
     </div>
 </div>
+<script>
+
+</script>

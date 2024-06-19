@@ -1,19 +1,19 @@
-﻿@model DataAccess.CustomModels.Customer_MainPage;
+﻿@model DataAccess.CustomModels.CustomerMainPage;
 
 @functions {
     public bool ischecked(int AuthorId)
     {
-        return Model.search2 != null && Model.search2.Contains(AuthorId);
+        return Model.Search2 != null && Model.Search2.Contains(AuthorId);
     }
 
     public bool ischecked2(int catId)
     {
-        return Model.search3 != null && Model.search3.Contains(catId);
+        return Model.Search3 != null && Model.Search3.Contains(catId);
     }
 
     public bool ischecked3(int pubId)
     {
-        return Model.search4 != null && Model.search4.Contains(pubId);
+        return Model.Search4 != null && Model.Search4.Contains(pubId);
     }
 }
 <style>
@@ -91,7 +91,7 @@
         <div class="searchbar">
             <form id="searchForm" class="mb-2 gy-2 row">
                 <div class="col-md-3 col-6">
-                    <input asp-for="@Model.search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
+                    <input asp-for="@Model.Search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
                 </div>
 
                 <div class="form-group col-md-3 col-6">
@@ -113,7 +113,7 @@
                     <div class="dropdown" data-control="checkbox-dropdown">
                         <label class="dropdown-label">Categories</label>
                         <div class="dropdown-list">
-                            @foreach (var i in Model.categories)
+                            @foreach (var i in Model.Categories)
                             {
                                 <label class="dropdown-option">
                                     <input class="categorytdata" type="checkbox" name="dropdown-group" checked="@ischecked2(i.Categoryid)" value="@i.Categoryid" />
@@ -128,7 +128,7 @@
                     <div class="dropdown" data-control="checkbox-dropdown">
                         <label class="dropdown-label">Publishers</label>
                         <div class="dropdown-list">
-                            @foreach (var i in Model.publishers)
+                            @foreach (var i in Model.Publishers)
                             {
                                 <label class="dropdown-option">
                                     <input class="publisherdata" type="checkbox" name="dropdown-group" checked="@ischecked3(i.Publisherid)" value="@i.Publisherid" />
@@ -147,48 +147,39 @@
         </div>
     </div>
 </div>
-<div class="container-fluid">
+<div class="container-fluid" style="height:70vh;">
     <div id="dashTable">
-        <div class="table-responsive ">
-            <table id="book-table" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Book</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="book-tbody">
-                    @foreach (var obj in Model.dashboardLists.ToList())
+        <div class=" ">
+            <div class="table row gap-1 d-flex justify-content-center container-fluid px-sm-3" id="book-list">
+                @if (Model.DashboardLists.Count() != 0)
+                {
+                    <input type="text" asp-for="@Model.BookCount" id="BookCount" hidden />
+                    @foreach (var obj in Model.DashboardLists.ToList())
                     {
-                        <tr>
-                            <td>
-                                <img src="~/BookListCollections/@obj.bookPhoto" class="p-0" width="100" height="150" alt="@obj.bookPhoto">
-                            </td>
-                            <td><span class="text-wrap fs-5">@obj.title</span></td>
-                            <td>@obj.authorName</td>
-                            <td>@obj.categoryName</td>
-                            <td>@obj.price $</td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.bookId)">View More</buttton>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                            <div class="card border-0 h-100 shadow">
+                                <img src="~/BookListCollections/@obj.BookPhoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.BookPhoto">
+                                <div class="card-body">
+                                    <h5 class="card-title text-truncate">@obj.Title</h5>
+                                    <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
+                                    <p class="card-text text-truncate px-1">Author: @obj.AuthorName</p>
                                 </div>
-                            </td>
-                        </tr>
+                                <div class="d-flex gap-2">
+                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.BookId)">View More</buttton>
+                                </div>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                }
+            </div>
         </div>
 
     </div>
+    <div id="" class="d-flex justify-content-center mt-5" style="display: none;">
+        <img src="~/backgroundImages/loader.gif" id="loader" height="20" width="800" alt="Loading..." />
+    </div>
 </div>
 
-<div id="loader" style="display: none;">
-    <img src="~/backgroundImages/loader.gif" height="100" width="100" alt="Loading..." />
-</div>
 
 
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -216,7 +207,6 @@
 
         });
 
-        console.log(formData);
         $.ajax({
             method: "POST",
             url: "/Home/HandleSearch",
@@ -310,18 +300,23 @@
         }
 
         var pageNumber = 1;
+        var bookCount = $('#BookCount').val();
+        var lastPageNumber = Math.ceil(bookCount / 5);
+     
+
         $(window).scroll(function () {
             if (isScrolledToBottom()) {
-                if (pageNumber < 5) {
+                if (pageNumber < lastPageNumber+1) {
                     pageNumber++;
                     fetchMoreData(pageNumber);
+                } else {
+                    var isLoading = false;
+                    $('#loader').hide();
                 }
-
             }
         });
 
         function fetchMoreData(pageNumber) {
-            console.log(pageNumber)
 
             if (isLoading) return;
             isLoading = true;
@@ -333,32 +328,29 @@
                     url: "/Home/CustomerDashboardTable",
                     type: "POST",
                     data: { pageNumber: pageNumber },
-                    // contentType: "application/json; charset=utf-8",
                     success: function (result) {
                         $('#loader').hide();
                         $.each(result, function (index, obj) {
-                            console.log(obj)
-                            var html = `
-                                                        <tr>
-                                                            <td>
-                                                                <img src="/BookListCollections/${obj.bookPhoto}" class="p-0" width="100" height="150" alt="${obj.bookPhoto}">
-                                                            </td>
-                                                            <td><span class="text-wrap fs-5">${obj.title}</span></td>
-                                                            <td>${obj.authorName}</td>
-                                                            <td>${obj.categoryName}</td>
-                                                            <td>${obj.price} $</td>
-                                                            <td>
-                                                                <div class="d-flex gap-2">
-                                                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(${obj.bookId})">View More</buttton>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    `;
-                            $('#book-table tbody').append(html);
+                            var html = ` <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                                    <div class="card border-0 h-100 shadow">
+                                            <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-truncate">${obj.title}</h5>
+                                            <strong class="card-title text-danger fs-4"> ${obj.price} $</strong>
+                                            <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <buttton class="btn btn-primary" onclick="ViewBooksPage(${obj.bookId})">View More</buttton>
+                                        </div>
+                                    </div>
+                                </div>
+                                                                `;
+                            $('#book-list').append(html);
                         });
                         isLoading = false;
 
                         $('#loader').hide();
+                        $('#loader').removeClass('d-flex');
 
                     },
                     error: function (err, xhr, a) {

@@ -20,7 +20,9 @@ namespace Online_Bookstore_Management_System.Controllers
         private readonly IAdminDashboardRepo _adminDashboard;
         private readonly IAuthentication _authentication;
 
-        public AdminController(ILogger<AdminController> logger, ICustomerRepo customerRepo, IHttpContextAccessor httpcontext, IAdminDashboardRepo adminDashboard, IAuthentication authentication)
+        public AdminController(ILogger<AdminController> logger, ICustomerRepo customerRepo,
+            IHttpContextAccessor httpcontext, IAdminDashboardRepo adminDashboard,
+            IAuthentication authentication)
         {
             _logger = logger;
             _customerRepo = customerRepo;
@@ -40,13 +42,6 @@ namespace Online_Bookstore_Management_System.Controllers
             AdminDashboardModel model = _adminDashboard.getAdminData();
 
             return PartialView("_AdminDashData", model);
-        }
-        public IActionResult GetOrderList()
-
-        {
-            OrderListModel model = new OrderListModel();
-            model = _adminDashboard.getOrderListData();
-            return PartialView("_OrderListView", model);
         }
 
         public IActionResult getResetPassword(string email)
@@ -229,11 +224,19 @@ namespace Online_Bookstore_Management_System.Controllers
 
         public IActionResult getChartData()
         {
-            int year = DateTime.Now.Year;
-            AdminDashboardModel model = _adminDashboard.getmonthSales(year);
+            DateTime date = DateTime.Now;
+            AdminDashboardModel model = _adminDashboard.GetChartData(date);
 
-            return Json(new { MonthlySales = model.monthlySales, categoryList = model.categorties, NumberOfBooks = model.noofbooks });
+            return Json(new { MonthlySales = model.monthlySales, categoryList = model.categorties, NumberOfBooks = model.noofbooks, dailySales =model.dailySales });
 
+        }
+
+        public IActionResult GetOrderList()
+
+        {
+            OrderListModel model = new OrderListModel();
+            model = _adminDashboard.getOrderListData();
+            return PartialView("_OrderListView", model);
         }
         public IActionResult getAcceptOrder(int orderId, int customerId)
         {

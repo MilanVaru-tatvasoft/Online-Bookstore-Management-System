@@ -1,83 +1,151 @@
 ﻿@model DataAccess.CustomModels.AdminDashboardModel;
-<div class="container-fluid">
-    <div class="row mt-2  w-100">
-        <div class="col-6 col-md-3">
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container-fluid {
+        padding: 30px 15px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease-in-out;
+        background-color: #fff;
+    }
+
+        .card:hover {
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+
+    .card-body {
+        border-radius: 10px;
+    }
+
+
+
+    .row > .col-md-3,
+    .row > .col-md-4,
+    .row > .col-md-5,
+    .row > .col-md-7 {
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        background-color: aliceblue;
+    }
+</style>
+
+<div class="">
+
+    <div class="row mt-1">
+        <div class="col-md-3 mb-4">
             <div class="card shadow bg-info-subtle">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+                <div class="card-body  ">
+                    <div class="d-flex justify-content-between align-items-center ">
+
                         <h5 class="card-title">New Orders</h5>
-                        <h2 class="card-subtitle  me-3 mb-2 text-body-secondary">@Model.newOrders</h2>
+                        <i class="bi bi-file-earmark-plus-fill fs-1"></i>
                     </div>
-                  
 
+                    <h2 class="card-subtitle mb-2 text-black">@Model.newOrders</h2>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card  shadow bg-warning-subtle">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow  bg-warning-subtle">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center ">
                         <h5 class="card-title">Processing Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.ProcessingOrder</h2>
+                        <i class="bi bi-gear fs-1"></i>
                     </div>
+                    <h2 class="card-subtitle mb-2 text-black">@Model.ProcessingOrder</h2>
+
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card shadow bg-success-subtle">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow  bg-secondary-subtle">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center ">
+
                         <h5 class="card-title">Shipped Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.shippedOrder</h2>
+                        <i class="bi bi-truck fs-1"></i>
                     </div>
+                    <h2 class="card-subtitle mb-2 text-black">@Model.shippedOrder</h2>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card shadow bg-primary-subtle">
+
+        <div class="col-md-3 mb-4">
+            <div class="card shadow  bg-success-subtle">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center ">
+
                         <h5 class="card-title">Delivered Orders</h5>
-                        <h2 class="card-subtitle me-3 mb-2 text-body-secondary">@Model.deliveredOrders</h2>
+                        <i class="bi bi-file-earmark-check-fill fs-1"></i>
                     </div>
-                    
+                    <h2 class="card-subtitle mb-2 text-black">@Model.deliveredOrders</h2>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="d-flex flex-lg-row flex-column gap-2 mt-4">
-        <div class="w-100 shadow p-3">
-            <h5>Mothly Sales of books</h5>
-            <canvas id="myBarChart" class="img-fluid" style="width:100%;"></canvas>
+    <div class="row mt-1">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Sales</h5>
+                    <canvas id="myBarChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
         </div>
-        <div class=" w-100 shadow p-3">
-            <canvas id="myPieChart" style="width:100%;" class="img-fluid"></canvas>
+        <div class="col-md-5 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Daily Sales</h5>
+                    <canvas id="myDailyBarChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-3 mb-4 ">
+            <div class="card shadow">
+                <div class="card-body ">
+                    <h5 class="card-title">Sales Distribution</h5>
+                    <canvas id="myPieChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="d-flex w-50">
-
-        <div class="card my-2 w-100 shadow bg-white">
-            <div class="card-body">
-                <h4 class="card-title text-start">@Model.numberOfBooks</h4>
-                <p class="card-text fw-bold">Total Books</p>
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">@Model.numberOfBooks</h4>
+                    <p class="card-text fw-bold">Total Books</p>
+                </div>
             </div>
         </div>
-
-
-        <div class="card w-100 my-2 shadow bg-white">
-            <div class="card-body">
-                <h4 class="card-tit. text-start">@Model.numberOfCustomer</h4>
-                <p class="card-text fw-bold">Total Numbers Of Users/Customers</p>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">@Model.numberOfCustomer</h4>
+                    <p class="card-text fw-bold">Total Customers</p>
+                </div>
             </div>
         </div>
-
-        <div class="card w-100 my-2 shadow bg-white">
-            <div class="card-body">
-                <h4 class="card-title text-start">$ @Model.sellofThisMonth</h4>
-                <p class="card-text fw-bold">Total Sell Of the month</p>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">$ @Model.salelofThisMonth</h4>
+                    <p class="card-text fw-bold">Total Sales This Month</p>
+                </div>
             </div>
         </div>
     </div>
@@ -96,30 +164,31 @@
             type: "GET",
             dataType: "json",
             success: function (response) {
-                console.log(response);
                 var monthlySales = response.monthlySales;
                 var categoryList = response.categoryList;
                 var No_Of_Books = response.numberOfBooks;
-                renderBarChart(monthlySales);
+                var dailySales = response.dailySales;
+                renderMonthlySalesChart(monthlySales);
+                renderDailySalesChart(dailySales);
                 renderPieChart(categoryList, No_Of_Books);
             },
             error: function (xhr, status, error) {
-                console.error("Failed to fetch monthly sales data:", error);
+                console.error("Failed to fetch data:", error);
             }
         });
     });
 
-    function renderBarChart(monthlySales) {
-        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        console.log(monthlySales);
+    function renderMonthlySalesChart(monthlySales) {
+        var months = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
 
         new Chart("myBarChart", {
             type: "bar",
             data: {
                 labels: months,
                 datasets: [{
-                    backgroundColor: "rgba(0,0,255,0.5)",
-                    borderColor: "rgba(0,0,255,1.0)",
+                    backgroundColor: "rgba(75, 192, 192)",
+                    borderColor: "rgba(75, 192, 192)",
                     borderWidth: 1,
                     data: monthlySales
                 }]
@@ -146,14 +215,56 @@
         });
     }
 
+    function renderDailySalesChart(dailySales) {
+        var days = getCurrentMonthDays();
+        var currentDate = new Date();
+        var month = currentDate.toLocaleString('default', { month: 'long' });
+        var year = currentDate.getFullYear();
+
+        var data = `Daily Sales - ${month}, ${year}`;
+
+
+        new Chart("myDailyBarChart", {
+            type: "bar",
+            data: {
+                labels: days,
+                datasets: [{
+                    label: data,
+                    backgroundColor: "rgb(75, 192, 192)",
+                    borderColor: "rgba(75,192,192)",
+                    borderWidth: 1,
+                    data: dailySales
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function (value, index, values) {
+                                return '$' + value;
+                            }
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Days'
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+
     function renderPieChart(categoryList, No_Of_Books) {
-     
         var pieColors = [
             "#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145",
             "#ffbb00", "#7e3878", "#ff8c00", "#5f9ea0", "#808080"];
 
         new Chart("myPieChart", {
-            type: "pie",
+            type: "doughnut",
             data: {
                 labels: categoryList,
                 datasets: [{
@@ -169,6 +280,20 @@
             }
         });
     }
+
+    function getCurrentMonthDays() {
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = currentDate.getMonth() + 1;
+        var daysInMonth = new Date(year, month, 0).getDate();
+
+        var days = [];
+        for (var i = 1; i <= daysInMonth; i++) {
+            days.push(i);
+        }
+        return days;
+    }
+
 </script>
 
 

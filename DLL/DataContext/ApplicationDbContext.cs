@@ -131,6 +131,8 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("orders_customerid_fkey");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.OrderModifiedbyNavigations).HasConstraintName("orders_modifiedby_fkey");
+
+            entity.HasOne(d => d.Orderstatus).WithMany(p => p.Orders).HasConstraintName("orders_orderstatusid_fkey");
         });
 
         modelBuilder.Entity<Orderdetail>(entity =>

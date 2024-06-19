@@ -79,7 +79,7 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
-            Customer_MainPage dashData = new Customer_MainPage();
+            CustomerMainPage dashData = new CustomerMainPage();
             dashData = _customerRepo.getdata(dashData, userId, 1);
 
             return View(dashData);
@@ -88,7 +88,7 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult CustomerDashboard2(int pageNumber = 1)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            Customer_MainPage dashData = new Customer_MainPage();
+            CustomerMainPage dashData = new CustomerMainPage();
             dashData = _customerRepo.getdata(dashData, userId, pageNumber);
             return PartialView("_CustomerMainPage", dashData);
         }
@@ -100,11 +100,11 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(list);
         }
 
-        public IActionResult HandleSearch(Customer_MainPage model)
+        public IActionResult HandleSearch(CustomerMainPage model)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             int pageNumber = 1;
-            Customer_MainPage dashData = _customerRepo.getdata(model, userId, pageNumber);
+            CustomerMainPage dashData = _customerRepo.getdata(model, userId, pageNumber);
             return PartialView("_CustomerMainPage", dashData);
         }
 
@@ -241,7 +241,8 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult getCartList()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            OrderData model = _customerRepo.getCartList(userId);
+            OrderData model = new OrderData();
+            model = _customerRepo.getCartList(model, userId);
             return PartialView("_MyCartList", model);
         }
 
@@ -255,7 +256,7 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
-            data = _customerRepo.getCartList(userId);
+            data = _customerRepo.getCartList(data, userId);
 
             return PartialView("_ConfirmOrder", data);
 
@@ -267,16 +268,15 @@ namespace Online_Bookstore_Management_System.Controllers
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (data.BookName == null)
             {
-                OrderData model = _customerRepo.getCartList(userId);
-                model = data;
+                OrderData model = _customerRepo.getCartList(data, userId);
                 int orderId = _customerRepo.confirmOrder(model, userId);
-                model.Orderid = orderId;
-                return PartialView("_PaymentPage", data);
+                model.OrderId = orderId;
+                return PartialView("_PaymentPage", model);
             }
             else
             {
                 int orderId = _customerRepo.confirmOrder(data, userId);
-                data.Orderid = orderId;
+                data.OrderId = orderId;
                 return PartialView("_PaymentPage", data);
             }
 

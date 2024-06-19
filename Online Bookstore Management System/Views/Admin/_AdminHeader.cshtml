@@ -1,115 +1,112 @@
-﻿@model DataAccess.CustomModels.Customer_MainPage;
+﻿@model DataAccess.CustomModels.CustomerMainPage;
 @inject IHttpContextAccessor context
 
-<style>
-    .navbar-brand {
-        font-size: 1.5rem;
-    }
 
-    a {
-        cursor: pointer;
-    }
+<nav class="navbar bg-body-tertiary shadow p-0">
+    <div class="row p-2 w-100 ">
+        <div class="col-6 d-flex justify-content-start ">
+            <button class="btn btn-light bg-transparent d-md-none d-block" style="height:50px; width:50px;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand fw-bolder text-primary d-block d-sm-none " href="#">BookStore</a>
+            <a class="navbar-brand fw-bolder text-primary d-none d-sm-block " href="#">Online BookStore</a>
 
-    .navbar-nav .nav-link {
-        margin-right: 1rem;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-
-        .navbar-nav .nav-link:hover {
-            color: #007bff;
-        }
-
-    .dropdown-menu a.dropdown-item {
-        transition: background-color 0.3s;
-    }
-
-        .dropdown-menu a.dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-    .form-control:focus {
-        box-shadow: none;
-        border-color: #007bff;
-    }
-
-    .btn-outline-primary {
-        color: #007bff;
-        border-color: #007bff;
-    }
-
-        .btn-outline-primary:hover {
-            background-color: #007bff;
-            color: white;
-        }
-
-    .btn-outline-danger {
-        color: #dc3545;
-        border-color: #dc3545;
-    }
-
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
-            color: white;
-        }
-
-    .dropdown-menu {
-        margin-left: 90%;
-    }
-</style>
-<nav class="navbar navbar-expand-md bg-light shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bolder text-primary " href="#">Online BookStore</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="col-6 d-flex justify-content-end ">
+            <div class="d-none d-sm-flex  align-items-center">
+                <h5 class="mx-2">
+                    Welcome <strong> @context.HttpContext.Session.GetString("UserName")</strong>
+                </h5>
             </div>
-            <hr class="m-0 d-flex d-md-none " />
-            <div class="offcanvas-body d-flex align-items-md-center">
-                <ul class="navbar-nav w-100">
-                    <li class="nav-item">
-                        <a class="nav-link active text-dark" aria-current="page" onclick="AdminDashboard()">Dashboard</a>
+            <a class=" btn btn-outline-info text-dark" asp-action="logout" asp-controller="Home">
+                <span class="d-none d-sm-block text-info ">Logout</span>
+                <span class="d-block d-sm-none  text-info"><i class="bi bi-box-arrow-right fs-4"></i></span>
+            </a>
+
+        </div>
+    </div>
+
+
+
+    <div class="border-top border-dark collapse show d-none d-md-block w-100 " id="navbarNav">
+        <div>
+            <ul class="nav nav-underline d-block d-sm-flex" id="myTab" role="tablist">
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link active text-black" id="home-tab" data-bs-toggle="tab" data-bs-target="#Dash_Tab" type="button" onclick="AdminDashboard()"
+                            role="tab" aria-controls="dash" aria-selected="true">
+                        Dashboard
+                    </button>
+                </li>
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link text-black" id="providerLocation-tab" data-bs-toggle="tab" data-bs-target="#ProviderLocation_Tab" type="button" onclick="AdminBookList()"
+                            role="tab" aria-controls="providelocation" aria-selected="false">
+                        BookList
+                    </button>
+                </li>
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link text-black" id="profile-tab" data-bs-toggle="tab" data-bs-target="#MyAdminProfile_Tab" type="button" onclick=" GetAdminProfile()"
+                            role="tab" aria-controls="profile" aria-selected="false">
+                        My Profile
+                    </button>
+                </li>
+                <li class="nav-item mx-2 dropdown" role="presentation">
+                    <button class="nav-link text-black  dropdown-toggle" data-bs-toggle="dropdown">
+                        Manage
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li aria-expanded="false" data-bs-toggle="tab" data-bs-target="#Records_Tab" id="records-tab" type="button" role="tab"><a class="dropdown-item" onclick="GetAuthorsList()"> Manage Author</a></li>
+                        <li aria-expanded="false" data-bs-toggle="tab" data-bs-target="#Records_Tab" id="records-tab" type="button" role="tab"><a class="dropdown-item" onclick="GetCategoryList()">Manage Category</a></li>
+                    </ul>
+                </li>
+
+
+          
+            </ul>
+        </div>
+    </div>
+
+</nav>
+
+
+
+<div class="offcanvas offcanvas-start w-50" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Index</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="border-top border-info collapse show d-md-block " id="navbarNav">
+            <div>
+                <ul class="nav nav-underline d-block d-md-flex" id="myTab" role="tablist">
+                    <li class="nav-item mx-2" role="presentation">
+                        <button class="nav-link active text-black" id="home-tab" data-bs-toggle="tab" data-bs-target="#Dash_Tab" type="button" onclick="AdminDashboard()"
+                                role="tab" aria-controls="dash" aria-selected="true">
+                            Dashboard
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="AdminBookList()">BookList</a>
+                    <li class="nav-item mx-2" role="presentation">
+                        <button class="nav-link text-black" id="providerLocation-tab" data-bs-toggle="tab" data-bs-target="#ProviderLocation_Tab" type="button" onclick="AdminBookList()"
+                                role="tab" aria-controls="providelocation" aria-selected="false">
+                            BookList
+                        </button>
                     </li>
-                    <li class="nav-item d-flex d-md-none">
-                        <a class="nav-link text-dark" onclick="GetAdminProfile()">My Profile</a>
+                    <li class="nav-item mx-2" role="presentation">
+                        <button class="nav-link text-black" id="profile-tab" data-bs-toggle="tab" data-bs-target="#MyAdminProfile_Tab" type="button" onclick=" GetAdminProfile()"
+                                role="tab" aria-controls="profile" aria-selected="false">
+                            My Profile
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetCategoryList()">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetOrderList()">Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onclick="GetAuthorsList()">Authors</a>
-                    </li>
-                    <li class="nav-item d-flex d-md-none">
-                        <a class="nav-link text-dark" asp-action="logout" asp-controller="Home">Logout</a>
+                    <li class="nav-item mx-2 dropdown" role="presentation">
+                        <button class="nav-link text-black  dropdown-toggle" data-bs-toggle="dropdown">
+                            Manage
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li aria-expanded="false" data-bs-toggle="tab" data-bs-target="#Records_Tab" id="records-tab" type="button" role="tab"><a class="dropdown-item" onclick="GetAuthorsList()"> Manage Author</a></li>
+                            <li aria-expanded="false" data-bs-toggle="tab" data-bs-target="#Records_Tab" id="records-tab" type="button" role="tab"><a class="dropdown-item" onclick="GetCategoryList()">Manage Category</a></li>
+                        </ul>
                     </li>
                 </ul>
-                <div class="mt-3 w-100 gap-3 d-none d-lg-flex justify-content-end align-items-center">
-                    <h5>Welcome <strong>@context.HttpContext.Session.GetString("UserName")</strong></h5>
-                    <div class="dropdown overflow-hidden position-static d-none d-md-block">
-                        <button class="btn bg-transparent border border-2 rounded-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi-person bi text-dark fw-bold"></i>
-                        </button>
-                        <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
-                            <li><a class="dropdown-item text-dark" href="#">Add Account</a></li>
-                            <li>
-                                <a class="dropdown-item text-dark" onclick="GetAdminProfile()">My Profile</a>
-                            </li>
-                            <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-</nav>
-
+</div>

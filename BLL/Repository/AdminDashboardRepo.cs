@@ -3,16 +3,7 @@ using DataAccess.CustomModels;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Repository
 {
@@ -62,7 +53,7 @@ namespace BusinessLogic.Repository
 
 
 
-            model.sellofThisMonth = sellofThisMonth;
+            model.salelofThisMonth = sellofThisMonth;
             return model;
 
         }
@@ -70,13 +61,12 @@ namespace BusinessLogic.Repository
         {
             OrderListModel orderList = new OrderListModel();
 
-            // Get the IDs of all orders that are not deleted
             var orderIds = _context.Orders
                                     .Where(x => x.Isdeleted != true)
                                     .Select(x => x.Orderid)
                                     .ToList();
 
-            // Filter OrderDetails based on the list of order IDs
+            
             orderList.orderdetails = _context.Orderdetails
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
@@ -101,7 +91,10 @@ namespace BusinessLogic.Repository
         {
 
             model.categories = _context.Categories.ToList();
-            List<Book> bookList = _context.Books.Where(x => x.Isdeleted != true).ToList();
+            var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
+                                             .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
+
+            var bookList = booksQuery.ToList();
             model.Authors = _context.Authors.ToList();
             model.publishers = _context.Publishers.ToList();
 
@@ -125,7 +118,26 @@ namespace BusinessLogic.Repository
                 bookList = bookList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
             }
 
-            model.bookList = bookList;
+            List<AdminBookList> AdminBookList = new List<AdminBookList>();
+            foreach (var book in bookList)
+            {
+                AdminBookList item = new AdminBookList();
+
+                item.BookId = book.Bookid;
+                item.Title = book.Title;
+                item.BookPhoto = book.Bookphoto;
+                item.AuthorId = (int)book.Authorid;
+                item.AuthorName = book.Author.Name;
+                item.CategoryId = (int)book.Categoryid;
+                item.CategoryName = book.Category.Categoryname;
+                item.Price = book.Price;
+                item.stock = book.Stockquantity;
+
+                AdminBookList.Add(item);
+
+            }
+
+            model.adminBookLists = AdminBookList;
             return model;
         }
 
@@ -502,54 +514,60 @@ namespace BusinessLogic.Repository
             }
         }
 
-        public AdminDashboardModel getmonthSales(int year)
+        public AdminDashboardModel GetChartData(DateTime date)
         {
             AdminDashboardModel model = new AdminDashboardModel();
+
+            var monthlyOrders = _context.Orders
+                .Where(o => o.Orderdate.Year == date.Year && o.Orderdate.Month >= 1 && o.Orderdate.Month <= 12)
+                .GroupBy(o => o.Orderdate.Month)
+                .Select(g => new { Month = g.Key, TotalAmount = g.Sum(o => o.Totalamount) })
+                .OrderBy(g => g.Month)
+                .ToList();
+
             List<decimal> saleslist = new List<decimal>();
             for (int month = 1; month <= 12; month++)
             {
-                var monthlyOrders = _context.Orders
-                    .Where(o => o.Orderdate.Year == year && o.Orderdate.Month == month)
-                    .OrderBy(o => o.Orderid)
-                    .ToList();
-
-                decimal monthlySales = 0;
-
-                if (monthlyOrders != null && monthlyOrders.Count > 0)
-                {
-                    monthlySales = monthlyOrders.Sum(o => o.Totalamount);
-                }
-
+                decimal monthlySales = monthlyOrders.FirstOrDefault(x => x.Month == month)?.TotalAmount ?? 0;
                 saleslist.Add(monthlySales);
             }
 
-            model.monthlySales = saleslist;
+            var dailyOrders = _context.Orders
+                .Where(o => o.Orderdate.Year == date.Year && o.Orderdate.Month == date.Month)
+                .GroupBy(o => o.Orderdate.Day)
+                .Select(g => new { Day = g.Key, TotalAmount = g.Sum(o => o.Totalamount) })
+                .OrderBy(g => g.Day)
+                .ToList();
+
+            List<decimal> dailySalesList = new List<decimal>();
+            for (int day = 1; day <= DateTime.DaysInMonth(date.Year, date.Month); day++)
+            {
+                decimal dailySales = dailyOrders.FirstOrDefault(x => x.Day == day)?.TotalAmount ?? 0;
+                dailySalesList.Add(dailySales);
+            }
+
             List<string> categories = _context.Categories
                 .Where(x => x.Isdeleted != true)
                 .OrderBy(x => x.Categoryid)
                 .Select(i => i.Categoryname)
                 .ToList();
 
-            List<int> booksSoldPerCategory = new List<int>();
-
-            foreach (var category in categories)
-            {
-                int booksSold = _context.Orders
-                    .Where(o => o.Orderdate.Year == year && o.Orderdetails.Any(od => od.Book.Category.Categoryname == category))
+            List<int> booksSoldPerCategory = categories
+                .Select(category => _context.Orders
+                    .Where(o => o.Orderdate.Year == date.Year && o.Orderdetails.Any(od => od.Book.Category.Categoryname == category))
                     .SelectMany(o => o.Orderdetails.Where(od => od.Book.Category.Categoryname == category))
-                    .Sum(od => od.Quantity);
+                    .Sum(od => od.Quantity))
+                .ToList();
 
-                booksSoldPerCategory.Add(booksSold);
-            }
-
-
+            model.monthlySales = saleslist;
+            model.dailySales = dailySalesList;
             model.categorties = categories;
             model.noofbooks = booksSoldPerCategory;
 
             return model;
         }
 
-     
+
 
         public bool getAcceptorder(int orderId, int customerId)
         {
