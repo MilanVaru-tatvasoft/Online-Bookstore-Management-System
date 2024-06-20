@@ -15,8 +15,10 @@ namespace DataAccess.CustomModels
         public List<RatingReview>? Reviews { get; set; }
         public List<DashboardList>? DashboardLists { get; set; }
 
+        public int? itemCount { get; set; }
         public int? UserId { get; set; }
         public int? BookCount { get; set; }
+        public int PageNumber { get; set; }
         public string? Search1 { get; set; }
         public List<int>? Search2 { get; set; }
         public List<int>? Search3 { get; set; }

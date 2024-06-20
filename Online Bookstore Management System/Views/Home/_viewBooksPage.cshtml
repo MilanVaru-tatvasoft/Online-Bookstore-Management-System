@@ -62,6 +62,7 @@
         </div>
         <div class="d-flex bg-light p-5 w-100 flex-column w-75 justify-content-center">
             <input type="text" asp-for="@Model.bookId" hidden />
+            <input type="text" asp-for="@Model.itemCount" id="CartCount2" hidden />
             <h1>@Model.Title</h1>
             <div class="d-flex my-3">
                 <h6 class="fw-bold me-3">About:</h6>
@@ -75,7 +76,7 @@
             <input type="text" asp-for="@Model.Stockquantity" id="bookStockQuantity" hidden />
             <div class="d-flex gap-2">
                 <button class="btn btn-success" onclick="GetOrderDatailsPage(@Model.bookId)">Buy</button>
-                @if (Model.cartId != 0 && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Isremoved == false && Model.Addtocarts?.FirstOrDefault(x => x.Cartid == Model.cartId).Checkout!=true)
+                @if (Model.cartId != 0)
                 {
                     <button class="btn btn-danger" onclick="GetRemoveFromCart(@Model.bookId, @Model.cartId)">Remove From Cart</button>
                 }
@@ -208,7 +209,7 @@
 
         $.ajax({
             method: "POST",
-            url: "/Home/submitReviewAndRating",
+            url: "/Home/SubmitReviewAndRating",
             data: formData,
             success: function (result) {
                 Swal.fire({
@@ -218,7 +219,7 @@
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    ViewBooksPage(result);
+                    ViewBookDetails(result);
                 });
 
             },

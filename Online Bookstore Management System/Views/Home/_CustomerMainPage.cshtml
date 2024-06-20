@@ -164,8 +164,9 @@
                                     <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
                                     <p class="card-text text-truncate px-1">Author: @obj.AuthorName</p>
                                 </div>
+
                                 <div class="d-flex gap-2">
-                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.BookId)">View More</buttton>
+                                    <buttton class="btn btn-primary" onclick="ViewBookDetails(@obj.BookId)">View More</buttton>
                                 </div>
                             </div>
                         </div>
@@ -215,6 +216,7 @@
             data: formData,
             success: function (result) {
                 $('#custDashboard').html(result);
+                $('#UserProfile').empty();
 
             },
             error: function () {
@@ -294,44 +296,48 @@
 
     $(document).ready(function () {
         var isLoading = false;
-
+        let checkboxes = document.querySelectorAll(".AuthorData:checked");
+        let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
+        let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
         function isScrolledToBottom() {
             return $(window).scrollTop() + $(window).height() >= $(document).height();
         }
-
-        var pageNumber = 1;
-        var bookCount = $('#BookCount').val();
-        var lastPageNumber = Math.ceil(bookCount / 5);
-     
-
-        $(window).scroll(function () {
-            if (isScrolledToBottom()) {
-                if (pageNumber < lastPageNumber+1) {
-                    pageNumber++;
-                    fetchMoreData(pageNumber);
-                } else {
-                    var isLoading = false;
-                    $('#loader').hide();
-                }
-            }
-        });
-
-        function fetchMoreData(pageNumber) {
-
-            if (isLoading) return;
-            isLoading = true;
-            $('#loader').show();
+        if (checkboxes.length == 0 && checkboxes2.length == 0 && checkboxes3.length == 0)
+        {
+            var pageNumber = 1;
+            var bookCount = $('#BookCount').val();
+            var lastPageNumber = Math.ceil(bookCount / 5);
 
 
-            setTimeout(function () {
-                $.ajax({
-                    url: "/Home/CustomerDashboardTable",
-                    type: "POST",
-                    data: { pageNumber: pageNumber },
-                    success: function (result) {
+            $(window).scroll(function () {
+                if (isScrolledToBottom()) {
+                    if (pageNumber < lastPageNumber + 1) {
+                        pageNumber++;
+                        fetchMoreData(pageNumber);
+                    } else {
+                        var isLoading = false;
                         $('#loader').hide();
-                        $.each(result, function (index, obj) {
-                            var html = ` <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                    }
+                }
+            });
+
+
+            function fetchMoreData(pageNumber) {
+
+                if (isLoading) return;
+                isLoading = true;
+                $('#loader').show();
+
+                setTimeout(function () {
+                 
+                    $.ajax({
+                        url: "/Home/CustomerDashboardTable",
+                        type: "POST",
+                        data: { pageNumber: pageNumber },
+                        success: function (result) {
+                            $('#loader').hide();
+                            $.each(result, function (index, obj) {
+                                var html = ` <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
                                     <div class="card border-0 h-100 shadow">
                                             <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
                                         <div class="card-body">
@@ -340,29 +346,35 @@
                                             <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <buttton class="btn btn-primary" onclick="ViewBooksPage(${obj.bookId})">View More</buttton>
+                                            <buttton class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</buttton>
                                         </div>
                                     </div>
                                 </div>
                                                                 `;
-                            $('#book-list').append(html);
-                        });
-                        isLoading = false;
+                                $('#book-list').append(html);
+                            });
+                            isLoading = false;
 
-                        $('#loader').hide();
-                        $('#loader').removeClass('d-flex');
+                            $('#loader').hide();
+                            $('#loader').removeClass('d-flex');
 
-                    },
-                    error: function (err, xhr, a) {
-                        $('#loader').hide();
-                        alert('Error loading partial view');
-                        isLoading = false;
-                    }
-                });
-            }, 2000);
+                        },
+                        error: function (err, xhr, a) {
+                            $('#loader').hide();
+                            alert('Error loading partial view');
+                            isLoading = false;
+                        }
+                    });
+                }, 1000);
 
+            }
         }
+        else {
 
+            $('#loader').hide();
+
+            isLoading = false;
+        }
 
     });
 

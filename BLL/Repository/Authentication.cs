@@ -24,13 +24,13 @@ namespace BusinessLogic.Repository
             _context = context;
 
         }
-        public User getSessionData(string email)
+        public User GetSessionData(string email)
         {
             User? user = _context.Users.FirstOrDefault(x => x.Email == email);
             return user;
         }
 
-        public bool validateLogin(string email, string password)
+        public bool ValidateLogin(string email, string password)
         {
             var userData = _context.Users.FirstOrDefault(u => u.Email == email);
             if (userData != null)

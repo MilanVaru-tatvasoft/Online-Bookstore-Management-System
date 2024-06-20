@@ -11,7 +11,8 @@
     label {
         display: block;
         margin-bottom: 5px;
-        color: #555;    }
+        color: #555;
+    }
 
     .form-floating label {
         padding-left: 15px;
@@ -20,113 +21,117 @@
 
 
 
-<div class="p-3 main m-5 ">
-    <div class="headerdata w-100 d-flex justify-content-between align-items-center">
-        <h2 class="text-dark">My Profile</h2>
-        
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">My Profile</h2>
+        </div>
+        <div class="card-body">
+            <form id="UserProfileData">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingInputFirstName" asp-for="firstName" placeholder="First Name" disabled>
+                            <label for="floatingInputFirstName">First Name</label>
+                            <span class="text-danger" asp-validation-for="firstName"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingInputLastName" asp-for="lastName" placeholder="Last Name" disabled>
+                            <label for="floatingInputLastName">Last Name</label>
+                            <span class="text-danger" asp-validation-for="lastName"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating my-2">
+                            <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthDate" placeholder="Birth Date" disabled>
+                            <label for="floatingBirthDate">Birth Date</label>
+                            <span class="text-danger" asp-validation-for="birthDate"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="my-2">
+                            <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="gender" disabled required>
+                                <option value="male" selected>Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating my-2">
+                            <input type="email" class="form-control" id="floatingEmail" asp-for="email" placeholder="Email Address" disabled>
+                            <label for="floatingEmail">Email Address</label>
+                            <span class="text-danger" asp-validation-for="email"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating my-2">
+                            <input type="text" class="form-control" id="floatingContact" asp-for="contact" placeholder="Contact" disabled>
+                            <label for="floatingContact">Contact</label>
+                            <span class="text-danger" asp-validation-for="contact"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating my-2">
+                            <input type="text" class="form-control" id="floatingCity" asp-for="city" placeholder="City" disabled>
+                            <label for="floatingCity">City</label>
+                            <span class="text-danger" asp-validation-for="city"></span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating my-2">
+                            <textarea class="form-control" id="floatingAddress" asp-for="@Model.address" placeholder="Address" style="height: 100px;" disabled></textarea>
+                            <label for="floatingAddress">Address</label>
+                            <span class="text-danger" asp-validation-for="@Model.address"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <button class="btn btn-dark px-3" onclick="GetAdminResetPasswordPage()">
+                            Reset password
+                        </button>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button id="edit" class="btn btn-primary" onclick="ActionEdit()">Edit</button>
+                        <button class="btn btn-success" type="submit" style="display: none;" onclick="EditAdminProfile()">Submit</button>
+                        <a id="reset" class="btn btn-secondary" style="display: none;" onclick="GetAdminProfile()">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <form id="AdminProfileData">
-        <input type="text" asp-for="@Model.UserId" hidden />
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingInputFirstName" asp-for="firstName" placeholder="First Name" disabled>
-                    <label for="floatingInputFirstName">First Name</label>
-                    <span class="text-danger" asp-validation-for="firstName"></span>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingInputLastName" asp-for="lastName" placeholder="Last Name" disabled>
-                    <label for="floatingInputLastName">Last Name</label>
-                    <span class="text-danger" asp-validation-for="lastName"></span>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.birthDate" placeholder="Birth Date" disabled>
-                    <label for="floatingBirthDate">Birth Date</label>
-                    <span class="text-danger" asp-validation-for="birthDate"></span>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="my-2">
-                    <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="gender" disabled required>
-                        <option value="male" selected>Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="email" class="form-control" id="floatingEmail" asp-for="email" placeholder="Email Address" disabled>
-                    <label for="floatingEmail">Email Address</label>
-                    <span class="text-danger" asp-validation-for="email"></span>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingContact" asp-for="contact" placeholder="Contact" disabled>
-                    <label for="floatingContact">Contact</label>
-                    <span class="text-danger" asp-validation-for="contact"></span>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="floatingCity" asp-for="city" placeholder="City" disabled>
-                    <label for="floatingCity">City</label>
-                    <span class="text-danger" asp-validation-for="city"></span>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-floating my-2">
-                    <textarea class="form-control" id="floatingAddress" asp-for="address" placeholder="Address" style="height: 100px;" disabled></textarea>
-                    <label for="floatingAddress">Address</label>
-                    <span class="text-danger" asp-validation-for="address"></span>
-                </div>
-            </div>
+    <!-- Reset Password Section -->
+    <div class="card mt-3 d-none" id="resetAdminpassword">
+        <div class="card-header bg-secondary text-white">
+            <h2 class="card-title mb-0">Reset Password</h2>
         </div>
-        <div class="d-flex justify-content-between">
-            <div class=" ">
-                <button class="btn btn-dark px-3 ms-5 mb-2  " onclick="getAdminResetPasswordPage()">
-                    Reset password
-                </button>
-            </div>
-                <div class="d-flex gap-2 ">
-                    <button id="edit" class="btn btn-primary p-2 px-3" onclick="ActionEdit()">Edit</button>
-                    <button class="btn btn-success p-2 px-3" type="submit" style="display: none;" onclick="EditAdminProfile()">Submit</button>
-                    <a id="reset" class="btn btn-secondary p-2 px-3" style="display: none;" onclick="GetAdminProfile()">cancle</a>
+        <div class="card-body">
+            <form id="resetForm" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="password" asp-for="password" class="form-control" id="loginpassword" placeholder="Password" required oninput="return ChkPasswordLength()">
+                        <span class="text-danger" id="error"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="password" asp-for="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
+                        <span class="text-danger" id="error2"></span>
+                    </div>
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary" id="submitbtn" onclick="ResetPassword()" disabled>Submit</button>
+                        <button type="button" class="btn btn-secondary" onclick="GetAdminProfile()">Reset</button>
+                    </div>
                 </div>
-            
+                <input type="hidden" asp-for="email" />
+                <input type="hidden" asp-for="UserId" />
+            </form>
         </div>
-       
-    </form>
-
-    <div id="resetAdminpassword" class="d-none d-flex flex-column ">
-        <form id="resetForm" method="post" class="d-flex">
-            <div class="row w-100">
-                <div class="col-12 col-md-3">
-                    <input type="password" asp-for="password" class="form-control" id="password" placeholder="Password" required oninput="return PasswordLength()">
-                    <span class="text-danger" id="error"></span>
-                </div>
-                <div class="col-12 col-md-3">
-                    <input type="password" asp-for="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
-                    <span class="text-danger" id="error2"></span>
-                </div>
-
-                <div class=" col-12 col-md-3 d-flex  gap-2">
-                    <button type="submit" class="btn btn-primary" id="submitbtn" onclick="resetpassword()" disabled>Submit</button>
-                    <button type="button" class="btn btn-secondary" onclick="GetAdminProfile()">Reset</button>
-                </div>
-            </div>
-
-            <input type="hidden" asp-for="email" />
-            <input type="hidden" asp-for="UserId" />
-        </form>
     </div>
 </div>
+
 
 
 <!-- Custom JS -->
@@ -152,11 +157,21 @@
 
 
     function GetAdminResetPasswordPage() {
-      
-            event.preventDefault();
-            $('#resetAdminpassword').toggleClass('d-block d-none');
+
+        event.preventDefault();
+        $('#resetAdminpassword').toggleClass('d-block d-none');
 
     }
+    function ChkPasswordLength() {
+        var password = document.getElementById("loginpassword").value;
 
+        if (password.length < 6) {
+            $('#error').text("Password length must be greater than 6!");
+            return false;
+
+        } else {
+            $('#error').hide();
+        }
+    }
 
 </script>

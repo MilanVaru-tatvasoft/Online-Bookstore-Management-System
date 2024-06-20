@@ -3,7 +3,7 @@ function RegisterPost() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/registerPost",
+        url: "/Home/RegisterPost",
         data: $('#RegisterForm').serialize(),
 
 
@@ -67,7 +67,7 @@ function ResetPassword() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                getResetPasswordPage(result.email)
+                GetResetPasswordPage(result.email)
             }
         },
         error: function () {
@@ -99,7 +99,7 @@ function GetCustomerDashboard() {
 function GetCartList() {
     $.ajax({
         method: "GET",
-        url: "/Home/getCartList",
+        url: "/Home/GetCartList",
 
 
         success: function (result) {
@@ -144,8 +144,8 @@ function EditUserProfile() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/editUserProfile",
-        data: $('#UserProfileData').serialize(),
+        url: "/Home/EditUserProfile",
+        data: $('#profileForm').serialize(),
 
 
         success: function (result) {
@@ -174,10 +174,10 @@ function EditUserProfile() {
         }
     });
 }
-function ViewBooksPage(bookId) {
+function ViewBookDetails(bookId) {
     $.ajax({
         method: "GET",
-        url: "/Home/ViewBooksPage",
+        url: "/Home/ViewBookDetails",
         data: { bookId: bookId },
         success: function (result) {
             $('#custDashboard').empty()
@@ -189,24 +189,13 @@ function ViewBooksPage(bookId) {
         }
     });
 }
-function CartCount(id) {
 
-    var cartcount = $('.itemCountInCart').val();
-    if (id == 1) {
-        cartcount = parseInt(cartcount) + 1;
-        $('.badge').text(cartcount);
-    } else {
-        cartcount = parseInt(cartcount) - 1;
-        $('.badge').text(cartcount);
-    }
-
-}
 function GetAddToCart(bookId, cartId) {
     event.preventDefault();
     var quantity = $('#quantity').val();
     $.ajax({
         method: "GET",
-        url: "/Home/getAddToCart",
+        url: "/Home/GetAddToCart",
         data: { bookId: bookId, cartId: cartId, quantity: quantity },
 
 
@@ -219,8 +208,7 @@ function GetAddToCart(bookId, cartId) {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                CartCount(1)
-                ViewBooksPage(bookId);
+                ViewBookDetails(bookId);
             }
 
         },
@@ -242,7 +230,7 @@ function GetRemoveFromCart(bookId, cartId) {
         if (result.isConfirmed) {
             $.ajax({
                 method: "GET",
-                url: "/Home/getRemoveFromCart",
+                url: "/Home/GetRemoveFromCart",
                 data: { cartId: cartId },
 
                 success: function (result) {
@@ -255,9 +243,8 @@ function GetRemoveFromCart(bookId, cartId) {
                         timer: 1500
 
                     });
-                    CartCount(0)
 
-                    ViewBooksPage(bookId);
+                    ViewBookDetails(bookId);
 
                 },
                 error: function () {
@@ -272,7 +259,7 @@ function GetBuyNow() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Home/getBuyNow",
+        url: "/Home/GetBuyNow",
         data: $('#confirmOrderForm').serialize(),
 
 
@@ -327,7 +314,7 @@ function GetOrderList() {
 function AdminBookList() {
     $.ajax({
         method: "get",
-        url: "/Admin/getAdminBookList",
+        url: "/Admin/GetAdminBookList",
 
 
         success: function (result) {
@@ -341,39 +328,41 @@ function AdminBookList() {
 function AddBook() {
     event.preventDefault();
     var formdata = new FormData($('#addBookdetails')[0]);
-
-    $.ajax({
-        method: "POST",
-        url: "/Admin/AddBook",
-        data: formdata,
-        contentType: false,
-        processData: false,
-        success: function (result) {
-            if (result.code == 401) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Book already exist",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            } else if (result.code == 402) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Book Added",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                $('#addBookModal').modal('hide').on('hidden.bs.modal', function () {
-                    AdminBookList();
-                });
+    if (formdata.isvalid()) {
+        $.ajax({
+            method: "POST",
+            url: "/Admin/AddBook",
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 401) {
+                    swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Book already exist",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                } else if (result.code == 402) {
+                    swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Book Added",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#addBookModal').modal('hide').on('hidden.bs.modal', function () {
+                        AdminBookList();
+                    });
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+
+    }
 }
 function UpdateBook() {
     event.preventDefault();
@@ -381,7 +370,7 @@ function UpdateBook() {
 
     $.ajax({
         method: "POST",
-        url: "/Admin/updateBook",
+        url: "/Admin/UpdateBook",
         data: formdata,
         contentType: false,
         processData: false,
@@ -428,7 +417,7 @@ function DeleteBooksPage(bookId) {
         if (result.isConfirmed) {
             $.ajax({
                 method: "GET",
-                url: "/Admin/getDeleteBook",
+                url: "/Admin/GetDeleteBook",
                 data: { bookId: bookId },
 
                 success: function (result) {
@@ -457,7 +446,7 @@ function DeleteBooksPage(bookId) {
 function GetAdminProfile() {
     $.ajax({
         method: "GET",
-        url: "/Admin/getAdminProfile",
+        url: "/Admin/GetAdminProfile",
 
         success: function (result) {
             $('#AdminDash').empty()
@@ -472,7 +461,7 @@ function EditAdminProfile() {
     event.preventDefault();
     $.ajax({
         method: "POST",
-        url: "/Admin/editAdminProfile",
+        url: "/Admin/EditAdminProfile",
         data: $('#AdminProfileData').serialize(),
 
 
@@ -508,7 +497,7 @@ function EditAdminProfile() {
 function GetAuthorsList() {
     $.ajax({
         method: "GET",
-        url: "/Admin/getAuthorList",
+        url: "/Admin/GetAuthorList",
 
         success: function (result) {
             $('#AdminDash').empty()
@@ -519,10 +508,10 @@ function GetAuthorsList() {
         }
     });
 }
-function GetAddorUpdateAuthor(AuthorId) {
+function GetAddOrUpdateAuthor(AuthorId) {
     $.ajax({
         method: "get",
-        url: "/Admin/getAddAuthor",
+        url: "/Admin/GetAddAuthor",
         data: { AuthorId: AuthorId },
 
         success: function (result) {
@@ -539,44 +528,47 @@ function GetAddorUpdateAuthor(AuthorId) {
 }
 function AddOrUpdateAuthor() {
     event.preventDefault();
+    var formData = $('#addUpdateAuthorForm').serialize();
+    if (formData.isvalid()) {
+        $.ajax({
+            method: "POST",
+            url: "/Admin/AddOrUpdateAuthor",
+            data: formData,
 
-    $.ajax({
-        method: "POST",
-        url: "/Admin/addOrUpdateAuthor",
-        data: $('#addUpdateAuthorForm').serialize(),
+            success: function (result) {
+                if (result.code == 401) {
+                    swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Done",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
+                        GetAuthorsList();
+                    });
 
-        success: function (result) {
-            if (result.code == 401) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Done",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                $('#addAuthorModal').modal('hide').on('hidden.bs.modal', function () {
+
+
+                } else if (result.code == 402) {
+                    swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Author exist",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#addAuthorModal').modal('hide');
                     GetAuthorsList();
-                });
 
-
-
-            } else if (result.code == 402) {
-                swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Author exist",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                $('#addAuthorModal').modal('hide');
-                GetAuthorsList();
-
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+    }
+   
 }
 function DeleteAuthor(AuthorId) {
     event.preventDefault();
@@ -591,7 +583,7 @@ function DeleteAuthor(AuthorId) {
         if (result.isConfirmed) {
             $.ajax({
                 method: "GET",
-                url: "/Admin/getDeleteAuthor",
+                url: "/Admin/GetDeleteAuthor",
                 data: { AuthorId: AuthorId },
 
                 success: function (result) {
@@ -620,7 +612,7 @@ function DeleteAuthor(AuthorId) {
 function GetCategoryList() {
     $.ajax({
         method: "GET",
-        url: "/Admin/getCategoryList",
+        url: "/Admin/GetCategoryList",
 
         success: function (result) {
             $('#AdminDash').empty()
@@ -631,10 +623,10 @@ function GetCategoryList() {
         }
     });
 }
-function GetAddorUpdateCategory(categoryId) {
+function GetAddOrUpdateCategory(categoryId) {
     $.ajax({
         method: "get",
-        url: "/Admin/getAddCategory",
+        url: "/Admin/GetAddCategory",
         data: { categoryId: categoryId },
 
         success: function (result) {
@@ -654,7 +646,7 @@ function AddOrUpdateCategory() {
 
     $.ajax({
         method: "POST",
-        url: "/Admin/addOrUpdateCategory",
+        url: "/Admin/AddOrUpdateCategory",
         data: $('#addUpdateCategoryForm').serialize(),
 
         success: function (result) {
@@ -703,7 +695,7 @@ function DeleteCategory(categoryId) {
         if (result.isConfirmed) {
             $.ajax({
                 method: "GET",
-                url: "/Admin/getDeleteCategory",
+                url: "/Admin/GetDeleteCategory",
                 data: { categoryId: categoryId },
 
                 success: function (result) {
@@ -736,7 +728,7 @@ function getForgotPassword() {
         $('#fpassworderrormsg').empty();
         $.ajax({
             method: "get",
-            url: "/Home/forgotpassword",
+            url: "/Home/ForgotPassword",
             data: { email: email },
 
             success: function (result) {
@@ -804,7 +796,7 @@ function GetPaymentDone(paymentType, Orderid) {
 
     $.ajax({
         method: "POST",
-        url: "/Home/getPaymentDone",
+        url: "/Home/GetPaymentDone",
         data: { paymentType: paymentType, Orderid: Orderid },
         success: function (result) {
             Swal.fire({
@@ -846,7 +838,7 @@ function GetGenerateBill(orderId) {
         showConfirmButton: false,
         timer: 1500
     });
-    window.location.href = './GeneratePDF?orderId=' + orderId;
+    window.location.href = '/Home/GeneratePDF?orderId=' + orderId;
 }
 
 

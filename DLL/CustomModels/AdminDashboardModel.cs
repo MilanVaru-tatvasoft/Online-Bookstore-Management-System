@@ -50,12 +50,12 @@ namespace DataAccess.CustomModels
     }
     public class AdminBookList
     {
-            public int BookId { get; set; }
+            public int bookId { get; set; }
             public string Title { get; set; }
             public string AuthorName { get; set; }
             public string CategoryName { get; set; }
             public int CategoryId { get; set; }
-            public int AuthorId { get; set; }
+            public int authorId { get; set; }
             public int stock { get; set; }
             public string BookPhoto { get; set; }
             public decimal Price { get; set; }
@@ -97,8 +97,14 @@ namespace DataAccess.CustomModels
     {
         public List<Author>? Authors { get; set; }
         public int AuthorId { get; set; }
+        [Required(ErrorMessage = "This field is required")]
+
         public string? AuthorName { get; set; }
+        [Required(ErrorMessage = "This field is required")]
+
         public string? Bio { get; set; }
+        [Required(ErrorMessage = "This field is required")]
+
         public DateTime? birthdate { get; set; }
         public bool? isdeleted { get; set; }
     }

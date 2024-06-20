@@ -39,12 +39,12 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult AdminDashboard2()
         {
-            AdminDashboardModel model = _adminDashboard.getAdminData();
+            AdminDashboardModel model = _adminDashboard.GetAdminDashboardData();
 
             return PartialView("_AdminDashData", model);
         }
 
-        public IActionResult getResetPassword(string email)
+        public IActionResult GetResetPassword(string email)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             ResetPasswordModel model = new ResetPasswordModel()
@@ -65,49 +65,49 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(new { code = 401 });
         }
 
-        public IActionResult getAdminBookList(AdminBookListmodel model)
+        public IActionResult GetAdminBookList(AdminBookListmodel model)
         {
-            _adminDashboard.getBookList(model);
+            _adminDashboard.GetBookList(model);
             return PartialView("_AdminBookList", model);
         }
-        public IActionResult searchBooks(AdminBookListmodel model)
+        public IActionResult GetFilterBookList(AdminBookListmodel model)
         {
-            _adminDashboard.getBookList(model);
+            _adminDashboard.GetBookList(model);
             return PartialView("_AdminBookList", model);
         }
-        public IActionResult ViewBookDetails(int bookId)
+        public IActionResult ViewBookData(int bookId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
-            viewBookModel model = _adminDashboard.viewBookDetails(bookId, userId);
+            viewBookModel model = _adminDashboard.ViewBookDetails(bookId, userId);
             return PartialView("_ViewBookDetail", model);
         }
-        public IActionResult getAddBook()
+        public IActionResult GetAddBook()
         {
-            viewBookModel model = _adminDashboard.getAddBook();
+            viewBookModel model = _adminDashboard.GetAddBook();
 
             return PartialView("_AddBookModal", model);
         }
         public IActionResult AddBook(viewBookModel model)
         {
-            if (_adminDashboard.isbookExist(model.Title))
+            if (_adminDashboard.IsBookExist(model.Title))
             {
                 return Json(new { code = 401 });
             }
             else
             {
                 int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-                _adminDashboard.addBook(model, userId);
+                _adminDashboard.AddBook(model, userId);
                 return Json(new { code = 402 });
             }
 
         }
-        public IActionResult updateBook(viewBookModel model)
+        public IActionResult UpdateBook(viewBookModel model)
         {
-            if (_adminDashboard.isbookExist(model.Title))
+            if (_adminDashboard.IsBookExist(model.Title))
             {
                 int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-                _adminDashboard.updateBook(model, userId);
+                _adminDashboard.UpdateBook(model, userId);
                 return Json(new { code = 401 });
             }
             else
@@ -117,35 +117,35 @@ namespace Online_Bookstore_Management_System.Controllers
             }
 
         }
-        public IActionResult getEditBook(int bookId)
+        public IActionResult GetEditBook(int bookId)
         {
-            viewBookModel model = _adminDashboard.getEditBook(bookId);
+            viewBookModel model = _adminDashboard.GetEditBook(bookId);
             return PartialView("_AddBookModal", model);
         }
-        public IActionResult getDeleteBook(int bookId)
+        public IActionResult GetDeleteBook(int bookId)
         {
-            if (_adminDashboard.getDeleteBook(bookId))
+            if (_adminDashboard.GetDeleteBook(bookId))
             {
 
                 return Json(new { code = 401 });
             }
             return Json(new { code = 402 });
         }
-        public IActionResult getAdminProfile()
+        public IActionResult GetAdminProfile()
         {
             int? uId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (uId != null)
             {
-                AdminProfileModel profile = _adminDashboard.getAdminProfile(uId);
+                AdminProfileModel profile = _adminDashboard.GetAdminProfile(uId);
                 return PartialView("_AdminProfile", profile);
             }
             return View();
         }
-        public IActionResult editAdminProfile(AdminProfileModel profile)
+        public IActionResult EditAdminProfile(AdminProfileModel profile)
         {
             if (ModelState.IsValid)
             {
-                bool result = _adminDashboard.editAdminProfile(profile);
+                bool result = _adminDashboard.EditAdminProfile(profile);
                 if (result)
                 {
                     return Json(new { code = 401 });
@@ -155,40 +155,40 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
 
-        public IActionResult getAuthorList()
+        public IActionResult GetAuthorList()
         {
             AuthorListmodel model = _adminDashboard.GetAuthorList();
             return PartialView("_AuthorsList", model);
         }
-        public IActionResult getCategoryList()
+        public IActionResult GetCategoryList()
         {
             CategoryListModel model = _adminDashboard.getCategoriesList();
 
             return PartialView("_CategoryList", model);
         }
-        public IActionResult getAddAuthor(int AuthorId)
+        public IActionResult GetAddAuthor(int AuthorId)
         {
-            AuthorListmodel model = _adminDashboard.getEditAuthor(AuthorId);
+            AuthorListmodel model = _adminDashboard.GetEditAuthor(AuthorId);
             return PartialView("_AddAuthorModal", model);
         }
-        public IActionResult getAddCategory(int categoryId)
+        public IActionResult GetAddCategory(int categoryId)
         {
-            CategoryListModel model = _adminDashboard.getAddCategory(categoryId);
+            CategoryListModel model = _adminDashboard.GetAddCategory(categoryId);
             return PartialView("_AddCategoryModal", model);
         }
 
-        public IActionResult getDeleteAuthor(int AuthorId)
+        public IActionResult GetDeleteAuthor(int AuthorId)
         {
-            if (_adminDashboard.getDeleteAuthor(AuthorId))
+            if (_adminDashboard.GetDeleteAuthor(AuthorId))
             {
 
                 return Json(new { code = 401 });
             }
             return Json(new { code = 402 });
         }
-        public IActionResult getDeleteCategory(int categoryId)
+        public IActionResult GetDeleteCategory(int categoryId)
         {
-            if (_adminDashboard.getDeleteCategory(categoryId))
+            if (_adminDashboard.GetDeleteCategory(categoryId))
             {
 
                 return Json(new { code = 401 });
@@ -196,7 +196,7 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(new { code = 402 });
         }
 
-        public IActionResult addOrUpdateAuthor(AuthorListmodel model)
+        public IActionResult AddOrUpdateAuthor(AuthorListmodel model)
         {
             if (_adminDashboard.AddOrUpdateAuthor(model))
             {
@@ -206,7 +206,7 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(new { code = 402 });
 
         }
-        public IActionResult addOrUpdateCategory(CategoryListModel model)
+        public IActionResult AddOrUpdateCategory(CategoryListModel model)
         {
             if (_adminDashboard.AddOrUpdateCategory(model))
             {
@@ -217,12 +217,7 @@ namespace Online_Bookstore_Management_System.Controllers
 
         }
 
-        public IActionResult getViewOrder(int orderDetailId)
-        {
-            return PartialView("_ViewOrderPage");
-        }
-
-        public IActionResult getChartData()
+        public IActionResult GetChartData()
         {
             DateTime date = DateTime.Now;
             AdminDashboardModel model = _adminDashboard.GetChartData(date);
@@ -238,9 +233,9 @@ namespace Online_Bookstore_Management_System.Controllers
             model = _adminDashboard.getOrderListData();
             return PartialView("_OrderListView", model);
         }
-        public IActionResult getAcceptOrder(int orderId, int customerId)
+        public IActionResult GetAcceptorder(int orderId, int customerId)
         {
-            if(_adminDashboard.getAcceptorder(orderId, customerId))
+            if(_adminDashboard.GetAcceptorder(orderId, customerId))
             {
                 return Json(new { code = 401 });
             }
@@ -249,9 +244,9 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 402 });
             }
         }
-        public IActionResult getShippedOrder(int orderId, int customerId)
+        public IActionResult GetShippedorder(int orderId, int customerId)
         {
-            if(_adminDashboard.getShippedorder(orderId, customerId))
+            if(_adminDashboard.GetShippedorder(orderId, customerId))
             {
                 return Json(new { code = 401 });
             }
@@ -260,9 +255,9 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 402 });
             }
         }
-        public IActionResult getDeliveredOrder(int orderId, int customerId)
+        public IActionResult GetDeliveredOrder(int orderId, int customerId)
         {
-            if(_adminDashboard.getDeliveredOrder(orderId, customerId))
+            if(_adminDashboard.GetDeliveredOrder(orderId, customerId))
             {
                 return Json(new { code = 401 });
             }
@@ -271,9 +266,9 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 402 });
             }
         }
-        public IActionResult getDeleteOrder(int orderId, int customerId)
+        public IActionResult GetDeleteOrder(int orderId, int customerId)
         {
-            if (_adminDashboard.getDeletedOrder(orderId, customerId))
+            if (_adminDashboard.GetDeletedOrder(orderId, customerId))
             {
                 return Json(new { code = 401 });
             }

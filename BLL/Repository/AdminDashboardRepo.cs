@@ -19,10 +19,10 @@ namespace BusinessLogic.Repository
             _authentication = authentication;
             _httpContext = httpContext;
         }
-        public AdminDashboardModel getAdminData()
+        public AdminDashboardModel GetAdminDashboardData()
         {
             AdminDashboardModel model = new AdminDashboardModel();
-            var orders = _context.Orders.ToList();
+            var orders = _context.Orders.Where(x=>x.Isdeleted!=true).ToList();
             var statuses = _context.Statuses.ToList();
 
             var ordersByStatus = statuses.Select(status => new
@@ -87,7 +87,7 @@ namespace BusinessLogic.Repository
             return orderList;
         }
 
-        public AdminBookListmodel getBookList(AdminBookListmodel model)
+        public AdminBookListmodel GetBookList(AdminBookListmodel model)
         {
 
             model.categories = _context.Categories.ToList();
@@ -123,10 +123,10 @@ namespace BusinessLogic.Repository
             {
                 AdminBookList item = new AdminBookList();
 
-                item.BookId = book.Bookid;
+                item.bookId = book.Bookid;
                 item.Title = book.Title;
                 item.BookPhoto = book.Bookphoto;
-                item.AuthorId = (int)book.Authorid;
+                item.authorId = (int)book.Authorid;
                 item.AuthorName = book.Author.Name;
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
@@ -141,7 +141,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public viewBookModel viewBookDetails(int bookId, int? userId)
+        public viewBookModel ViewBookDetails(int bookId, int? userId)
         {
             Customer? customer = _context.Customers.FirstOrDefault(x => x.Userid == userId);
             Book? book = _context.Books.FirstOrDefault(x => x.Bookid == bookId);
@@ -161,7 +161,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public int isAuthorExist(string? AuthorName)
+        private int GetAutherId(string? AuthorName)
         {
             int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name == AuthorName && x.Isdeleted != true)?.Authorid;
 
@@ -176,7 +176,7 @@ namespace BusinessLogic.Repository
 
             return (int)AuthorId;
         }
-        public int ispublisherExist(string? publisherName)
+        private int GetPublisherId(string? publisherName)
         {
             int? publisherId = _context.Publishers.FirstOrDefault(x => x.Name == publisherName)?.Publisherid;
 
@@ -191,7 +191,7 @@ namespace BusinessLogic.Repository
 
             return (int)publisherId;
         }
-        public int isCategoryExist(string? categoryName)
+        private int GetCategoryId(string? categoryName)
         {
 
             int? catId = _context.Categories.FirstOrDefault(x => x.Categoryname == categoryName)?.Categoryid;
@@ -204,13 +204,11 @@ namespace BusinessLogic.Repository
             }
             return (int)catId;
         }
-        public bool isbookExist(string? bookTitle)
+        public bool IsBookExist(string? bookTitle)
         {
-            List<string> bookList = _context.Books.Where(i => i.Isdeleted != true).Select(x => x.Title).ToList();
-            if (bookList.Contains(bookTitle)) { return true; }
-            return false;
+            return _context.Books.Any(i => i.Title == bookTitle && i.Isdeleted != true);
         }
-        public viewBookModel getAddBook()
+        public viewBookModel GetAddBook()
         {
             viewBookModel model = new viewBookModel()
             {
@@ -219,17 +217,48 @@ namespace BusinessLogic.Repository
             };
             return model;
         }
-        public void addBook(viewBookModel model, int? userId)
+        public void AddBook(viewBookModel model, int? userId)
         {
-            int? AuthorId = isAuthorExist(model.AuthorName);
-            int? publisherId = ispublisherExist(model.publisherName);
-            int? categoryId = isCategoryExist(model.categoryName);
+            int authorId = GetAutherId(model.AuthorName);
+            int publisherId = GetPublisherId(model.publisherName);
+            int categoryId = GetCategoryId(model.categoryName);
 
-            Book book = new Book();
+            Book book = new Book
+            {
+                Title = model.Title,
+                Authorid = authorId,
+                Bookphoto = model.bookPhoto.FileName,
+                Publisherid = publisherId,
+                Categoryid = categoryId,
+                Noofpages = model.pageNumber,
+                Price = (decimal)model.price,
+                Stockquantity = (int)model.Stockquantity,
+                Createdby = userId,
+                Createddate = DateTime.Now,
+                Description = model.description
+            };
+
+            if (model.bookPhoto != null)
+            {
+                storefile(model.bookPhoto);
+            }
+
+            _context.Books.Add(book);
+            _context.SaveChanges();
+        }
+
+        public void UpdateBook(viewBookModel model, int? userId)
+        {
+            Book book = _context.Books.FirstOrDefault(x => x.Bookid == model.bookId);
+
+            int authorId = GetAutherId(model.AuthorName);
+            int publisherId = GetPublisherId(model.publisherName);
+            int categoryId = GetCategoryId(model.categoryName);
+
 
             book.Title = model.Title;
-            book.Authorid = AuthorId;
-            book.Bookphoto = model.bookPhoto.FileName;
+            book.Authorid = authorId;
+            book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
             book.Publisherid = publisherId;
             book.Categoryid = categoryId;
             book.Noofpages = model.pageNumber;
@@ -238,13 +267,17 @@ namespace BusinessLogic.Repository
             book.Createdby = userId;
             book.Createddate = DateTime.Now;
             book.Description = model.description;
-            if (model.bookPhoto != null) { storefile(model.bookPhoto); }
-            _context.Books.Add(book);
-            _context.SaveChanges();
 
+            if (model.bookPhoto != null)
+            {
+                storefile(model.bookPhoto);
+            }
+
+            _context.Books.Update(book);
+            _context.SaveChanges();
         }
 
-        public viewBookModel getEditBook(int bookId)
+        public viewBookModel GetEditBook(int bookId)
         {
             Book? book = _context.Books.FirstOrDefault(x => x.Bookid == bookId);
             viewBookModel model = new viewBookModel()
@@ -264,31 +297,6 @@ namespace BusinessLogic.Repository
             };
             return model;
         }
-        public void updateBook(viewBookModel model, int? userId)
-        {
-            Book? book = _context.Books.FirstOrDefault(x => x.Bookid == model.bookId);
-
-            int? AuthorId = isAuthorExist(model.AuthorName);
-            int? publisherId = ispublisherExist(model.publisherName);
-            int? categoryId = isCategoryExist(model.categoryName);
-
-
-            book.Title = model.Title;
-            book.Authorid = AuthorId;
-            book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
-            book.Publisherid = publisherId;
-            book.Categoryid = categoryId;
-            book.Noofpages = model.pageNumber;
-            book.Price = (decimal)model.price;
-            book.Stockquantity = (int)model.Stockquantity;
-            book.Createdby = userId;
-            book.Createddate = DateTime.Now;
-            book.Description = model.description;
-            if (model.bookPhoto != null) { storefile(model.bookPhoto); }
-            _context.Books.Update(book);
-            _context.SaveChanges();
-
-        }
 
         public void storefile(IFormFile fileName)
         {
@@ -307,7 +315,7 @@ namespace BusinessLogic.Repository
 
         }
 
-        public bool getDeleteBook(int bookId)
+        public bool GetDeleteBook(int bookId)
         {
             if (bookId != 0)
             {
@@ -320,7 +328,7 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-        public AdminProfileModel getAdminProfile(int? uId)
+        public AdminProfileModel GetAdminProfile(int? uId)
         {
             User user = _context.Users.FirstOrDefault(x => x.Userid == uId);
             AdminProfileModel Profile = new AdminProfileModel()
@@ -338,7 +346,7 @@ namespace BusinessLogic.Repository
             };
             return Profile;
         }
-        public bool editAdminProfile(AdminProfileModel profile)
+        public bool EditAdminProfile(AdminProfileModel profile)
         {
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
@@ -391,7 +399,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public AuthorListmodel getEditAuthor(int AuthorId)
+        public AuthorListmodel GetEditAuthor(int AuthorId)
         {
             Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == AuthorId);
             AuthorListmodel model = new AuthorListmodel();
@@ -410,7 +418,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public CategoryListModel getAddCategory(int categoryId)
+        public CategoryListModel GetAddCategory(int categoryId)
         {
             Category? category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
             CategoryListModel model = new CategoryListModel();
@@ -427,7 +435,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public bool getDeleteAuthor(int AuthorId)
+        public bool GetDeleteAuthor(int AuthorId)
         {
             if (AuthorId != 0)
             {
@@ -440,7 +448,7 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-        public bool getDeleteCategory(int categoryId)
+        public bool GetDeleteCategory(int categoryId)
         {
             if (categoryId != 0)
             {
@@ -567,9 +575,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-
-
-        public bool getAcceptorder(int orderId, int customerId)
+        public bool GetAcceptorder(int orderId, int customerId)
         {
             if (orderId != 0 && customerId != 0)
             {
@@ -602,7 +608,7 @@ namespace BusinessLogic.Repository
                 return false;
             }
         }
-        public bool getShippedorder(int orderId, int customerId)
+        public bool GetShippedorder(int orderId, int customerId)
         {
             if (orderId != 0 && customerId != 0)
             {
@@ -636,7 +642,7 @@ namespace BusinessLogic.Repository
             }
         }
 
-        public bool getDeliveredOrder(int orderId, int customerId)
+        public bool GetDeliveredOrder(int orderId, int customerId)
         {
             if (orderId != 0 && customerId != 0)
             {
@@ -670,7 +676,7 @@ namespace BusinessLogic.Repository
             }
         }
 
-        public bool getDeletedOrder(int orderId, int customerId)
+        public bool GetDeletedOrder(int orderId, int customerId)
         {
             if (orderId != 0 && customerId != 0)
             {

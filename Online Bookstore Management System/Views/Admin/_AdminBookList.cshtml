@@ -124,7 +124,7 @@
     </div>
     <div class="mx-0 my-3  p-3">
         <div class="searchbar">
-            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="SearchBooks()">
+            <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="GetFilterBookList()">
                 <div class=" col-md-3  col-6">
                     <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
                 </div>
@@ -226,9 +226,9 @@
                             <td>@obj.stock </td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="ViewBookDetails(@obj.BookId)">View </button>
-                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.BookId)">Edit </button>
-                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.BookId)">Delete </button>
+                                    <button class="btn btn-primary" onclick="ViewBookData(@obj.bookId)">View </button>
+                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.bookId)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.bookId)">Delete </button>
                                     </div>
                             </td>
                         </tr>
@@ -321,7 +321,7 @@
             }
         })(jQuery);
 
-    function SearchBooks() {
+    function GetFilterBookList() {
         event.preventDefault();
 
         // Get all checked checkboxes with class "AuthorData"
@@ -349,7 +349,7 @@
 
         $.ajax({
             method: "POST",
-            url: "/Admin/searchBooks",
+            url: "/Admin/GetFilterBookList",
             contentType: false,
             processData: false,
             data: formData, 
@@ -363,10 +363,10 @@
         });
     }
 
-    function ViewBookDetails(bookId) {
+    function ViewBookData(bookId) {
         $.ajax({
             method: "GET",
-            url: "/Admin/ViewBookDetails",
+            url: "/Admin/ViewBookData",
             data: { bookId: bookId },
             success: function (result) {
                 $('#AdminDash').empty()
@@ -381,7 +381,7 @@
     function GetAddBookModal() {
         $.ajax({
             method: "get",
-            url: "/Admin/getAddBook",
+            url: "/Admin/GetAddBook",
             success: function (result) {
 
                 $('#Modaldata').html(result);
@@ -398,7 +398,7 @@
     function GetEditBook(bookId) {
         $.ajax({
             method: "get",
-            url: "/Admin/getEditBook",
+            url: "/Admin/GetEditBook",
             data: { bookId: bookId },
 
             success: function (result) {
