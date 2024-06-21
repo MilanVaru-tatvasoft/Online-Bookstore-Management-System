@@ -96,7 +96,6 @@ namespace BusinessLogic.Repository
 
             var bookList = booksQuery.ToList();
             model.Authors = _context.Authors.ToList();
-            model.publishers = _context.Publishers.ToList();
 
             if (model.search1 != null)
             {
@@ -113,11 +112,10 @@ namespace BusinessLogic.Repository
                 bookList = bookList.Where(r => model.search3.Contains((int)r.Categoryid)).ToList();
             }
 
-            if (model.search4 != null && model.search4.Count != 0)
+            if (model.search4 != null)
             {
-                bookList = bookList.Where(r => model.search4.Contains((int)r.Publisherid)).ToList();
+                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.search4.Trim().ToLower())).ToList();
             }
-
             List<AdminBookList> AdminBookList = new List<AdminBookList>();
             foreach (var book in bookList)
             {
@@ -153,7 +151,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
+                publisherName = book.Publisher,
                 bookPic = book.Bookphoto,
 
 
@@ -175,21 +173,6 @@ namespace BusinessLogic.Repository
 
 
             return (int)AuthorId;
-        }
-        private int GetPublisherId(string? publisherName)
-        {
-            int? publisherId = _context.Publishers.FirstOrDefault(x => x.Name == publisherName)?.Publisherid;
-
-            if (publisherId == null)
-            {
-                DataAccess.DataModels.Publisher publisher = new DataAccess.DataModels.Publisher() { Name = publisherName };
-                _context.Publishers.Add(publisher);
-                _context.SaveChanges();
-                publisherId = publisher.Publisherid;
-            }
-
-
-            return (int)publisherId;
         }
         private int GetCategoryId(string? categoryName)
         {
@@ -220,7 +203,6 @@ namespace BusinessLogic.Repository
         public void AddBook(viewBookModel model, int? userId)
         {
             int authorId = GetAutherId(model.AuthorName);
-            int publisherId = GetPublisherId(model.publisherName);
             int categoryId = GetCategoryId(model.categoryName);
 
             Book book = new Book
@@ -228,7 +210,7 @@ namespace BusinessLogic.Repository
                 Title = model.Title,
                 Authorid = authorId,
                 Bookphoto = model.bookPhoto.FileName,
-                Publisherid = publisherId,
+                Publisher = model.publisherName,
                 Categoryid = categoryId,
                 Noofpages = model.pageNumber,
                 Price = (decimal)model.price,
@@ -252,14 +234,13 @@ namespace BusinessLogic.Repository
             Book book = _context.Books.FirstOrDefault(x => x.Bookid == model.bookId);
 
             int authorId = GetAutherId(model.AuthorName);
-            int publisherId = GetPublisherId(model.publisherName);
             int categoryId = GetCategoryId(model.categoryName);
 
 
             book.Title = model.Title;
             book.Authorid = authorId;
             book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
-            book.Publisherid = publisherId;
+            book.Publisher = model.publisherName;
             book.Categoryid = categoryId;
             book.Noofpages = model.pageNumber;
             book.Price = (decimal)model.price;
@@ -288,7 +269,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
+                publisherName = book.Publisher,
                 categoryName = _context.Categories?.FirstOrDefault(x => x.Categoryid == book.Categoryid).Categoryname,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,

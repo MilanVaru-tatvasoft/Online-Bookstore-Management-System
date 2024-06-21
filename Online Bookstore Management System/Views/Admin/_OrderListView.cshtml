@@ -1,11 +1,5 @@
 ﻿@model DataAccess.CustomModels.OrderListModel;
-@functions {
-    public string? getStatus(int? statusId)
-    {
-        string? status = Model.statuses?.FirstOrDefault(c => c.StatusId == statusId).StatusName;
-        return status;
-    }
-}
+
 <div class="container-fluid">
 
     <h4 class="mt-4">Orders Dashboard</h4>
@@ -27,7 +21,7 @@
                     <input type="date" class="form-control" id="orderDate" name="orderDate" placeholder="Order ID" max="@DateTime.Today.Date">
                 </div>
                 <div class="form-group col-md-3 col-6">
-                    <select class="form-select" aria-label="Default select example" onchange="getStatus(this.value)">
+                    <select class="form-select" aria-label="Default select example" onchange="GetStatus(this.value)">
                         <option selected>all</option>
                         @foreach (var x in Model.statuses.ToList())
                         {
@@ -79,7 +73,7 @@
                             <td>@i.Address</td>
                             <td>@i.City</td>
                             <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
-                            <td>@getStatus(statusid)</td>
+                            <td>@i.Orderstatus.StatusName</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
                                     @if (i.Orderstatusid == 1)

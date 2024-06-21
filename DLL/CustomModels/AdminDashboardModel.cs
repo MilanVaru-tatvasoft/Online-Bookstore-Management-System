@@ -45,7 +45,7 @@ namespace DataAccess.CustomModels
         public string? search1 { get; set; }
         public List<int>? search2 { get; set; }
         public List<int>? search3 { get; set; }
-        public List<int> search4 { get; set; } 
+        public string? search4 { get; set; } 
         public List<AdminBookList> adminBookLists { get; set; }
     }
     public class AdminBookList

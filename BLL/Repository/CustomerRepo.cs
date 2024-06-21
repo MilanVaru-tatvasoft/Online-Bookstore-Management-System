@@ -40,7 +40,6 @@ namespace BusinessLogic.Repository
 
             var categories = _context.Categories.ToList();
             var authors = _context.Authors.ToList();
-            var publishers = _context.Publishers.ToList();
 
             var addtocarts = _context.Addtocarts
                                      .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
@@ -67,17 +66,18 @@ namespace BusinessLogic.Repository
             {
                 booksList = booksList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
             }
-
-            if (model.Search4 != null && model.Search4.Count != 0)
+            if (!string.IsNullOrEmpty(model.Search4))
             {
-                booksList = booksList.Where(r => model.Search4.Contains((int)r.Publisherid)).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
             }
-
             List<DashboardList> dashboardList = new List<DashboardList>();
             foreach (var book in booksList)
             {
-                DashboardList item = new DashboardList();
+                var reviews = _context.RatingReviews.Where(x=>x.BookId == book.Bookid).ToList();
+                decimal i = 0;
+                if(reviews.Count != 0) { i = (decimal)reviews.Average(x=>x.BookId); }
 
+                DashboardList item = new DashboardList();
                 item.BookId = book.Bookid;
                 item.Title = book.Title;
                 item.BookPhoto = book.Bookphoto;
@@ -86,7 +86,7 @@ namespace BusinessLogic.Repository
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
                 item.Price = book.Price;
-
+                item.AvgRating = i;
                 dashboardList.Add(item);
 
             }
@@ -97,15 +97,14 @@ namespace BusinessLogic.Repository
             }
             else
             {
-            _MainPage.Search3 = model.Search3;
-            _MainPage.Search2 = model.Search2;
-            _MainPage.Search4 = model.Search4;
+                _MainPage.Search3 = model.Search3;
+                _MainPage.Search2 = model.Search2;
+                _MainPage.Search4 = model.Search4;
 
             }
 
             _MainPage.Authors = authors;
             _MainPage.Categories = categories;
-            _MainPage.Publishers = publishers;
             _MainPage.UserId = userId;
             _MainPage.DashboardLists = dashboardList;
             _MainPage.BookCount = booksList.Count();
@@ -128,8 +127,11 @@ namespace BusinessLogic.Repository
 
             foreach (var book in booksList)
             {
-                DashboardList item = new DashboardList();
+                var reviews = _context.RatingReviews.Where(x => x.BookId == book.Bookid).ToList();
+                decimal i = 0;
+                if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.Rating); }
 
+                DashboardList item = new DashboardList();
                 item.BookId = book.Bookid;
                 item.Title = book.Title;
                 item.BookPhoto = book.Bookphoto;
@@ -137,6 +139,8 @@ namespace BusinessLogic.Repository
                 item.AuthorName = book.Author.Name;
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
+                item.AvgRating = i;
+
                 item.Price = book.Price;
 
                 dashboardList.Add(item);
@@ -268,13 +272,13 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = _context.Publishers?.FirstOrDefault(x => x.Publisherid == book.Publisherid).Name,
+                publisherName = book.Publisher,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,
                 quantity = 1,
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
-                itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved != true && x.Checkout!= true).ToList().Count(),
+                itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved != true && x.Checkout != true).ToList().Count(),
                 reviews = _context.RatingReviews.Where(x => x.BookId == bookId).OrderByDescending(x => x.RatingDate).ToList(),
                 customers = _context.Customers.ToList(),
 
@@ -506,7 +510,6 @@ namespace BusinessLogic.Repository
 
                 Categories = _context.Categories.ToList(),
                 Authors = _context.Authors.ToList(),
-                Publishers = _context.Publishers.ToList(),
                 AddToCarts = addtocart,
                 BookList = addtocart.Select(a => a.Book).ToList(),
                 ItemCount = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true).Count(),
@@ -639,6 +642,7 @@ namespace BusinessLogic.Repository
                 bill.TotalBooks = totalBooks;
                 bill.ShippingAmount = shippingAmount;
                 bill.BookList = _context.Books.Where(b => bookIds.Contains(b.Bookid)).ToList();
+                bill.TotalAmount = totalAmount;
             }
 
             return bill;

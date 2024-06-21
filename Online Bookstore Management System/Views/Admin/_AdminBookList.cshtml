@@ -24,18 +24,7 @@
         return false;
 
     }
-    public bool ischecked3(int pubId)
-    {
-        if (Model.search4 != null)
-        {
-            if (Model.search4.Contains(pubId))
-            {
-                return true;
-            }
-        }
-        return false;
 
-    }
 }
 
 <style>
@@ -168,22 +157,8 @@
                 </div>
 
 
-                <div class="form-group col-md-3  col-6">
-                    <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search3" hidden>
-                        <label class="dropdown-label p-2">publishers</label>
-
-                        <div class="dropdown-list ">
-
-                            @foreach (var i in Model.publishers)
-                            {
-                                <label class="dropdown-option">
-                                    <input class="publisherdata" type="checkbox" name="dropdown-group" checked="@ischecked3(i.Publisherid)" value="@i.Publisherid" />
-                                    @i.Name
-                                </label>
-                            }
-                        </div>
-                    </div>
+                <div class=" col-md-3  col-6">
+                    <input asp-for=@Model.search4 type="text" class="w-100 " id="bookPublisher" placeholder="Publisher Name">
                 </div>
                 <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -196,7 +171,7 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-end m-2   w-100">
             <button class="btn btn-primary " onclick="GetAddBookModal()">    Add Book </button>
-         
+
         </div>
         <div class="table-responsive">
 
@@ -229,7 +204,7 @@
                                     <button class="btn btn-primary" onclick="ViewBookData(@obj.bookId)">View </button>
                                     <button class="btn btn-warning" onclick="GetEditBook(@obj.bookId)">Edit </button>
                                     <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.bookId)">Delete </button>
-                                    </div>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -327,7 +302,6 @@
         // Get all checked checkboxes with class "AuthorData"
         let checkboxes = document.querySelectorAll(".AuthorData:checked");
         let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
-        let checkboxes3 = document.querySelectorAll(".publisherdata:checked");
         const search2 = [];
 
         // Loop through checked checkboxes and push their values to the search2 array
@@ -340,10 +314,6 @@
             formData.append('search3', checkbox.value);
 
         });
-        checkboxes3.forEach(function (checkbox) {
-            formData.append('search4', checkbox.value);
-
-        });
 
 
 
@@ -352,7 +322,7 @@
             url: "/Admin/GetFilterBookList",
             contentType: false,
             processData: false,
-            data: formData, 
+            data: formData,
             success: function (result) {
                 $('#AdminDash').html(result);
 

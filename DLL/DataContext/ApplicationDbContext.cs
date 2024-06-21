@@ -36,8 +36,6 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Payment> Payments { get; set; }
 
-    public virtual DbSet<Publisher> Publishers { get; set; }
-
     public virtual DbSet<RatingReview> RatingReviews { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -95,8 +93,6 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasConstraintName("fk_author");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Books).HasConstraintName("books_categoryid_fkey");
-
-            entity.HasOne(d => d.Publisher).WithMany(p => p.Books).HasConstraintName("fk_publisher");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -126,11 +122,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.OrderCreatedbyNavigations).HasConstraintName("orders_createdby_fkey");
-
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("orders_customerid_fkey");
-
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.OrderModifiedbyNavigations).HasConstraintName("orders_modifiedby_fkey");
 
             entity.HasOne(d => d.Orderstatus).WithMany(p => p.Orders).HasConstraintName("orders_orderstatusid_fkey");
         });
@@ -159,13 +151,6 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.Payments)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("payment_order_id_fkey");
-        });
-
-        modelBuilder.Entity<Publisher>(entity =>
-        {
-            entity.HasKey(e => e.Publisherid).HasName("publishers_pkey");
-
-            entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<RatingReview>(entity =>

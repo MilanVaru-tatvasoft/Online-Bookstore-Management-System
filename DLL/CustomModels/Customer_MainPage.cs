@@ -22,7 +22,7 @@ namespace DataAccess.CustomModels
         public string? Search1 { get; set; }
         public List<int>? Search2 { get; set; }
         public List<int>? Search3 { get; set; }
-        public List<int> Search4 { get; set; }
+        public string? Search4 { get; set; }
     }
 
     public class DashboardList
@@ -35,6 +35,8 @@ namespace DataAccess.CustomModels
         public int AuthorId { get; set; }
         public string BookPhoto { get; set; }
         public decimal Price { get; set; }
+        public decimal AvgRating { get; set; }
+
     }
 
     public class UserProfile

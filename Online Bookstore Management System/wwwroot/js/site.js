@@ -209,6 +209,10 @@ function GetAddToCart(bookId, cartId) {
                     timer: 1500
                 })
                 ViewBookDetails(bookId);
+                var count = $('#CartCount2').val();
+                $('.badge').text(count); 
+
+
             }
 
         },
@@ -326,9 +330,13 @@ function AdminBookList() {
     });
 }
 function AddBook() {
-    event.preventDefault();
-    var formdata = new FormData($('#addBookdetails')[0]);
-    if (formdata.isvalid()) {
+    event.preventDefault(); 
+
+    var isValid = $('#addBookdetails').valid(); 
+
+    if (isValid) {
+        var formdata = new FormData($('#addBookdetails')[0]);
+
         $.ajax({
             method: "POST",
             url: "/Admin/AddBook",
@@ -340,10 +348,10 @@ function AddBook() {
                     swal.fire({
                         position: "top-end",
                         icon: "error",
-                        title: "Book already exist",
+                        title: "Book already exists",
                         showConfirmButton: false,
                         timer: 1500
-                    })
+                    });
                 } else if (result.code == 402) {
                     swal.fire({
                         position: "top-end",
@@ -351,9 +359,9 @@ function AddBook() {
                         title: "Book Added",
                         showConfirmButton: false,
                         timer: 1500
-                    })
+                    });
                     $('#addBookModal').modal('hide').on('hidden.bs.modal', function () {
-                        AdminBookList();
+                        AdminBookList(); 
                     });
                 }
             },
@@ -361,7 +369,8 @@ function AddBook() {
                 alert('Error loading partial view');
             }
         });
-
+    } else {
+        console.log('Form is not valid');
     }
 }
 function UpdateBook() {
