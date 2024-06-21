@@ -12,7 +12,7 @@ namespace BusinessLogic.Interface
         public OrderListModel getOrderListData();
         public AdminDashboardModel GetAdminDashboardData();
 
-        public AdminBookListmodel GetBookList(AdminBookListmodel model);
+        public AdminBookListModel GetBookList(AdminBookListModel model);
         public viewBookModel ViewBookDetails(int bookId, int? userId);
         public bool IsBookExist(string? bookTitle);
         public viewBookModel GetAddBook();
@@ -23,12 +23,12 @@ namespace BusinessLogic.Interface
         public AdminProfileModel GetAdminProfile(int? uId);
         public bool GetDeleteBook(int bookId);
         public CategoryListModel getCategoriesList();
-        public AuthorListmodel GetAuthorList();
-        public AuthorListmodel GetEditAuthor(int AuthorId);
+        public AuthorListModel GetAuthorList();
+        public AuthorListModel GetEditAuthor(int AuthorId);
         public CategoryListModel GetAddCategory(int categtoryId);
         public bool GetDeleteCategory(int categoryId);
         public bool GetDeleteAuthor(int AuthorId);
-        public bool AddOrUpdateAuthor(AuthorListmodel model);
+        public bool AddOrUpdateAuthor(AuthorListModel model);
         public bool AddOrUpdateCategory(CategoryListModel model);
 
         public AdminDashboardModel GetChartData(DateTime date);

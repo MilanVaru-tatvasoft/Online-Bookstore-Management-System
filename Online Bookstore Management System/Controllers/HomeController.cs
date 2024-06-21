@@ -5,6 +5,7 @@ using DataAccess.CustomModels;
 using DataAccess.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Online_Bookstore_Management_System.Controllers
@@ -144,16 +145,15 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult EditUserProfile(UserProfile profile)
         {
-            if (ModelState.IsValid)
-            {
+           
                 bool result = _customerRepo.EditUserProfile(profile);
                 if (result)
                 {
                     return Json(new { code = 401 });
                 }
                 return Json(new { code = 402 });
-            }
-            return View();
+         
+           
         }
         public IActionResult ViewBookDetails(int bookId)
         {
@@ -194,10 +194,16 @@ namespace Online_Bookstore_Management_System.Controllers
             return View(model);
         }
         [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordModel model)
+        public IActionResult ResetPassword(UserProfile data)
         {
-
-            if (_authentication.resetPassword(model))
+            ResetPasswordModel model = new ResetPasswordModel()
+            {
+                Password = data.Password,
+                Password2 = data.Password2,
+                Email = data.Email,
+                UserId = data.UserId,
+            };
+            if (_authentication.ResetPasswordPost(model))
             {
                 return Json(new { code = 401 });
             }
@@ -210,7 +216,7 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult ForgotPassword(string Email)
         {
-            if (_authentication.sendmail(Email))
+            if (_authentication.ResetPasswordMail(Email))
             {
 
                 return Json(new { code = 401 });

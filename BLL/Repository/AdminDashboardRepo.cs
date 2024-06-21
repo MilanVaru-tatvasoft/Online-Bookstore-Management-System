@@ -31,12 +31,12 @@ namespace BusinessLogic.Repository
                 OrderCount = orders.Count(order => order.Orderstatusid == status.StatusId)
             }).ToList();
 
-            model.newOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 1)?.OrderCount ?? 0;
-            model.ProcessingOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 2)?.OrderCount ?? 0;
-            model.shippedOrder = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 3)?.OrderCount ?? 0;
-            model.deliveredOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 4)?.OrderCount ?? 0;
-            model.numberOfBooks = _context.Books.Where(x => x.Isdeleted != true).Count();
-            model.numberOfCustomer = _context.Customers.Count();
+            model.NewOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 1)?.OrderCount ?? 0;
+            model.ProcessingOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 2)?.OrderCount ?? 0;
+            model.ShippedOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 3)?.OrderCount ?? 0;
+            model.DeliveredOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 4)?.OrderCount ?? 0;
+            model.NumberOfBooks = _context.Books.Where(x => x.Isdeleted != true).Count();
+            model.NumberOfCustomers = _context.Customers.Count();
 
             decimal sellofThisMonth = 0;
 
@@ -53,7 +53,7 @@ namespace BusinessLogic.Repository
 
 
 
-            model.salelofThisMonth = sellofThisMonth;
+            model.SaleOfThisMonth = sellofThisMonth;
             return model;
 
         }
@@ -67,75 +67,75 @@ namespace BusinessLogic.Repository
                                     .ToList();
 
             
-            orderList.orderdetails = _context.Orderdetails
+            orderList.OrderDetails = _context.Orderdetails
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
-            orderList.orders = _context.Orders
+            orderList.Orders = _context.Orders
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
-            orderList.books = _context.Books
+            orderList.Books = _context.Books
                                                 .ToList();
             orderList.Authors = _context.Authors
                                                .ToList();
-            orderList.categories = _context.Categories
+            orderList.Categories = _context.Categories
                                                .ToList();
-            orderList.customers = _context.Customers
+            orderList.Customers = _context.Customers
                                                 .ToList();
-            orderList.statuses = _context.Statuses
+            orderList.Statuses = _context.Statuses
                                                .ToList();
 
             return orderList;
         }
 
-        public AdminBookListmodel GetBookList(AdminBookListmodel model)
+        public AdminBookListModel GetBookList(AdminBookListModel model)
         {
 
-            model.categories = _context.Categories.ToList();
+            model.Categories = _context.Categories.ToList();
             var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
                                              .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
 
             var bookList = booksQuery.ToList();
             model.Authors = _context.Authors.ToList();
 
-            if (model.search1 != null)
+            if (model.Search1 != null)
             {
-                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.search1.Trim().ToLower())).ToList();
+                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
             }
 
-            if (model.search2 != null && model.search2.Count != 0)
+            if (model.Search2 != null && model.Search2.Count != 0)
             {
-                bookList = bookList.Where(r => model.search2.Contains((int)r.Authorid)).ToList();
+                bookList = bookList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
             }
 
-            if (model.search3 != null && model.search3.Count != 0)
+            if (model.Search3 != null && model.Search3.Count != 0)
             {
-                bookList = bookList.Where(r => model.search3.Contains((int)r.Categoryid)).ToList();
+                bookList = bookList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
             }
 
-            if (model.search4 != null)
+            if (model.Search4 != null)
             {
-                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.search4.Trim().ToLower())).ToList();
+                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
             }
             List<AdminBookList> AdminBookList = new List<AdminBookList>();
             foreach (var book in bookList)
             {
                 AdminBookList item = new AdminBookList();
 
-                item.bookId = book.Bookid;
+                item.BookId = book.Bookid;
                 item.Title = book.Title;
                 item.BookPhoto = book.Bookphoto;
-                item.authorId = (int)book.Authorid;
+                item.AuthorId = (int)book.Authorid;
                 item.AuthorName = book.Author.Name;
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
                 item.Price = book.Price;
-                item.stock = book.Stockquantity;
+                item.Stock = book.Stockquantity;
 
                 AdminBookList.Add(item);
 
             }
 
-            model.adminBookLists = AdminBookList;
+            model.AdminBookLists = AdminBookList;
             return model;
         }
 
@@ -222,7 +222,7 @@ namespace BusinessLogic.Repository
 
             if (model.bookPhoto != null)
             {
-                storefile(model.bookPhoto);
+                StoreFileAsync(model.bookPhoto, model.Title);
             }
 
             _context.Books.Add(book);
@@ -251,7 +251,7 @@ namespace BusinessLogic.Repository
 
             if (model.bookPhoto != null)
             {
-                storefile(model.bookPhoto);
+                StoreFileAsync(model.bookPhoto, book.Title);
             }
 
             _context.Books.Update(book);
@@ -279,22 +279,33 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public void storefile(IFormFile fileName)
+        public async Task StoreFileAsync(IFormFile file, string bookTitle)
         {
-            string FileName = fileName.FileName;
-            string FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "BookListCollections", FileName);
-
-            if (!File.Exists(FilePath))
+            if (file == null || file.Length == 0)
             {
+                throw new ArgumentException("File is null or empty.");
+            }
 
-                IFormFile DocFile = fileName;
-                FileStream stream = new FileStream(FilePath, FileMode.Create);
+            string sanitizedTitle = string.Join("_", bookTitle.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 
-                DocFile.CopyTo(stream);
-                stream.Close();
+            string fileName = $"{sanitizedTitle}{Path.GetExtension(file.FileName)}";
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "BookListCollections");
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            Directory.CreateDirectory(directoryPath);
+
+            if (File.Exists(filePath))
+            {
+                throw new IOException($"File {fileName} already exists.");
+            }
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
             }
 
         }
+
 
         public bool GetDeleteBook(int bookId)
         {
@@ -315,14 +326,15 @@ namespace BusinessLogic.Repository
             AdminProfileModel Profile = new AdminProfileModel()
             {
                 UserId = user.Userid,
-                firstName = user.Firstname,
-                lastName = user.Lastname,
-                email = user.Email,
-                contact = user.Phonenumber,
-                address = user.Address,
-                birthDate = user.Birthdate,
-                city = user.City,
-                gender = user.Gender,
+                FirstName = user.Firstname,
+                LastName = user.Lastname,
+                Email = user.Email,
+                Contact = user.Phonenumber,
+                Address = user.Address,
+                BirthDate = user.Birthdate,
+                City = user.City,
+                Gender = user.Gender,
+                UserPhotoName = user.Profilephoto,
 
             };
             return Profile;
@@ -332,27 +344,33 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
-                user.Firstname = profile.firstName;
-                user.Address = profile.address;
-                user.Lastname = profile.lastName;
-                user.Email = profile.email;
-                user.Birthdate = profile.birthDate;
-                user.City = profile.city;
-                user.Gender = profile.gender;
-                user.Phonenumber = profile.contact;
+                user.Firstname = profile.FirstName;
+                user.Address = profile.Address;
+                user.Lastname = profile.LastName;
+                user.Email = profile.Email;
+                user.Birthdate = profile.BirthDate;
+                user.City = profile.City;
+                user.Gender = profile.Gender;
+                user.Phonenumber = profile.Contact;
+
+                if (profile.UserProfilePhoto != null)
+                {
+                    _authentication.StoreProfilePhoto(profile.UserProfilePhoto, profile.UserId);
+                }
+
                 _context.Users.Update(user);
                 _context.SaveChanges();
 
                 Admin? admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
                 if (admin != null)
                 {
-                    admin.Firstname = profile.firstName;
-                    admin.Lastname = profile.lastName;
-                    admin.Address = profile.address;
-                    admin.Email = profile.email;
-                    admin.City = profile.city;
-                    admin.Gender = profile.gender;
-                    admin.Phonenumber = profile.contact;
+                    admin.Firstname = profile.FirstName;
+                    admin.Lastname = profile.LastName;
+                    admin.Address = profile.Address;
+                    admin.Email = profile.Email;
+                    admin.City = profile.City;
+                    admin.Gender = profile.Gender;
+                    admin.Phonenumber = profile.Contact;
                     _context.Admins.Update(admin);
                     _context.SaveChanges();
                 }
@@ -363,9 +381,9 @@ namespace BusinessLogic.Repository
 
         }
 
-        public AuthorListmodel GetAuthorList()
+        public AuthorListModel GetAuthorList()
         {
-            AuthorListmodel model = new AuthorListmodel()
+            AuthorListModel model = new AuthorListModel()
             {
                 Authors = _context.Authors.Where(x => x.Isdeleted != true).ToList(),
             };
@@ -375,20 +393,20 @@ namespace BusinessLogic.Repository
         {
             CategoryListModel model = new CategoryListModel()
             {
-                categories = _context.Categories.Where(x => x.Isdeleted != true).ToList(),
+                Categories = _context.Categories.Where(x => x.Isdeleted != true).ToList(),
             };
             return model;
         }
 
-        public AuthorListmodel GetEditAuthor(int AuthorId)
+        public AuthorListModel GetEditAuthor(int AuthorId)
         {
             Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == AuthorId);
-            AuthorListmodel model = new AuthorListmodel();
+            AuthorListModel model = new AuthorListModel();
             if (Author != null && AuthorId != 0)
             {
                 model.AuthorId = Author.Authorid;
                 model.AuthorName = Author.Name;
-                model.birthdate = Author.Birthdate;
+                model.BirthDate = Author.Birthdate;
                 model.Bio = Author.Bio;
             }
             else
@@ -405,12 +423,12 @@ namespace BusinessLogic.Repository
             CategoryListModel model = new CategoryListModel();
             if (category != null && categoryId != 0)
             {
-                model.categoryId = category.Categoryid;
-                model.categoryName = category.Categoryname;
+                model.CategoryId = category.Categoryid;
+                model.CategoryName = category.Categoryname;
             }
             else
             {
-                model.categoryId = 0;
+                model.CategoryId = 0;
             }
 
             return model;
@@ -442,14 +460,14 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-        public bool AddOrUpdateAuthor(AuthorListmodel model)
+        public bool AddOrUpdateAuthor(AuthorListModel model)
         {
             if (model.AuthorId != 0)
             {
                 Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == model.AuthorId);
                 Author.Name = model.AuthorName;
                 Author.Bio = model.Bio;
-                Author.Birthdate = model.birthdate;
+                Author.Birthdate = model.BirthDate;
                 Author.Isdeleted = false;
                 _context.Authors.Update(Author);
                 _context.SaveChanges();
@@ -463,7 +481,7 @@ namespace BusinessLogic.Repository
                     {
                         Name = model.AuthorName,
                         Bio = model.Bio,
-                        Birthdate = model.birthdate,
+                        Birthdate = model.BirthDate,
                         Isdeleted = false
                     };
                     _context.Authors.Add(Author);
@@ -477,10 +495,10 @@ namespace BusinessLogic.Repository
         }
         public bool AddOrUpdateCategory(CategoryListModel model)
         {
-            if (model.categoryId != 0)
+            if (model.CategoryId != 0)
             {
-                Category? ca = _context.Categories.FirstOrDefault(x => x.Categoryid == model.categoryId);
-                ca.Categoryname = model.categoryName;
+                Category? ca = _context.Categories.FirstOrDefault(x => x.Categoryid == model.CategoryId);
+                ca.Categoryname = model.CategoryName;
                 ca.Isdeleted = false;
                 _context.Categories.Update(ca);
                 _context.SaveChanges();
@@ -488,11 +506,11 @@ namespace BusinessLogic.Repository
             }
             else
             {
-                if (_context.Categories.Any(x => x.Categoryname.Trim() != model.categoryName.Trim()))
+                if (_context.Categories.Any(x => x.Categoryname.Trim() != model.CategoryName.Trim()))
                 {
                     Category category = new Category()
                     {
-                        Categoryname = model.categoryName,
+                        Categoryname = model.CategoryName,
                         Isdeleted = false
                     };
                     _context.Categories.Add(category);
@@ -548,10 +566,10 @@ namespace BusinessLogic.Repository
                     .Sum(od => od.Quantity))
                 .ToList();
 
-            model.monthlySales = saleslist;
-            model.dailySales = dailySalesList;
-            model.categorties = categories;
-            model.noofbooks = booksSoldPerCategory;
+            model.MonthlySales = saleslist;
+            model.DailySales = dailySalesList;
+            model.Categories = categories;
+            model.NoOfBooks = booksSoldPerCategory;
 
             return model;
         }
@@ -574,10 +592,10 @@ namespace BusinessLogic.Repository
                     {
                         string recipientEmail = customer.Email;
                         string status = "Your order has been accepted by the admin. It will be delivered to you very soon.";
-                        string body = _authentication.ordermessage(status);
+                        string body = _authentication.OrderMailMessageBody(status);
                         string subject = "Order Acceptance";
 
-                        _authentication.emailSender(recipientEmail, subject, body);
+                        _authentication.EmailSender(recipientEmail, subject, body);
                     }
 
                 }
@@ -607,10 +625,10 @@ namespace BusinessLogic.Repository
                     {
                         string recipientEmail = customer.Email;
                         string status = "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
-                        string body = _authentication.ordermessage(status);
+                        string body = _authentication.OrderMailMessageBody(status);
                         string subject = "Order Shipped";
 
-                        _authentication.emailSender(recipientEmail, subject, body);
+                        _authentication.EmailSender(recipientEmail, subject, body);
                     }
 
                 }
@@ -641,10 +659,10 @@ namespace BusinessLogic.Repository
                     {
                         string recipientEmail = customer.Email;
                         string status = "Your order has been  delivered to you. we hope You received Order!";
-                        string body = _authentication.ordermessage(status);
+                        string body = _authentication.OrderMailMessageBody(status);
                         string subject = "Order Delivered";
 
-                        _authentication.emailSender(recipientEmail, subject, body);
+                        _authentication.EmailSender(recipientEmail, subject, body);
                     }
 
                 }
@@ -675,10 +693,10 @@ namespace BusinessLogic.Repository
                     {
                         string recipientEmail = customer.Email;
                         string status = "Your order has been  Deleted as per your request!";
-                        string body = _authentication.ordermessage(status);
+                        string body = _authentication.OrderMailMessageBody(status);
                         string subject = "Order Deleted";
 
-                        _authentication.emailSender(recipientEmail, subject, body);
+                        _authentication.EmailSender(recipientEmail, subject, body);
                     }
 
                 }

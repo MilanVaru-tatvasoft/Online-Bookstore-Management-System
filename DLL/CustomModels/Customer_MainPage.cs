@@ -1,4 +1,5 @@
 ﻿using DataAccess.DataModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,7 @@ namespace DataAccess.CustomModels
         public List<Addtocart>? AddToCarts { get; set; }
         public List<RatingReview>? Reviews { get; set; }
         public List<DashboardList>? DashboardLists { get; set; }
-
+         public User? user { get; set; }
         public int? itemCount { get; set; }
         public int? UserId { get; set; }
         public int? BookCount { get; set; }
@@ -66,6 +67,8 @@ namespace DataAccess.CustomModels
         public DateTime? Birthdate { get; set; }
 
         public string? Role { get; set; }
+        public string? UserPhotoName { get; set; }
+        public IFormFile? UserProfilePhoto { get; set; }
 
         [Required(ErrorMessage = "Address is required")]
         public string? Address { get; set; }

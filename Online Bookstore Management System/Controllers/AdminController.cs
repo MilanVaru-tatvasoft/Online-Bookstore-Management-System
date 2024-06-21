@@ -55,22 +55,29 @@ namespace Online_Bookstore_Management_System.Controllers
             return View("_AdminResetPasswordPage", model);
         }
         [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordModel model)
+        public IActionResult AdminResetPassword(AdminProfileModel data)
         {
+            ResetPasswordModel model = new ResetPasswordModel()
+            {
+                Password = data.Password,
+                Password2 = data.ConfirmPassword,
+                Email = data.Email,
+                UserId = data.UserId,
+            };
 
-            if (_authentication.resetPassword(model))
+            if (_authentication.ResetPasswordPost(model))
             {
                 return Json(new { code = 401 });
             }
             return Json(new { code = 401 });
         }
 
-        public IActionResult GetAdminBookList(AdminBookListmodel model)
+        public IActionResult GetAdminBookList(AdminBookListModel model)
         {
             _adminDashboard.GetBookList(model);
             return PartialView("_AdminBookList", model);
         }
-        public IActionResult GetFilterBookList(AdminBookListmodel model)
+        public IActionResult GetFilterBookList(AdminBookListModel model)
         {
             _adminDashboard.GetBookList(model);
             return PartialView("_AdminBookList", model);
@@ -157,7 +164,7 @@ namespace Online_Bookstore_Management_System.Controllers
 
         public IActionResult GetAuthorList()
         {
-            AuthorListmodel model = _adminDashboard.GetAuthorList();
+            AuthorListModel model = _adminDashboard.GetAuthorList();
             return PartialView("_AuthorsList", model);
         }
         public IActionResult GetCategoryList()
@@ -168,7 +175,7 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult GetAddAuthor(int AuthorId)
         {
-            AuthorListmodel model = _adminDashboard.GetEditAuthor(AuthorId);
+            AuthorListModel model = _adminDashboard.GetEditAuthor(AuthorId);
             return PartialView("_AddAuthorModal", model);
         }
         public IActionResult GetAddCategory(int categoryId)
@@ -196,7 +203,7 @@ namespace Online_Bookstore_Management_System.Controllers
             return Json(new { code = 402 });
         }
 
-        public IActionResult AddOrUpdateAuthor(AuthorListmodel model)
+        public IActionResult AddOrUpdateAuthor(AuthorListModel model)
         {
             if (_adminDashboard.AddOrUpdateAuthor(model))
             {
@@ -222,7 +229,7 @@ namespace Online_Bookstore_Management_System.Controllers
             DateTime date = DateTime.Now;
             AdminDashboardModel model = _adminDashboard.GetChartData(date);
 
-            return Json(new { MonthlySales = model.monthlySales, categoryList = model.categorties, NumberOfBooks = model.noofbooks, dailySales =model.dailySales });
+            return Json(new { MonthlySales = model.MonthlySales, categoryList = model.Categories, NumberOfBooks = model.NoOfBooks, dailySales =model.DailySales });
 
         }
 

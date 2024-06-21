@@ -1,10 +1,10 @@
-﻿@model DataAccess.CustomModels.AdminBookListmodel;
+﻿@model DataAccess.CustomModels.AdminBookListModel;
 @functions {
     public bool ischecked(int AuthorId)
     {
-        if (Model.search2 != null)
+        if (Model.Search2 != null)
         {
-            if (Model.search2.Contains(AuthorId))
+            if (Model.Search2.Contains(AuthorId))
             {
                 return true;
             }
@@ -14,9 +14,9 @@
     }
     public bool ischecked2(int catId)
     {
-        if (Model.search2 != null)
+        if (Model.Search3 != null)
         {
-            if (Model.search3.Contains(catId))
+            if (Model.Search3.Contains(catId))
             {
                 return true;
             }
@@ -115,11 +115,11 @@
         <div class="searchbar">
             <form id="searchForm" class=" mb-2 gy-2 row" onsubmit="GetFilterBookList()">
                 <div class=" col-md-3  col-6">
-                    <input asp-for=@Model.search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
+                    <input asp-for=@Model.Search1 type="text" class="w-100 " id="bookTitle" placeholder="Book Title">
                 </div>
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search2" hidden>
+                        <input type="text" asp-for="@Model.Search2" hidden>
                         <label class="dropdown-label p-2 ">Authors</label>
 
                         <div class="dropdown-list">
@@ -139,12 +139,12 @@
 
                 <div class="form-group col-md-3  col-6">
                     <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.search3" hidden>
+                        <input type="text" asp-for="@Model.Search3" hidden>
                         <label class="dropdown-label p-2">Categories</label>
 
                         <div class="dropdown-list ">
 
-                            @foreach (var i in Model.categories)
+                            @foreach (var i in Model.Categories)
                             {
                                 <label class="dropdown-option">
                                     <input class="categorytdata" type="checkbox" name="dropdown-group" checked="@ischecked2(i.Categoryid)" value="@i.Categoryid" />
@@ -158,7 +158,7 @@
 
 
                 <div class=" col-md-3  col-6">
-                    <input asp-for=@Model.search4 type="text" class="w-100 " id="bookPublisher" placeholder="Publisher Name">
+                    <input asp-for=@Model.Search4 type="text" class="w-100 " id="bookPublisher" placeholder="Publisher Name">
                 </div>
                 <div class="form-group d-flex justify-content-end gap-2 col-md-12 mt-3">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -188,7 +188,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var obj in Model.adminBookLists)
+                    @foreach (var obj in Model.AdminBookLists)
                     {
                         <tr>
                             <td>
@@ -198,12 +198,12 @@
                             <td>@obj.AuthorName</td>
                             <td>@obj.CategoryName</td>
                             <td>@obj.Price $</td>
-                            <td>@obj.stock </td>
+                            <td>@obj.Stock </td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="ViewBookData(@obj.bookId)">View </button>
-                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.bookId)">Edit </button>
-                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.bookId)">Delete </button>
+                                    <button class="btn btn-primary" onclick="ViewBookData(@obj.BookId)">View </button>
+                                    <button class="btn btn-warning" onclick="GetEditBook(@obj.BookId)">Edit </button>
+                                    <button class="btn btn-danger" onclick="DeleteBooksPage(@obj.BookId)">Delete </button>
                                 </div>
                             </td>
                         </tr>
@@ -217,6 +217,11 @@
 
 
 <script>
+
+
+
+
+
     $(document).ready(function () {
 
         var table = $('#book-table').DataTable({

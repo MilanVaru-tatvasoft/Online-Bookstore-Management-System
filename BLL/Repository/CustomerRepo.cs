@@ -2,19 +2,8 @@
 using DataAccess.CustomModels;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace BusinessLogic.Repository
 {
@@ -44,7 +33,7 @@ namespace BusinessLogic.Repository
             var addtocarts = _context.Addtocarts
                                      .Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true)
                                      .ToList();
-            int pageSize = 5;
+            int pageSize = 6;
 
             var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
                                    .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
@@ -109,6 +98,7 @@ namespace BusinessLogic.Repository
             _MainPage.DashboardLists = dashboardList;
             _MainPage.BookCount = booksList.Count();
             _MainPage.itemCount = addtocarts.Count();
+            _MainPage.user = _context.Users.FirstOrDefault(x=>x.Userid == userId);
 
 
 
@@ -116,7 +106,7 @@ namespace BusinessLogic.Repository
         }
         public List<DashboardList> GetCustomerDashboardTable(int? userId, int pageNumber)
         {
-            int pageSize = 5;
+            int pageSize = 6;
 
             var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
                                    .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
@@ -220,6 +210,7 @@ namespace BusinessLogic.Repository
                 Birthdate = user.Birthdate,
                 City = user.City,
                 Gender = user.Gender,
+                UserPhotoName = user.Profilephoto
 
             };
             return userProfile;
@@ -229,6 +220,10 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
+
+              
+
+
                 user.Firstname = profile.FirstName;
                 user.Address = profile.Address;
                 user.Lastname = profile.LastName;
@@ -237,6 +232,11 @@ namespace BusinessLogic.Repository
                 user.City = profile.City;
                 user.Gender = profile.Gender;
                 user.Phonenumber = profile.Contact;
+
+                if (profile.UserProfilePhoto != null)
+                {
+                    _authentication.StoreProfilePhoto(profile.UserProfilePhoto, profile.UserId);
+                }
                 _context.Users.Update(user);
                 _context.SaveChanges();
 
@@ -247,7 +247,6 @@ namespace BusinessLogic.Repository
                     customer.Address = profile.Address;
                     customer.Email = profile.Email;
                     customer.City = profile.City;
-                    //customer.Gender = profile.gender;
                     customer.Phonenumber = profile.Contact;
                     _context.Customers.Update(customer);
                     _context.SaveChanges();
@@ -258,6 +257,7 @@ namespace BusinessLogic.Repository
             return false;
 
         }
+
 
         public viewBookModel ViewBookDetails(int bookId, int? userId)
         {
@@ -604,10 +604,10 @@ namespace BusinessLogic.Repository
 
                 string recipientEmail = customer.Email;
                 string status = "Your order has been  placed , ThankYou.";
-                string body = _authentication.ordermessage(status);
+                string body = _authentication.OrderMailMessageBody(status);
                 string subject = "Order Placed";
 
-                _authentication.emailSender(recipientEmail, subject, body);
+                _authentication.EmailSender(recipientEmail, subject, body);
 
                 return true;
             }

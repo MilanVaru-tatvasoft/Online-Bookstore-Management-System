@@ -142,10 +142,14 @@ function GetOrderHistory() {
 }
 function EditUserProfile() {
     event.preventDefault();
+    var formdata = new FormData($('#profileForm')[0]);
+
     $.ajax({
         method: "POST",
         url: "/Home/EditUserProfile",
-        data: $('#profileForm').serialize(),
+        data: formdata,
+        contentType: false,
+        processData: false,
 
 
         success: function (result) {
@@ -157,6 +161,7 @@ function EditUserProfile() {
                     showConfirmButton: false,
                     timer: 1500
                 })
+                GetUserProfile()
 
             }
             else if (result.code == 402) {
@@ -468,11 +473,13 @@ function GetAdminProfile() {
 }
 function EditAdminProfile() {
     event.preventDefault();
+    var formdata = new FormData($('#AdminProfileData')[0]);
     $.ajax({
         method: "POST",
         url: "/Admin/EditAdminProfile",
-        data: $('#AdminProfileData').serialize(),
-
+        data: formdata,
+        contentType: false,
+        processData: false,
 
         success: function (result) {
             if (result.code == 401) {
@@ -848,6 +855,46 @@ function GetGenerateBill(orderId) {
         timer: 1500
     });
     window.location.href = '/Home/GeneratePDF?orderId=' + orderId;
+}
+function AdminResetPassword() {
+    event.preventDefault();
+
+    $.ajax({
+        method: "POST",
+        url: "/Admin/AdminResetPassword",
+        data: $('#resetFormAdmin').serialize(),
+
+        success: function (result) {
+            if (result.code == 401) {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "password changed",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/Home/Logout";
+
+                });
+
+
+
+
+            } else {
+                swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Error",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                GetResetPasswordPage(result.email)
+            }
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
 }
 
 

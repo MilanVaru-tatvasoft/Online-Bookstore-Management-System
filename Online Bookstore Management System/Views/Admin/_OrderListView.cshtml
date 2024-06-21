@@ -23,7 +23,7 @@
                 <div class="form-group col-md-3 col-6">
                     <select class="form-select" aria-label="Default select example" onchange="GetStatus(this.value)">
                         <option selected>all</option>
-                        @foreach (var x in Model.statuses.ToList())
+                        @foreach (var x in Model.Statuses.ToList())
                         {
                             <option value="@x.StatusName">@x.StatusName</option>
                         }
@@ -56,12 +56,11 @@
                 </tr>
             </thead>
             <tbody class="bg-white">
-                @if (Model.orders.Count() != 0)
+                @if (Model.Orders.Count() != 0)
                 {
 
-                    @foreach (var i in Model.orders)
+                    @foreach (var i in Model.Orders)
                     {
-                        var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
                         <tr class="text-center">
                             <td>@i.Orderid</td>
                             <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
@@ -72,7 +71,7 @@
 
                             <td>@i.Address</td>
                             <td>@i.City</td>
-                            <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
+                            <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
                             <td>@i.Orderstatus.StatusName</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
@@ -172,6 +171,7 @@
                 $('#AdminDash').html(result)
             },
             error: function () {
+
                 alert('Error loading partial view');
             }
         });

@@ -84,8 +84,8 @@
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
-    <div class="mx-0 my-3 p-3">
-        <div class="searchbar">
+    <div class="mx-0 mt-3 p-3">
+        <div class="searchbar m-0">
             <form id="searchForm" class="mb-2 gy-2 row">
                 <div class="col-md-3 col-6">
                     <input asp-for="@Model.Search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
@@ -136,13 +136,13 @@
 <div class="container-fluid" style="height:70vh;">
     <div id="dashTable">
         <div class=" ">
-            <div class="table row gap-1 d-flex justify-content-center container-fluid px-sm-3" id="book-list">
+            <div class="table row d-flex justify-content-center container-fluid " id="book-list">
                 @if (Model.DashboardLists.Count() != 0)
                 {
                     <input type="text" asp-for="@Model.BookCount" id="BookCount" hidden />
                     @foreach (var obj in Model.DashboardLists.ToList())
                     {
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3">
                             <div class="card border-0 h-100 shadow">
                                 <img src="~/BookListCollections/@obj.BookPhoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.BookPhoto">
                                 <div class="card-body">
@@ -304,7 +304,7 @@
         if (checkboxes.length == 0 && checkboxes2.length == 0) {
             var pageNumber = 1;
             var bookCount = $('#BookCount').val();
-            var lastPageNumber = Math.ceil(bookCount / 5);
+            var lastPageNumber = Math.ceil(bookCount / 6);
 
 
             $(window).scroll(function () {
@@ -335,7 +335,7 @@
                         success: function (result) {
                             $('#loader').hide();
                             $.each(result, function (index, obj) {
-                                var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                                var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
         <div class="card border-0 h-100 shadow">
             <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
             <div class="card-body">

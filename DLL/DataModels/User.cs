@@ -40,9 +40,6 @@ public partial class User
     [Column("is_deleted")]
     public bool? IsDeleted { get; set; }
 
-    [Column("createdby")]
-    public int? Createdby { get; set; }
-
     [Column("createddate", TypeName = "timestamp without time zone")]
     public DateTime? Createddate { get; set; }
 
@@ -60,6 +57,10 @@ public partial class User
     [Column("gender")]
     [StringLength(10)]
     public string? Gender { get; set; }
+
+    [Column("profilephoto")]
+    [StringLength(255)]
+    public string? Profilephoto { get; set; }
 
     [ForeignKey("Roleid")]
     [InverseProperty("Users")]

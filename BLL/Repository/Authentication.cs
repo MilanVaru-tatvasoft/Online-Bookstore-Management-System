@@ -12,6 +12,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using System.Net.Mail;
 using System.Net;
 using System.Collections;
+using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic.Repository
 {
@@ -47,7 +48,7 @@ namespace BusinessLogic.Repository
             return false;
 
         }
-        public bool resetPassword(ResetPasswordModel model)
+        public bool ResetPasswordPost(ResetPasswordModel model)
         {
             User user = _context.Users.FirstOrDefault(x => x.Email == model.Email);
             if (user != null)
@@ -55,39 +56,86 @@ namespace BusinessLogic.Repository
                 user.Passwordhash = model.Password;
                 _context.SaveChanges();
 
-                Customer customer = _context.Customers.FirstOrDefault(x => x.Userid == user.Userid);
-                if (customer != null)
+                if (user.Roleid == 1)
                 {
+                    Admin ad = _context.Admins.FirstOrDefault(x => x.Userid == user.Userid);
+                    ad.Passwordhash = model.Password;
+                    _context.SaveChanges();
+
+
+                }
+                else if(user.Roleid == 2) 
+                {
+                    Customer customer = _context.Customers.FirstOrDefault(x => x.Userid == user.Userid);
                     customer.Passwordhash = model.Password;
                     _context.SaveChanges();
+                    
+
+                }
+                else
+                {
+                    return false;
 
                 }
 
-                return true;
             }
-            return false;
+            return true;
+
         }
 
-        public bool sendmail(string Email)
+        public bool ResetPasswordMail(string Email)
         {
             User? user = _context.Users.FirstOrDefault(x => x.Email == Email);
             if (user != null)
             {
                 
                 string recipientEmail = Email;
-                string resetPasswordLink = "https://localhost:44369/home/ResetPasswordPage?email=" + recipientEmail;
-                string body = $"Click the link below to reset your password:<br/><a href='{resetPasswordLink}'>click Here</a>";
+                string ResetPasswordLink = "https://localhost:44369/home/ResetPasswordPage?email=" + recipientEmail;
+                string body = $"Click the link below to reset your password:<br/><a href='{ResetPasswordLink}'>click Here</a>";
                 string subject = "Reset Your Password";
                 int result;
 
-               emailSender(Email,subject,body);
+               EmailSender(Email,subject,body);
 
                 return true;
             }
             return false;
         }
+        public void StoreProfilePhoto(IFormFile file, int userId)
+        {
+            User user = _context.Users.FirstOrDefault(x => x.Userid == userId);
 
-        public void emailSender(string email,string subject, string message)
+            if (user == null)
+            {
+                throw new Exception($"User with id {userId} not found.");
+            }
+
+            string fileExtension = Path.GetExtension(file.FileName);
+            string fileName = $"{userId}_{user.Firstname.Trim() + user.Lastname.Trim()}{fileExtension}";
+
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UsersProfile");
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            user.Profilephoto = fileName;
+        }
+
+        public void EmailSender(string email,string subject, string message)
         {
             var mail = "tatva.dotnet.milanvaru@outlook.com";
             var password = "vpgozcxbptbunspz";
@@ -109,10 +157,10 @@ namespace BusinessLogic.Repository
             {
                 value = 0;
             }
-            emailLogData(email, subject, value);
+            EmailLogData(email, subject, value);
 
         }
-        public void emailLogData(string email, string subject, int sentvalue)
+        public void EmailLogData(string email, string subject, int sentvalue)
         {
             var user = _context.Users.FirstOrDefault(x=>x.Email ==  email);
             Emaillog emaillog = new Emaillog()
@@ -127,7 +175,7 @@ namespace BusinessLogic.Repository
             _context.SaveChanges();
            
         }
-        public string ordermessage(string status)
+        public string OrderMailMessageBody(string status)
         {
             string message = @"
         <html>
