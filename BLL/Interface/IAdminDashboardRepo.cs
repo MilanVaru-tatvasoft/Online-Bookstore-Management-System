@@ -10,32 +10,32 @@ namespace BusinessLogic.Interface
     public interface IAdminDashboardRepo
     {
         public OrderListModel getOrderListData();
-        public AdminDashboardModel getAdminData();
+        public AdminDashboardModel GetAdminDashboardData();
 
-        public AdminBookListmodel getBookList(AdminBookListmodel model);
-        public viewBookModel viewBookDetails(int bookId, int? userId);
-        public bool isbookExist(string? bookTitle);
-        public viewBookModel getAddBook();
-        public void addBook(viewBookModel model, int? userId);
-        public viewBookModel getEditBook(int bookId);
-        public void updateBook(viewBookModel model, int? userId);
-        public bool editAdminProfile(AdminProfileModel profile);
-        public AdminProfileModel getAdminProfile(int? uId);
-        public bool getDeleteBook(int bookId);
+        public AdminBookListModel GetBookList(AdminBookListModel model);
+        public viewBookModel ViewBookDetails(int bookId, int? userId);
+        public bool IsBookExist(string? bookTitle);
+        public viewBookModel GetAddBook();
+        public void AddBook(viewBookModel model, int? userId);
+        public viewBookModel GetEditBook(int bookId);
+        public void UpdateBook(viewBookModel model, int? userId);
+        public bool EditAdminProfile(AdminProfileModel profile);
+        public AdminProfileModel GetAdminProfile(int? uId);
+        public bool GetDeleteBook(int bookId);
         public CategoryListModel getCategoriesList();
-        public AuthorListmodel GetAuthorList();
-        public AuthorListmodel getEditAuthor(int AuthorId);
-        public CategoryListModel getAddCategory(int categtoryId);
-        public bool getDeleteCategory(int categoryId);
-        public bool getDeleteAuthor(int AuthorId);
-        public bool AddOrUpdateAuthor(AuthorListmodel model);
+        public AuthorListModel GetAuthorList();
+        public AuthorListModel GetEditAuthor(int AuthorId);
+        public CategoryListModel GetAddCategory(int categtoryId);
+        public bool GetDeleteCategory(int categoryId);
+        public bool GetDeleteAuthor(int AuthorId);
+        public bool AddOrUpdateAuthor(AuthorListModel model);
         public bool AddOrUpdateCategory(CategoryListModel model);
 
         public AdminDashboardModel GetChartData(DateTime date);
-         public bool getAcceptorder(int orderId,  int customerId);
-         public bool getShippedorder(int orderId,  int customerId);
-         public bool getDeliveredOrder(int orderId,  int customerId);
-        public bool getDeletedOrder(int orderId, int customerId);
+         public bool GetAcceptorder(int orderId,  int customerId);
+         public bool GetShippedorder(int orderId,  int customerId);
+         public bool GetDeliveredOrder(int orderId,  int customerId);
+        public bool GetDeletedOrder(int orderId, int customerId);
 
     }
 }

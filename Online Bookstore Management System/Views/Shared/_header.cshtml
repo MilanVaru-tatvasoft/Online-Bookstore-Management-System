@@ -1,14 +1,17 @@
 ﻿@model DataAccess.CustomModels.CustomerMainPage;
 @inject IHttpContextAccessor context
 <style>
-    .dropdown-menu{
-        margin-left:90%;
+    .dropdown-menu {
+        margin-left: 90%;
     }
-    a{
-        cursor:pointer;
+
+    a {
+        cursor: pointer;
     }
 
 </style>
+<input type="text" asp-for="@Model.itemCount" id="CartCount" hidden />
+
 <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm w-100">
     <div class="container-fluid">
         <button class="btn btn-dark bg-transparent d-block d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -23,10 +26,10 @@
             <div class="offcanvas-body d-flex">
                 <ul class="navbar-nav w-100">
                     <li class="nav-item ">
-                        <a class="nav-link text-dark"  onclick="GetCustomerDashboard()" >Home</a>
+                        <a class="nav-link text-dark" onclick="GetCustomerDashboard()">Home</a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link  d-flex text-dark w-100"  onclick="GetUserProfile()">My Profile</a>
+                        <a class="nav-link  d-flex text-dark w-100" onclick="GetUserProfile()">My Profile</a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link  d-flex text-dark w-100" onclick="GetOrderHistory()"> My Order</a>
@@ -34,8 +37,8 @@
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
                             <input type="text" value="@Model.AddToCarts.Count()" hidden id="modelcountdata" />
-                            <a class="nav-link text-dark" onclick="getCartList()">My Cart</a>
-                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;">@Model.AddToCarts.Count()</div>
+                            <a class="nav-link text-dark" onclick="GetCartList()">My Cart</a>
+                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;"></div>
                         </div>
                     </li>
                     <li>
@@ -50,14 +53,28 @@
                         <button class="btn bg-transparent border rounded-1 position-relative" onclick="GetCartList()">
                             <span class="bi-cart text-dark bi fw-bold"></span>
                         </button>
-                        <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">@Model.AddToCarts.Count()</div>
+                        @if (Model.AddToCarts.Count() != 0)
+                        {
+
+                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">
+                                <span class="text-danger">.</span>
+                            </div>
+                        }
                     </div>
-                    <div class="dropdown overflow-hidden position-static d-none d-md-block">
-                        <button class="btn bg-transparent border rounded-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi-person bi text-dark fw-bold"></i>
+                    <div class="dropdown overflow-hidden position-static d-none d-md-flex align-items-center m-0">
+                        <button class="btn bg-transparent border rounded-5 p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (Model.user != null)
+                            {
+
+                                <img src="~/UsersProfile/@Model.user.Profilephoto" height="40" width="40" alt="Profile Photo" class=" border rounded-5">
+                            }
+                            else
+                            {
+                                <img src="~/UsersProfile/profile-placeholder.jpg" height="40" width="40" alt="Profile Photo">
+                            }
                         </button>
                         <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
-                            <li><a class="dropdown-item text-dark" >Add Account</a></li>
+                            <li><a class="dropdown-item text-dark">Add Account</a></li>
                             <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
                         </ul>
                     </div>
@@ -66,3 +83,7 @@
         </div>
     </div>
 </nav>
+<script>
+ 
+
+</script>

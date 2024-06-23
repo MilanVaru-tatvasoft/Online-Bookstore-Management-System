@@ -1,11 +1,5 @@
 ﻿@model DataAccess.CustomModels.OrderListModel;
-@functions {
-    public string? getStatus(int? statusId)
-    {
-        string? status = Model.statuses?.FirstOrDefault(c => c.StatusId == statusId).StatusName;
-        return status;
-    }
-}
+
 <div class="container-fluid">
 
     <h4 class="mt-4">Orders Dashboard</h4>
@@ -27,9 +21,9 @@
                     <input type="date" class="form-control" id="orderDate" name="orderDate" placeholder="Order ID" max="@DateTime.Today.Date">
                 </div>
                 <div class="form-group col-md-3 col-6">
-                    <select class="form-select" aria-label="Default select example" onchange="getStatus(this.value)">
+                    <select class="form-select" aria-label="Default select example" onchange="GetStatus(this.value)">
                         <option selected>all</option>
-                        @foreach (var x in Model.statuses.ToList())
+                        @foreach (var x in Model.Statuses.ToList())
                         {
                             <option value="@x.StatusName">@x.StatusName</option>
                         }
@@ -62,12 +56,11 @@
                 </tr>
             </thead>
             <tbody class="bg-white">
-                @if (Model.orders.Count() != 0)
+                @if (Model.Orders.Count() != 0)
                 {
 
-                    @foreach (var i in Model.orders)
+                    @foreach (var i in Model.Orders)
                     {
-                        var statusid = Model.orders?.FirstOrDefault(x => x.Orderid == i.Orderid).Orderstatusid;
                         <tr class="text-center">
                             <td>@i.Orderid</td>
                             <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
@@ -78,19 +71,19 @@
 
                             <td>@i.Address</td>
                             <td>@i.City</td>
-                            <td>@Model.orderdetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
-                            <td>@getStatus(statusid)</td>
+                            <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
+                            <td>@i.Orderstatus.StatusName</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
                                     @if (i.Orderstatusid == 1)
                                     {
-                                        <button class="btn btn-info" onclick="GetAcceptOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-info" onclick="GetAcceptorder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-clipboard-check-fill"></i>
                                         </button>
                                     }
                                     else if (i.Orderstatusid == 2)
                                     {
-                                        <button class="btn btn-warning" onclick="GetShippedOrder(@i.Orderid,@i.Customerid)">
+                                        <button class="btn btn-warning" onclick="GetShippedorder(@i.Orderid,@i.Customerid)">
                                             <i class="bi bi-truck"></i>
                                         </button>
                                     }
@@ -110,11 +103,9 @@
                                     }
                                     else
                                     {
-                                        <button class="btn btn-dark">
-                                            <i class="bi bi-file-earmark-check-fill"></i>
-                                        </button>
-                                        <button class="btn btn-secondary">
-                                            <i class="bi bi-download"></i>
+                                   
+                                        <button class="btn btn-outline-secondary" onclick="GetGenerateBill(@i.Orderid)">
+                                            <i class="bi bi-download"></i>Download Bill
                                         </button>
                                     }
                                 </div>
@@ -180,6 +171,7 @@
                 $('#AdminDash').html(result)
             },
             error: function () {
+
                 alert('Error loading partial view');
             }
         });
@@ -187,10 +179,10 @@
     function GetStatus(value) {
         $('#statusname').val(value);
     }
-    function GetAcceptOrder(orderId, customerId) {
+    function GetAcceptorder(orderId, customerId) {
         $.ajax({
             method: "GET",
-            url: "/Admin/getacceptOrder",
+            url: "/Admin/GetAcceptorder",
             data: { orderId: orderId, customerId: customerId },
             success: function (result) {
                 if (result.code == 401) {
@@ -222,10 +214,10 @@
             }
         });
     }
-    function GetShippedOrder(orderId, customerId) {
+    function GetShippedorder(orderId, customerId) {
         $.ajax({
             method: "GET",
-            url: "/Admin/getShippedOrder",
+            url: "/Admin/GetShippedorder",
             data: { orderId: orderId, customerId: customerId },
             success: function (result) {
                 if (result.code == 401) {
@@ -261,7 +253,7 @@
     function GetDeliveredOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
-            url: "/Admin/getDeliveredOrder",
+            url: "/Admin/GetDeliveredOrder",
             data: { orderId: orderId, customerId: customerId },
             success: function (result) {
                 if (result.code == 401) {
@@ -296,7 +288,7 @@
     function GetDeleteOrder(orderId, customerId) {
         $.ajax({
             method: "GET",
-            url: "/Admin/getDeleteOrder",
+            url: "/Admin/GetDeleteOrder",
             data: { orderId: orderId, customerId: customerId },
             success: function (result) {
                 if (result.code == 401) {

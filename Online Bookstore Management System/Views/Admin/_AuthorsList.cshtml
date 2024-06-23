@@ -1,11 +1,11 @@
-﻿@model DataAccess.CustomModels.AuthorListmodel
+﻿@model DataAccess.CustomModels.AuthorListModel
 <div class="" id="custDashboard2">
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Authors</h3>
     </div>
     <div class="container-fluid">
         <div class="d-flex justify-content-end m-2  w-100">
-            <button class="btn btn-success  " onclick="GetAddorUpdateAuthor(0)"> Add Author </button>
+            <button class="btn btn-success  " onclick="GetAddOrUpdateAuthor(0)"> Add Author </button>
         </div>
         <div class="table-responsive">
 
@@ -32,7 +32,7 @@
                             </td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-warning" onclick="GetAddorUpdateAuthor(@obj.Authorid)">Edit </button>
+                                    <button class="btn btn-warning" onclick="GetAddOrUpdateAuthor(@obj.Authorid)">Edit </button>
                                     <button class="btn btn-danger" onclick="DeleteAuthor(@obj.Authorid)">Delete </button>
                                 </div>
                             </td>

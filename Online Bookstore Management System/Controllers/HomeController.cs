@@ -5,6 +5,7 @@ using DataAccess.CustomModels;
 using DataAccess.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Online_Bookstore_Management_System.Controllers
@@ -32,13 +33,13 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult loginPostMethod(LoginVm model)
+        public IActionResult LoginPostMethod(LoginVm model)
         {
             if (!string.IsNullOrEmpty(model.loginEmail) && !string.IsNullOrEmpty(model.password))
             {
-                if (_authentication.validateLogin(model.loginEmail, model.password))
+                if (_authentication.ValidateLogin(model.loginEmail, model.password))
                 {
-                    User user = _authentication.getSessionData(model.loginEmail);
+                    User user = _authentication.GetSessionData(model.loginEmail);
                     string roleId;
                     if (user.Roleid == 1) { roleId = "Admin"; } else { roleId = "customer"; }
                     string name = user.Firstname + " " + user.Lastname;
@@ -51,16 +52,16 @@ namespace Online_Bookstore_Management_System.Controllers
 
                     if (user.Roleid == 1)
                     {
-                        Admin admin = _customerRepo.getAdminData(model.loginEmail);
+                        Admin admin = _customerRepo.GetAdminData(model.loginEmail);
                         _httpcontext.HttpContext.Session.SetInt32("AdminId", admin.Adminid);
 
                         return RedirectToAction("AdminDashboard", "Admin");
                     }
                     else if (user.Roleid == 2)
                     {
-                        Customer customer = _customerRepo.getCustomerData(model.loginEmail);
+                        Customer customer = _customerRepo.GetCustomerData(model.loginEmail);
                         _httpcontext.HttpContext.Session.SetInt32("customerId", customer.Customerid);
-                        return RedirectToAction("customerDashboard");
+                        return RedirectToAction("CustomerDashboard");
 
                     }
                     else
@@ -75,28 +76,28 @@ namespace Online_Bookstore_Management_System.Controllers
         }
 
         [Authorize("customer")]
-        public IActionResult customerDashboard()
+        public IActionResult CustomerDashboard()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
             CustomerMainPage dashData = new CustomerMainPage();
-            dashData = _customerRepo.getdata(dashData, userId, 1);
-
+            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, 1);
+            
             return View(dashData);
         }
 
-        public IActionResult CustomerDashboard2(int pageNumber = 1)
+        public IActionResult CustomerDashboard2()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             CustomerMainPage dashData = new CustomerMainPage();
-            dashData = _customerRepo.getdata(dashData, userId, pageNumber);
+            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, 1);
             return PartialView("_CustomerMainPage", dashData);
         }
 
         public IActionResult CustomerDashboardTable(int pageNumber)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            List<DashboardList> list = _customerRepo.getTableData(userId, pageNumber);
+            List<DashboardList> list = _customerRepo.GetCustomerDashboardTable(userId, pageNumber);
             return Json(list);
         }
 
@@ -104,12 +105,11 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             int pageNumber = 1;
-            CustomerMainPage dashData = _customerRepo.getdata(model, userId, pageNumber);
+            CustomerMainPage dashData = _customerRepo.GetCustomerDashboardData(model, userId, pageNumber);
             return PartialView("_CustomerMainPage", dashData);
         }
 
-
-        public IActionResult getregistrationform()
+        public IActionResult GetRegistrationform()
         {
             return RedirectToAction("RegisterPage");
         }
@@ -117,9 +117,9 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             return View();
         }
-        public IActionResult registerPost(RegisterVm model)
+        public IActionResult RegisterPost(RegisterVm model)
         {
-            bool result = _customerRepo.registerPost(model);
+            bool result = _customerRepo.RegisterPost(model);
             if (result)
             {
                 return Json(new { code = 401 });
@@ -133,46 +133,44 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_MyOrdersPage", model);
 
         }
-        public IActionResult getUserProfile()
+        public IActionResult GetUserProfile()
         {
             int? uId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (uId != null)
             {
-                UserProfile userProfile = _customerRepo.getUserProfile(uId);
+                UserProfile userProfile = _customerRepo.GetUserProfile(uId);
                 return PartialView("_CustomerProfile", userProfile);
             }
             return View();
         }
-        public IActionResult editUserProfile(UserProfile profile)
+        public IActionResult EditUserProfile(UserProfile profile)
         {
-            if (ModelState.IsValid)
-            {
-                bool result = _customerRepo.editUserProfile(profile);
+           
+                bool result = _customerRepo.EditUserProfile(profile);
                 if (result)
                 {
                     return Json(new { code = 401 });
                 }
                 return Json(new { code = 402 });
-            }
-            return View();
+         
+           
         }
-        public IActionResult ViewBooksPage(int bookId)
+        public IActionResult ViewBookDetails(int bookId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
-            viewBookModel model = _customerRepo.viewBookDetails(bookId, userId);
+            viewBookModel model = _customerRepo.ViewBookDetails(bookId, userId);
             return PartialView("_viewBooksPage", model);
         }
 
 
-
-        public IActionResult getAddToCart(int bookId, int cartId, int quantity)
+        public IActionResult GetAddToCart(int bookId, int cartId, int quantity)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             _customerRepo.GetAddToCart(bookId, userId, cartId, quantity);
             return Json(new { code = 401 });
         }
-        public IActionResult getRemoveFromCart(int cartId)
+        public IActionResult GetRemoveFromCart(int cartId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             _customerRepo.GetRemoveFromCart(cartId, userId);
@@ -196,10 +194,16 @@ namespace Online_Bookstore_Management_System.Controllers
             return View(model);
         }
         [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordModel model)
+        public IActionResult ResetPassword(UserProfile data)
         {
-
-            if (_authentication.resetPassword(model))
+            ResetPasswordModel model = new ResetPasswordModel()
+            {
+                Password = data.Password,
+                Password2 = data.Password2,
+                Email = data.Email,
+                UserId = data.UserId,
+            };
+            if (_authentication.ResetPasswordPost(model))
             {
                 return Json(new { code = 401 });
             }
@@ -210,9 +214,9 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             return PartialView("_PasswordRecoveryModal");
         }
-        public IActionResult forgotpassword(string Email)
+        public IActionResult ForgotPassword(string Email)
         {
-            if (_authentication.sendmail(Email))
+            if (_authentication.ResetPasswordMail(Email))
             {
 
                 return Json(new { code = 401 });
@@ -223,10 +227,10 @@ namespace Online_Bookstore_Management_System.Controllers
                 return Json(new { code = 402 });
             }
         }
-        public IActionResult submitReviewAndRating(viewBookModel model)
+        public IActionResult SubmitReviewAndRating(viewBookModel model)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            _customerRepo.getSubmitReviewAndRating(model, userId);
+            _customerRepo.GetSubmitReviewAndRating(model, userId);
             return Ok(model.bookId);
 
 
@@ -234,41 +238,41 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult GetOrderDatailsPage(int bookId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            OrderData model = _customerRepo.getOrderDetails(bookId, userId);
+            OrderData model = _customerRepo.GetOrderDetails(bookId, userId);
             return PartialView("_OrderBook", model);
         }
 
-        public IActionResult getCartList()
+        public IActionResult GetCartList()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             OrderData model = new OrderData();
-            model = _customerRepo.getCartList(model, userId);
+            model = _customerRepo.GetCartList(model, userId);
             return PartialView("_MyCartList", model);
         }
 
 
-        public IActionResult getBuyNow(OrderData data)
+        public IActionResult GetBuyNow(OrderData data)
         {
             return PartialView("_ConfirmOrder", data);
         }
 
-        public IActionResult getCheckout(OrderData data)
+        public IActionResult GetCheckout(OrderData data)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
 
-            data = _customerRepo.getCartList(data, userId);
+            data = _customerRepo.GetCartList(data, userId);
 
             return PartialView("_ConfirmOrder", data);
 
         }
 
 
-        public IActionResult getPayment(OrderData data)
+        public IActionResult GetPayment(OrderData data)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             if (data.BookName == null)
             {
-                OrderData model = _customerRepo.getCartList(data, userId);
+                OrderData model = _customerRepo.GetCartList(data, userId);
                 int orderId = _customerRepo.confirmOrder(model, userId);
                 model.OrderId = orderId;
                 return PartialView("_PaymentPage", model);
@@ -286,10 +290,10 @@ namespace Online_Bookstore_Management_System.Controllers
 
 
 
-        public IActionResult getPaymentDone(string paymentType, int OrderId)
+        public IActionResult GetPaymentDone(string paymentType, int OrderId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            bool status = _customerRepo.getPaymentDone(paymentType, OrderId, userId);
+            bool status = _customerRepo.GetPaymentDone(paymentType, OrderId, userId);
 
             return Ok();
         }

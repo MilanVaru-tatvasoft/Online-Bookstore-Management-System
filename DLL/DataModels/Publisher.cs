@@ -26,7 +26,4 @@ public partial class Publisher
 
     [Column("createddate", TypeName = "timestamp without time zone")]
     public DateTime? Createddate { get; set; }
-
-    [InverseProperty("Publisher")]
-    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 }

@@ -11,10 +11,7 @@
         return Model.Search3 != null && Model.Search3.Contains(catId);
     }
 
-    public bool ischecked3(int pubId)
-    {
-        return Model.Search4 != null && Model.Search4.Contains(pubId);
-    }
+   
 }
 <style>
     .dropdown {
@@ -87,8 +84,8 @@
     <div class="bookCategory">
         <h3 class="my-2 ms-1">All Books</h3>
     </div>
-    <div class="mx-0 my-3 p-3">
-        <div class="searchbar">
+    <div class="mx-0 mt-3 p-3">
+        <div class="searchbar m-0">
             <form id="searchForm" class="mb-2 gy-2 row">
                 <div class="col-md-3 col-6">
                     <input asp-for="@Model.Search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
@@ -124,19 +121,8 @@
                     </div>
                 </div>
 
-                <div class="form-group col-md-3 col-6">
-                    <div class="dropdown" data-control="checkbox-dropdown">
-                        <label class="dropdown-label">Publishers</label>
-                        <div class="dropdown-list">
-                            @foreach (var i in Model.Publishers)
-                            {
-                                <label class="dropdown-option">
-                                    <input class="publisherdata" type="checkbox" name="dropdown-group" checked="@ischecked3(i.Publisherid)" value="@i.Publisherid" />
-                                    @i.Name
-                                </label>
-                            }
-                        </div>
-                    </div>
+                <div class=" col-md-3 col-6">
+                    <input asp-for=@Model.Search4 type="text" class=" form-control" id="bookPublisher" placeholder="Publisher Name">
                 </div>
 
                 <div class="form-group d-flex justify-content-end col-md-12 mt-3">
@@ -150,13 +136,13 @@
 <div class="container-fluid" style="height:70vh;">
     <div id="dashTable">
         <div class=" ">
-            <div class="table row gap-1 d-flex justify-content-center container-fluid px-sm-3" id="book-list">
+            <div class="table row d-flex justify-content-center container-fluid " id="book-list">
                 @if (Model.DashboardLists.Count() != 0)
                 {
                     <input type="text" asp-for="@Model.BookCount" id="BookCount" hidden />
                     @foreach (var obj in Model.DashboardLists.ToList())
                     {
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3">
                             <div class="card border-0 h-100 shadow">
                                 <img src="~/BookListCollections/@obj.BookPhoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.BookPhoto">
                                 <div class="card-body">
@@ -164,8 +150,27 @@
                                     <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
                                     <p class="card-text text-truncate px-1">Author: @obj.AuthorName</p>
                                 </div>
+                                <div>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        @if (i <= obj.AvgRating)
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else if ((decimal)(i - 0.5) == obj.AvgRating)
+                                        {
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    }
+
+                                </div>
+
                                 <div class="d-flex gap-2">
-                                    <buttton class="btn btn-primary" onclick="ViewBooksPage(@obj.BookId)">View More</buttton>
+                                    <buttton class="btn btn-primary" onclick="ViewBookDetails(@obj.BookId)">View More</buttton>
                                 </div>
                             </div>
                         </div>
@@ -202,10 +207,6 @@
             formData.append('search3', checkbox.value);
 
         });
-        checkboxes3.forEach(function (checkbox) {
-            formData.append('search4', checkbox.value);
-
-        });
 
         $.ajax({
             method: "POST",
@@ -215,6 +216,7 @@
             data: formData,
             success: function (result) {
                 $('#custDashboard').html(result);
+                $('#UserProfile').empty();
 
             },
             error: function () {
@@ -294,75 +296,102 @@
 
     $(document).ready(function () {
         var isLoading = false;
-
+        let checkboxes = document.querySelectorAll(".AuthorData:checked");
+        let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
         function isScrolledToBottom() {
             return $(window).scrollTop() + $(window).height() >= $(document).height();
         }
-
-        var pageNumber = 1;
-        var bookCount = $('#BookCount').val();
-        var lastPageNumber = Math.ceil(bookCount / 5);
-     
-
-        $(window).scroll(function () {
-            if (isScrolledToBottom()) {
-                if (pageNumber < lastPageNumber+1) {
-                    pageNumber++;
-                    fetchMoreData(pageNumber);
-                } else {
-                    var isLoading = false;
-                    $('#loader').hide();
-                }
-            }
-        });
-
-        function fetchMoreData(pageNumber) {
-
-            if (isLoading) return;
-            isLoading = true;
-            $('#loader').show();
+        if (checkboxes.length == 0 && checkboxes2.length == 0) {
+            var pageNumber = 1;
+            var bookCount = $('#BookCount').val();
+            var lastPageNumber = Math.ceil(bookCount / 6);
 
 
-            setTimeout(function () {
-                $.ajax({
-                    url: "/Home/CustomerDashboardTable",
-                    type: "POST",
-                    data: { pageNumber: pageNumber },
-                    success: function (result) {
+            $(window).scroll(function () {
+                if (isScrolledToBottom()) {
+                    if (pageNumber < lastPageNumber + 1) {
+                        pageNumber++;
+                        fetchMoreData(pageNumber);
+                    } else {
+                        var isLoading = false;
                         $('#loader').hide();
-                        $.each(result, function (index, obj) {
-                            var html = ` <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 gx-2">
-                                    <div class="card border-0 h-100 shadow">
-                                            <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-truncate">${obj.title}</h5>
-                                            <strong class="card-title text-danger fs-4"> ${obj.price} $</strong>
-                                            <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <buttton class="btn btn-primary" onclick="ViewBooksPage(${obj.bookId})">View More</buttton>
-                                        </div>
-                                    </div>
-                                </div>
-                                                                `;
-                            $('#book-list').append(html);
-                        });
-                        isLoading = false;
-
-                        $('#loader').hide();
-                        $('#loader').removeClass('d-flex');
-
-                    },
-                    error: function (err, xhr, a) {
-                        $('#loader').hide();
-                        alert('Error loading partial view');
-                        isLoading = false;
                     }
-                });
-            }, 2000);
+                }
+            });
 
+
+            function fetchMoreData(pageNumber) {
+
+                if (isLoading) return;
+                isLoading = true;
+                $('#loader').show();
+
+                setTimeout(function () {
+
+                    $.ajax({
+                        url: "/Home/CustomerDashboardTable",
+                        type: "POST",
+                        data: { pageNumber: pageNumber },
+                        success: function (result) {
+                            $('#loader').hide();
+                            $.each(result, function (index, obj) {
+                                var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
+        <div class="card border-0 h-100 shadow">
+            <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
+            <div class="card-body">
+                <h5 class="card-title text-truncate">${obj.title}</h5>
+                <strong class="card-title text-danger fs-4">${obj.price} $</strong>
+                <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
+            </div>
+            <div>`;
+
+                            
+                                for (var i = 1; i <= 5; i++) {
+                                    if (i <=  obj.avgRating ) {
+                                        html += `<i class="bi bi-star-fill text-warning"></i>`;
+                                    } else if (i - 0.5 <=  obj.avgRating ) {
+                                        html += `<i class="bi bi-star-half text-warning"></i>`;
+                                    } else {
+                                        html += `<i class="bi bi-star text-warning"></i>`;
+                                    }
+                                }
+
+                                html += `</div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>
+            </div>
+        </div>
+    </div>`;
+
+                                $('#book-list').append(html);
+
+                                
+
+                                
+
+                            });
+                            isLoading = false;
+
+                            $('#loader').hide();
+                            $('#loader').removeClass('d-flex');
+
+                        },
+                        error: function (err, xhr, a) {
+                            $('#loader').hide();
+                            alert('Error loading partial view');
+                            isLoading = false;
+                        }
+                    });
+                }, 1000);
+
+            }
         }
+        else {
 
+            $('#loader').hide();
+
+            isLoading = false;
+        }
 
     });
 
