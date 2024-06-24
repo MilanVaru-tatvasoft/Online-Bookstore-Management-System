@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Online_Bookstore_Management_System.Controllers
 {
@@ -35,7 +36,8 @@ namespace Online_Bookstore_Management_System.Controllers
         [Authorize("Admin")]
         public IActionResult AdminDashboard()
         {
-            return View();
+            AdminDashboardModel model = _adminDashboard.GetAdminDashboardData();
+            return View(model);
         }
         public IActionResult AdminDashboard2()
         {
@@ -150,14 +152,23 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult EditAdminProfile(AdminProfileModel profile)
         {
-           
+
+            try
+            {
                 bool result = _adminDashboard.EditAdminProfile(profile);
-                if (result)
-                {
-                    return Json(new { code = 401 });
-                }
-                return Json(new { code = 402 });
-          
+                int code = result ? 401 : 402;
+                return Json(new { code });
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while editing the admin profile.", code = 500 });
+            }
+
+
+
         }
 
         public IActionResult GetAuthorList()
@@ -184,41 +195,68 @@ namespace Online_Bookstore_Management_System.Controllers
 
         public IActionResult GetDeleteAuthor(int AuthorId)
         {
-            if (_adminDashboard.GetDeleteAuthor(AuthorId))
+            try
             {
-
-                return Json(new { code = 401 });
+                bool result = _adminDashboard.GetDeleteAuthor(AuthorId);
+                int code = result ? 401 : 402;
+                return Json(new { code });
             }
-            return Json(new { code = 402 });
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while deleting the Author.", code = 500 });
+            }
         }
         public IActionResult GetDeleteCategory(int categoryId)
         {
-            if (_adminDashboard.GetDeleteCategory(categoryId))
+            try
             {
+                bool result = _adminDashboard.GetDeleteCategory(categoryId);
+                int code = result ? 401 : 402;
 
-                return Json(new { code = 401 });
+                return Json(new { code });
             }
-            return Json(new { code = 402 });
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while deleting the category.", code = 500 });
+            }
         }
 
         public IActionResult AddOrUpdateAuthor(AuthorListModel model)
         {
-            if (_adminDashboard.AddOrUpdateAuthor(model))
+            try
             {
+                bool result = _adminDashboard.AddOrUpdateAuthor(model);
+                int code = result ? 401 : 402;
 
-                return Json(new { code = 401 });
+                return Json(new { code });
             }
-            return Json(new { code = 402 });
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while editing the Author.", code = 500 });
+            }
 
         }
         public IActionResult AddOrUpdateCategory(CategoryListModel model)
         {
-            if (_adminDashboard.AddOrUpdateCategory(model))
+            try
             {
+                bool result = _adminDashboard.AddOrUpdateCategory(model);
+                int code = result ? 401 : 402;
 
-                return Json(new { code = 401 });
+                return Json(new { code });
             }
-            return Json(new { code = 402 });
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while editing the Category.", code = 500 });
+            }
 
         }
 
@@ -227,61 +265,33 @@ namespace Online_Bookstore_Management_System.Controllers
             DateTime date = DateTime.Now;
             AdminDashboardModel model = _adminDashboard.GetChartData(date);
 
-            return Json(new { MonthlySales = model.MonthlySales, categoryList = model.Categories, NumberOfBooks = model.NoOfBooks, dailySales =model.DailySales });
+            return Json(new { MonthlySales = model.MonthlySales, categoryList = model.Categories, NumberOfBooks = model.NoOfBooks, dailySales = model.DailySales });
 
         }
 
         public IActionResult GetOrderList()
-
         {
-            OrderListModel model = new OrderListModel();
-            model = _adminDashboard.getOrderListData();
+            OrderListModel model = _adminDashboard.getOrderListData();
             return PartialView("_OrderListView", model);
         }
-        public IActionResult GetAcceptorder(int orderId, int customerId)
+        public IActionResult HandleOrderAction(int tempId, int orderId, int customerId)
         {
-            if(_adminDashboard.GetAcceptorder(orderId, customerId))
+            try
             {
-                return Json(new { code = 401 });
+                bool result = false;
+                int code = 402;
+                result = _adminDashboard.HandleOrderAction(orderId, customerId, tempId);
+                code = result ? 401 : 402;
+                return Json(new { code });
             }
-            else
+            catch (Exception ex)
             {
-                return Json(new { code = 402 });
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return Json(new { error = "An error occurred while processing the order action.", code = 500 });
             }
+
         }
-        public IActionResult GetShippedorder(int orderId, int customerId)
-        {
-            if(_adminDashboard.GetShippedorder(orderId, customerId))
-            {
-                return Json(new { code = 401 });
-            }
-            else
-            {
-                return Json(new { code = 402 });
-            }
-        }
-        public IActionResult GetDeliveredOrder(int orderId, int customerId)
-        {
-            if(_adminDashboard.GetDeliveredOrder(orderId, customerId))
-            {
-                return Json(new { code = 401 });
-            }
-            else
-            {
-                return Json(new { code = 402 });
-            }
-        }
-        public IActionResult GetDeleteOrder(int orderId, int customerId)
-        {
-            if (_adminDashboard.GetDeletedOrder(orderId, customerId))
-            {
-                return Json(new { code = 401 });
-            }
-            else
-            {
-                return Json(new { code = 402 });
-            }
-        }
+
 
     }
 }

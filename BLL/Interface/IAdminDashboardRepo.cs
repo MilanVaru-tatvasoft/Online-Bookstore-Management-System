@@ -36,6 +36,8 @@ namespace BusinessLogic.Interface
          public bool GetShippedorder(int orderId,  int customerId);
          public bool GetDeliveredOrder(int orderId,  int customerId);
         public bool GetDeletedOrder(int orderId, int customerId);
+        public bool HandleOrderAction(int orderId, int customerId, int tempId);
+
 
     }
 }

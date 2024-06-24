@@ -23,20 +23,18 @@
                 <h5 class="offcanvas-title text-white" id="offcanvasNavbarLabel">Menu</h5>
                 <button type="button" class="btn-close bg-transparent border-0 text-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body d-flex">
+            <div class="offcanvas-body d-flex align-items-center">
                 <ul class="navbar-nav w-100">
                     <li class="nav-item ">
                         <a class="nav-link text-dark" onclick="GetCustomerDashboard()">Home</a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link  d-flex text-dark w-100" onclick="GetUserProfile()">My Profile</a>
-                    </li>
+                 
                     <li class="nav-item ">
                         <a class="nav-link  d-flex text-dark w-100" onclick="GetOrderHistory()"> My Order</a>
                     </li>
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
-                            <input type="text" value="@Model.AddToCarts.Count()" hidden id="modelcountdata" />
+                            
                             <a class="nav-link text-dark" onclick="GetCartList()">My Cart</a>
                             <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -25px;margin-top:6px; opacity: 0.9;"></div>
                         </div>
@@ -74,7 +72,8 @@
                             }
                         </button>
                         <ul class="dropdown-menu" style="max-width: 300px; overflow-x: auto;">
-                            <li><a class="dropdown-item text-dark">Add Account</a></li>
+                            @* <li><a class="dropdown-item text-dark">Add Account</a></li> *@
+                            <li> <a class="dropdown-item text-dark " onclick="GetUserProfile()">My Profile</a> </li>
                             <li><a class="dropdown-item text-dark" asp-action="logout" asp-controller="Home">Logout</a></li>
                         </ul>
                     </div>

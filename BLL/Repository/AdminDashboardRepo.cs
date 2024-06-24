@@ -21,8 +21,11 @@ namespace BusinessLogic.Repository
         }
         public AdminDashboardModel GetAdminDashboardData()
         {
+            int? userid = _httpContext.HttpContext.Session.GetInt32("UserId");
+
+
             AdminDashboardModel model = new AdminDashboardModel();
-            var orders = _context.Orders.Where(x=>x.Isdeleted!=true).ToList();
+            var orders = _context.Orders.Where(x => x.Isdeleted != true).ToList();
             var statuses = _context.Statuses.ToList();
 
             var ordersByStatus = statuses.Select(status => new
@@ -37,6 +40,7 @@ namespace BusinessLogic.Repository
             model.DeliveredOrders = ordersByStatus.FirstOrDefault(x => x.Status.StatusId == 4)?.OrderCount ?? 0;
             model.NumberOfBooks = _context.Books.Where(x => x.Isdeleted != true).Count();
             model.NumberOfCustomers = _context.Customers.Count();
+            model.user = _context.Users.FirstOrDefault(x => x.Userid == userid);
 
             decimal sellofThisMonth = 0;
 
@@ -66,7 +70,7 @@ namespace BusinessLogic.Repository
                                     .Select(x => x.Orderid)
                                     .ToList();
 
-            
+
             orderList.OrderDetails = _context.Orderdetails
                                                 .Where(x => orderIds.Contains((int)x.Orderid))
                                                 .ToList();
@@ -706,6 +710,88 @@ namespace BusinessLogic.Repository
             else
             {
                 return false;
+            }
+        }
+
+        public bool HandleOrderAction(int orderId, int customerId, int tempId)
+        {
+            if (orderId != 0 && customerId != 0)
+            {
+                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
+
+                if (ord != null)
+                {
+                    switch (tempId)
+                    {
+                        case 1:
+                            ord.Orderstatusid = 2;
+                            break;
+                        case 2:
+                            ord.Orderstatusid = 3;
+                            break;
+                        case 3:
+                            ord.Orderstatusid = 4;
+                            break;
+                        case 4:
+                            ord.Isdeleted = true;
+                            break;
+                        default:
+                            return false;
+                    }
+
+                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
+                    ord.Modifieddate = DateTime.Now;
+                    _context.SaveChanges();
+
+                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
+                    if (customer != null)
+                    {
+                        string recipientEmail = customer.Email;
+                        string status = GetStatusMessage(tempId);
+                        string body = _authentication.OrderMailMessageBody(status);
+                        string subject = GetSubject(tempId);
+
+                        _authentication.EmailSender(recipientEmail, subject, body);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private string GetStatusMessage(int tempId)
+        {
+            switch (tempId)
+            {
+                case 1:
+                    return "Your order has been accepted by the admin. It will be delivered to you very soon.";
+                case 2:
+                    return "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
+                case 3:
+                    return "Your order has been delivered to you. We hope you received your order!";
+                case 4:
+                    return "Your order has been deleted as per your request.";
+                default:
+                    return "";
+            }
+        }
+
+        private string GetSubject(int tempId)
+        {
+            switch (tempId)
+            {
+                case 1:
+                    return "Order Acceptance";
+                case 2:
+                    return "Order Shipped";
+                case 3:
+                    return "Order Delivered";
+                case 4:
+                    return "Order Deleted";
+                default:
+                    return "";
             }
         }
 
