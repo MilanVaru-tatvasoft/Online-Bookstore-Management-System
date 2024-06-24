@@ -33,26 +33,30 @@
 <div class="container">
     <div class="profile-container">
         <div class="profile-header text-center">
-            <h2>Customer Profile</h2>
+            <h2>Admin Profile</h2>
         </div>
         <form id="AdminProfileData" onsubmit="EditAdminProfile()">
             <div class="row">
                 <div class="col-md-4 text-center">
                     <div class="profile-photo">
-                        @if (Model.UserPhotoName != null)
-                        {
+                        <div class="mt-2">
+                            @if (Model.UserPhotoName == null)
+                            {
+                                <img id="photo" src="~/UsersProfile/Common_ProfilePic.png" alt="Profile Photo">
+                            }
+                            else
+                            {
+                                <img id="preview4" src="~/UsersProfile/@Model.UserPhotoName" class="d-block" alt="Preview" style="max-width: 100%; max-height: 200px;">
+                                <img id="preview3" src="#" alt="Preview" class="d-none" style="max-width: 100%; max-height: 200px; ">
+                            }
+                        </div>
 
-                            <img src="~/UsersProfile/@Model.UserPhotoName" alt="Profile Photo">
-                        }
-                        else
-                        {
-                            <img src="~/UsersProfile/profile-placeholder.jpg" alt="Profile Photo">
-                        }
+                        <div class="form-floating my-2">
+                            <input type="file" asp-for="@Model.UserProfilePhoto" accept="image" onchange="previewPhoto3(event)" disabled />
+                            <span class="text-danger"></span>
+                        </div>
                     </div>
-                    <div class="m-3">
-
-                        <input type="file" asp-for="@Model.UserProfilePhoto" disabled />
-                    </div>
+                 
                 </div>
                 <div class="col-md-8 ">
                     <input type="text" asp-for="@Model.UserId" hidden />
@@ -141,11 +145,11 @@
             <form id="resetFormAdmin" method="post">
                 <div class="row">
                     <div class="col-md-3">
-                        <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" required oninput="return ChkPasswordLength()">
+                        <input type="password" asp-for="Password" class="form-control" id="adminpassword" placeholder="Password" required oninput="return AdminPasswordLength()">
                         <span class="text-danger" id="error"></span>
                     </div>
                     <div class="col-md-3">
-                        <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
+                        <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return AdminComparePassword()">
                         <span class="text-danger" id="error2"></span>
                     </div>
                     <div class="col-md-3 d-flex justify-content-center gap-2">
@@ -185,5 +189,47 @@
         $('#ResetPassword').toggleClass('d-block d-none');
 
 
+    }
+
+
+    function previewPhoto3(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        var imgElement = $('#preview3');
+        var imgElement2 = $('#preview4');
+        reader.onload = function (e) {
+            imgElement.attr('src', reader.result).show();
+        };
+
+        reader.readAsDataURL(input.files[0]);
+
+        imgElement2.removeClass('d-block').addClass('d-none');
+        imgElement.removeClass('d-none').addClass('d-block');
+    }
+    function AdminPasswordLength() {
+        var password = document.getElementById("adminpassword").value;
+
+        if (password.length < 6) {
+            $('#error').text("Password length must be greater than 6!");
+            return false;
+
+        } else {
+            $('#error').hide();
+        }
+    }
+    function AdminComparePassword() {
+        var password = document.getElementById("adminpassword").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password != confirmPassword) {
+            $('#error2').text("Passwords not the same!");
+            $('#submitbtn').prop('disabled', true);
+
+            return false;
+        } else {
+            $('#error2').empty();
+            $('#submitbtn').prop('disabled', false);
+
+        }
     }
 </script>

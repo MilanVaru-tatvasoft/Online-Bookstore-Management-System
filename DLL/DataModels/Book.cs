@@ -37,10 +37,6 @@ public partial class Book
     [Column("stockquantity")]
     public int Stockquantity { get; set; }
 
-    [Column("isbn")]
-    [StringLength(20)]
-    public string? Isbn { get; set; }
-
     [Column("createdby")]
     public int? Createdby { get; set; }
 

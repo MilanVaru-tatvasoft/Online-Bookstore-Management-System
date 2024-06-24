@@ -150,16 +150,14 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult EditAdminProfile(AdminProfileModel profile)
         {
-            if (ModelState.IsValid)
-            {
+           
                 bool result = _adminDashboard.EditAdminProfile(profile);
                 if (result)
                 {
                     return Json(new { code = 401 });
                 }
                 return Json(new { code = 402 });
-            }
-            return View();
+          
         }
 
         public IActionResult GetAuthorList()

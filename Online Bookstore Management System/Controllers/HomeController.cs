@@ -117,7 +117,7 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             return View();
         }
-        public IActionResult RegisterPost(RegisterVm model)
+        public IActionResult RegisterPost(UserProfile model)
         {
             bool result = _customerRepo.RegisterPost(model);
             if (result)

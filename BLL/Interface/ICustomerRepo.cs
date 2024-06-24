@@ -16,7 +16,7 @@ namespace BusinessLogic.Interface
 
         public Admin GetAdminData(string email);
         public Customer GetCustomerData(string email);
-        public bool RegisterPost(RegisterVm model);
+        public bool RegisterPost(UserProfile model);
         public UserProfile GetUserProfile(int? uId);
         public bool EditUserProfile(UserProfile profile);
         public viewBookModel ViewBookDetails(int bookId, int? userId);

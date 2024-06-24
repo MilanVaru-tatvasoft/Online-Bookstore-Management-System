@@ -3,6 +3,7 @@ using DataAccess.CustomModels;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BusinessLogic.Repository
@@ -150,9 +151,9 @@ namespace BusinessLogic.Repository
             Customer customer = _context.Customers.FirstOrDefault(x => x.Email == email);
             return customer;
         }
-        public bool RegisterPost(RegisterVm model)
+        public bool RegisterPost(UserProfile model)
         {
-            if (_context.Users.Any(x => x.Email == model.email))
+            if (_context.Users.Any(x => x.Email == model.Email))
             {
                 return false;
             }
@@ -160,27 +161,35 @@ namespace BusinessLogic.Repository
             {
                 User user = new User()
                 {
-                    Firstname = model.firstname,
-                    Lastname = model.lastname,
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
                     Phonenumber = model.Contact,
                     Roleid = 2,
-                    Email = model.email,
-                    Birthdate = model.birthdate,
+                    Email = model.Email,
+                    Birthdate = model.Birthdate,
                     Gender = model.Gender,
-                    City = model.city,
+                    City = model.City,
                     Address = model.Address,
                     Passwordhash = model.Password,
                     IsDeleted = false,
                     Createddate = DateTime.Now,
+                   
 
                 };
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
+                if (model.UserProfilePhoto != null)
+                {
+                    _authentication.StoreProfilePhoto(model.UserProfilePhoto, user.Userid);
+                }
+                _context.Users.Update(user);
+                _context.SaveChanges();
+
                 Customer customer = new Customer()
                 {
-                    Name = model.firstname + " " + model.lastname,
-                    Email = model.email,
+                    Name = model.FirstName + " " + model.LastName,
+                    Email = model.Email,
                     Passwordhash = model.Password,
                     Address = model.Address,
                     Phonenumber = model.Contact,
@@ -220,9 +229,6 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
-
-              
-
 
                 user.Firstname = profile.FirstName;
                 user.Address = profile.Address;

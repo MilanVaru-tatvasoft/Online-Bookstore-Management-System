@@ -353,13 +353,13 @@ namespace BusinessLogic.Repository
                 user.Gender = profile.Gender;
                 user.Phonenumber = profile.Contact;
 
+
+                _context.Users.Update(user);
+                _context.SaveChanges();
                 if (profile.UserProfilePhoto != null)
                 {
                     _authentication.StoreProfilePhoto(profile.UserProfilePhoto, profile.UserId);
                 }
-
-                _context.Users.Update(user);
-                _context.SaveChanges();
 
                 Admin? admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
                 if (admin != null)

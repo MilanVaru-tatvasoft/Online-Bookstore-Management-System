@@ -52,6 +52,8 @@ namespace DataAccess.CustomModels
 
         [Required(ErrorMessage = "Last name is required")]
         public string? LastName { get; set; }
+        [Required(ErrorMessage = "this field is required")]
+
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]

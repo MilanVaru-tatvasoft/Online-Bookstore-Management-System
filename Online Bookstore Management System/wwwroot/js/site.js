@@ -1,39 +1,42 @@
 ﻿
 function RegisterPost() {
     event.preventDefault();
-    $.ajax({
-        method: "POST",
-        url: "/Home/RegisterPost",
-        data: $('#RegisterForm').serialize(),
-
-
-        success: function (result) {
-            if (result.code == 401) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Account created",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    // Redirect to the login page
-                    window.location.href = '/Home/Index';
-                });
+    var form = new FormData($('#RegisterForm')[0]);
+    if ($('#RegisterForm').valid())
+    {
+        $.ajax({
+            url: "/Home/RegisterPost",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Account created",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = '/Home/Index';
+                    });
+                }
+                else if (result.code == 402) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Account already Exist",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-            else if (result.code == 402) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Account already Exist",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+    }
 }
 function ResetPassword() {
     event.preventDefault();
@@ -160,8 +163,10 @@ function EditUserProfile() {
                     title: "Profile updated",
                     showConfirmButton: false,
                     timer: 1500
-                })
+                }).then(() => {
                 GetUserProfile()
+                });
+
 
             }
             else if (result.code == 402) {
@@ -171,7 +176,10 @@ function EditUserProfile() {
                     title: "error occured",
                     showConfirmButton: false,
                     timer: 1500
-                })
+                }).then(() => {
+                    GetUserProfile()
+                    });
+
             }
         },
         error: function () {
@@ -545,7 +553,7 @@ function GetAddOrUpdateAuthor(AuthorId) {
 function AddOrUpdateAuthor() {
     event.preventDefault();
     var formData = $('#addUpdateAuthorForm').serialize();
-    if (formData.isvalid()) {
+    if ($('#addUpdateAuthorForm').valid()) {
         $.ajax({
             method: "POST",
             url: "/Admin/AddOrUpdateAuthor",
@@ -779,32 +787,7 @@ function getForgotPassword() {
         return false;
     }
 }
-function Passwordlength() {
-    var password = document.getElementById("password").value;
 
-    if (password.length < 6) {
-        $('#error').text("Password length must be greater than 6!");
-        return false;
-
-    } else {
-        $('#error').hide();
-    }
-}
-function ComparePassword() {
-    var password = document.getElementById("password").value;
-    var confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (password != confirmPassword) {
-        $('#error2').text("Passwords not the same!");
-        $('#submitbtn').prop('disabled', true);
-
-        return false;
-    } else {
-        $('#error2').empty();
-        $('#submitbtn').prop('disabled', false);
-
-    }
-}
 
 
 function GetPaymentDone(paymentType, Orderid) {
