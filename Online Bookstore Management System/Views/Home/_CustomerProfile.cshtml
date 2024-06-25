@@ -38,20 +38,25 @@
         <form id="profileForm" onsubmit="EditUserProfile()">
             <div class="row">
                 <div class="col-md-4 text-center">
-                    <div class="profile-photo">
-                        @if (Model.UserPhotoName != null)
-                        {
+                    <div class="profile-photo ">
+                        <div class="mt-2 d-flex justify-content-center ">
+                            @if (Model.UserPhotoName == null)
+                            {
+                                <img id="photo" src="~/UsersProfile/Common_ProfilePic.png" alt="Profile Photo">
+                            }
+                            else
+                            {
+                                <img id="preview2" src="~/UsersProfile/@Model.UserPhotoName" class="d-block" alt="Preview" style="max-width: 100%; max-height: 200px;">
+                                <img id="preview" src="#" alt="Preview" class="d-none" style="max-width: 100%; max-height: 200px; ">
+                            }
+                        </div>
 
-                            <img src="~/UsersProfile/@Model.UserPhotoName" alt="Profile Photo">
-                        }
-                        else
-                        {
-                            <img src="~/UsersProfile/profile-placeholder.jpg" alt="Profile Photo">
-                        }
-                    </div>
-                    <div class="m-3">
+                        <div class="form-floating my-2">
+                            <input type="file" asp-for="UserProfilePhoto" id="fileUploadId" accept=".png,.jpg,.jpeg" onchange=" handleFileUpload(event);" disabled />
+                            <br />
+                            <span id="errormsg" class="text-danger"></span>
+                        </div>
 
-                        <input type="file" asp-for="@Model.UserProfilePhoto" disabled />
                     </div>
                 </div>
                 <div class="col-md-8 ">
@@ -124,12 +129,13 @@
                         </div>
                         <div class="d-flex gap-2">
                             <button id="edit" class="btn btn-primary" onclick="ActionEdit()">Edit</button>
-                            <button class="btn btn-success" type="submit" style="display: none;" onclick="EditUserProfile()">Submit</button>
+                            <button class="btn btn-success" id="customerProfileSubmit" type="submit" style="display: none;" onclick="EditUserProfile()">Submit</button>
                             <a id="reset" class="btn btn-secondary" style="display: none;" onclick="GetUserProfile()">Cancel</a>
                         </div>
                     </div>
                 </div>
             </div>
+
         </form>
     </div>
     <!-- Reset Password Section -->
@@ -141,11 +147,11 @@
             <form id="resetForm" method="post">
                 <div class="row">
                     <div class="col-md-3">
-                        <input type="password" asp-for="Password" class="form-control" id="loginpassword" placeholder="Password" required oninput="return ChkPasswordLength()">
+                        <input type="password" asp-for="Password" class="form-control" id="custpassword" placeholder="Password" required oninput="return CustomerPasswordLength()">
                         <span class="text-danger" id="error"></span>
                     </div>
                     <div class="col-md-3">
-                        <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return ComparePassword()">
+                        <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return CustomerComparePassword()">
                         <span class="text-danger" id="error2"></span>
                     </div>
                     <div class="col-md-3 d-flex justify-content-center gap-2">
@@ -159,8 +165,41 @@
         </div>
     </div>
 </div>
+<partial name="_ValidationScriptsPartial" />
 
 <script>
+    function handleFileUpload(event) {
+        var input = event.target;
+        var file = input.files[0];
+        var fileName = file.name.toLowerCase();
+      
+        var tagToDisplayMessage = document.getElementById('errormsg');
+
+        if (!(fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.jpg'))) {
+            tagToDisplayMessage.innerText = "Upload file with .jpeg, .jpg, or .png extension.";
+            input.value = "";
+            imgElement.removeClass('d-block').addClass('d-none');
+            return;
+        } else {
+            tagToDisplayMessage.innerText = ""; 
+            var input = event.target;
+            var reader = new FileReader();
+            var imgElement = $('#preview');
+            var imgElement2 = $('#preview2');
+            reader.onload = function (e) {
+                imgElement.attr('src', reader.result).show();
+            };
+
+
+            reader.readAsDataURL(input.files[0]);
+
+            imgElement2.removeClass('d-block').addClass('d-none');
+            imgElement.removeClass('d-none').addClass('d-block');
+        }
+
+   
+    }
+
     function ActionEdit() {
         event.preventDefault();
         const editButton = document.getElementById('edit');
@@ -179,11 +218,37 @@
         editButton.style.display = 'none';
     }
 
-
     function GetResetPassword() {
         event.preventDefault();
         $('#ResetPassword').toggleClass('d-block d-none');
-
-
     }
+
+    function CustomerPasswordLength() {
+        var password = document.getElementById("custpassword").value;
+
+        if (password.length < 6) {
+            $('#error').text("Password length must be greater than 6!");
+            return false;
+
+        } else {
+            $('#error').hide();
+        }
+    }
+
+    function CustomerComparePassword() {
+        var password = document.getElementById("custpassword").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password != confirmPassword) {
+            $('#error2').text("Passwords not the same!");
+            $('#submitbtn').prop('disabled', true);
+
+            return false;
+        } else {
+            $('#error2').empty();
+            $('#submitbtn').prop('disabled', false);
+
+        }
+    }
+
 </script>

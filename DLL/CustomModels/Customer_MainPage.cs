@@ -15,7 +15,7 @@ namespace DataAccess.CustomModels
         public List<Addtocart>? AddToCarts { get; set; }
         public List<RatingReview>? Reviews { get; set; }
         public List<DashboardList>? DashboardLists { get; set; }
-         public User? user { get; set; }
+        public User? user { get; set; }
         public int? itemCount { get; set; }
         public int? UserId { get; set; }
         public int? BookCount { get; set; }
@@ -37,6 +37,7 @@ namespace DataAccess.CustomModels
         public string BookPhoto { get; set; }
         public decimal Price { get; set; }
         public decimal AvgRating { get; set; }
+        public bool IsFavorite { get; set; }
 
     }
 
@@ -52,11 +53,13 @@ namespace DataAccess.CustomModels
 
         [Required(ErrorMessage = "Last name is required")]
         public string? LastName { get; set; }
+        [Required(ErrorMessage = "this field is required")]
+
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string Email { get; set; }
+        [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", ErrorMessage = "Invalid email address format")]
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Contact number is required")]
         [DataType(DataType.PhoneNumber)]
@@ -68,6 +71,8 @@ namespace DataAccess.CustomModels
 
         public string? Role { get; set; }
         public string? UserPhotoName { get; set; }
+        [Required(ErrorMessage = "This is required")]
+
         public IFormFile? UserProfilePhoto { get; set; }
 
         [Required(ErrorMessage = "Address is required")]
@@ -185,4 +190,19 @@ namespace DataAccess.CustomModels
         public decimal? GrossTotal { get; set; }
         public decimal? Tax { get; set; }
     }
+
+
+    public class FavoriteModel
+    {
+        public int FavoriteId { get; set; }
+
+        public int CustomerId { get; set; }
+        public int BookCount { get; set; }
+
+        public int BookId { get; set; }
+
+        public List<DashboardList> FavBookList { get; set; }
+    }
+
+
 }

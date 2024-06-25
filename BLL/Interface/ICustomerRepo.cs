@@ -11,12 +11,12 @@ namespace BusinessLogic.Interface
     public interface ICustomerRepo
     {
         public CustomerMainPage GetCustomerDashboardData(CustomerMainPage model, int? userId, int pageNumber);
-        public List<DashboardList> GetCustomerDashboardTable( int? userId, int pageNumber);
+        public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber);
 
 
         public Admin GetAdminData(string email);
         public Customer GetCustomerData(string email);
-        public bool RegisterPost(RegisterVm model);
+        public bool RegisterPost(UserProfile model);
         public UserProfile GetUserProfile(int? uId);
         public bool EditUserProfile(UserProfile profile);
         public viewBookModel ViewBookDetails(int bookId, int? userId);
@@ -31,6 +31,9 @@ namespace BusinessLogic.Interface
 
         public PaymentBillDetails getBillDetails(int orderId);
         public OrderData GetOrderHistoy(int? userId);
+        public FavoriteModel GetFavoritesPageData(int? userId);
+        public bool FavoriteAction(string actionType, int bookId, int? userId);
+
 
 
 

@@ -1,39 +1,42 @@
 ﻿
 function RegisterPost() {
     event.preventDefault();
-    $.ajax({
-        method: "POST",
-        url: "/Home/RegisterPost",
-        data: $('#RegisterForm').serialize(),
-
-
-        success: function (result) {
-            if (result.code == 401) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Account created",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    // Redirect to the login page
-                    window.location.href = '/Home/Index';
-                });
+    var form = new FormData($('#RegisterForm')[0]);
+    if ($('#RegisterForm').valid())
+    {
+        $.ajax({
+            url: "/Home/RegisterPost",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Account created",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = '/Home/Index';
+                    });
+                }
+                else if (result.code == 402) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Account already Exist",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-            else if (result.code == 402) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "Account already Exist",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+    }
 }
 function ResetPassword() {
     event.preventDefault();
@@ -143,41 +146,48 @@ function GetOrderHistory() {
 function EditUserProfile() {
     event.preventDefault();
     var formdata = new FormData($('#profileForm')[0]);
+    if ($('#profileForm').valid()) {
+        $.ajax({
+            method: "POST",
+            url: "/Home/EditUserProfile",
+            data: formdata,
+            contentType: false,
+            processData: false,
 
-    $.ajax({
-        method: "POST",
-        url: "/Home/EditUserProfile",
-        data: formdata,
-        contentType: false,
-        processData: false,
+
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Profile updated",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        GetUserProfile()
+                    });
 
 
-        success: function (result) {
-            if (result.code == 401) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Profile updated",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                GetUserProfile()
+                }
+                else if (result.code == 402) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "error occured",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        GetUserProfile()
+                    });
 
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-            else if (result.code == 402) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "error occured",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+
+    }
 }
 function ViewBookDetails(bookId) {
     $.ajax({
@@ -545,7 +555,7 @@ function GetAddOrUpdateAuthor(AuthorId) {
 function AddOrUpdateAuthor() {
     event.preventDefault();
     var formData = $('#addUpdateAuthorForm').serialize();
-    if (formData.isvalid()) {
+    if ($('#addUpdateAuthorForm').valid()) {
         $.ajax({
             method: "POST",
             url: "/Admin/AddOrUpdateAuthor",
@@ -779,32 +789,7 @@ function getForgotPassword() {
         return false;
     }
 }
-function Passwordlength() {
-    var password = document.getElementById("password").value;
 
-    if (password.length < 6) {
-        $('#error').text("Password length must be greater than 6!");
-        return false;
-
-    } else {
-        $('#error').hide();
-    }
-}
-function ComparePassword() {
-    var password = document.getElementById("password").value;
-    var confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (password != confirmPassword) {
-        $('#error2').text("Passwords not the same!");
-        $('#submitbtn').prop('disabled', true);
-
-        return false;
-    } else {
-        $('#error2').empty();
-        $('#submitbtn').prop('disabled', false);
-
-    }
-}
 
 
 function GetPaymentDone(paymentType, Orderid) {
@@ -897,7 +882,25 @@ function AdminResetPassword() {
     });
 }
 
+function GetMyFavorites() {
 
+    $.ajax({
+        method: "POST",
+        url: "/Home/GetMyFavorites",
+        success: function (result) {
+            $('#custDashboard').html(result);
+            $('#UserProfile').empty();
+        },
+        error: function () {
+            alert('Error loading  view');
+        }
+    });
+
+
+    $('#loader2').show();
+
+
+}
 
 
 

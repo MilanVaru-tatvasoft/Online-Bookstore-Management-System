@@ -82,7 +82,7 @@ namespace Online_Bookstore_Management_System.Controllers
 
             CustomerMainPage dashData = new CustomerMainPage();
             dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, 1);
-            
+
             return View(dashData);
         }
 
@@ -94,20 +94,15 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_CustomerMainPage", dashData);
         }
 
-        public IActionResult CustomerDashboardTable(int pageNumber)
+        public IActionResult CustomerDashboardTable(CustomerMainPage model)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            List<DashboardList> list = _customerRepo.GetCustomerDashboardTable(userId, pageNumber);
+            CustomerMainPage customerData = new CustomerMainPage(); 
+            List<DashboardList> list =  _customerRepo.GetCustomerDashboardTable(customerData, userId, model.PageNumber);
             return Json(list);
         }
 
-        public IActionResult HandleSearch(CustomerMainPage model)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            int pageNumber = 1;
-            CustomerMainPage dashData = _customerRepo.GetCustomerDashboardData(model, userId, pageNumber);
-            return PartialView("_CustomerMainPage", dashData);
-        }
+     
 
         public IActionResult GetRegistrationform()
         {
@@ -117,7 +112,7 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             return View();
         }
-        public IActionResult RegisterPost(RegisterVm model)
+        public IActionResult RegisterPost(UserProfile model)
         {
             bool result = _customerRepo.RegisterPost(model);
             if (result)
@@ -145,15 +140,15 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult EditUserProfile(UserProfile profile)
         {
-           
-                bool result = _customerRepo.EditUserProfile(profile);
-                if (result)
-                {
-                    return Json(new { code = 401 });
-                }
-                return Json(new { code = 402 });
-         
-           
+
+            bool result = _customerRepo.EditUserProfile(profile);
+            if (result)
+            {
+                return Json(new { code = 401 });
+            }
+            return Json(new { code = 402 });
+
+
         }
         public IActionResult ViewBookDetails(int bookId)
         {
@@ -162,7 +157,6 @@ namespace Online_Bookstore_Management_System.Controllers
             viewBookModel model = _customerRepo.ViewBookDetails(bookId, userId);
             return PartialView("_viewBooksPage", model);
         }
-
 
         public IActionResult GetAddToCart(int bookId, int cartId, int quantity)
         {
@@ -250,7 +244,6 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_MyCartList", model);
         }
 
-
         public IActionResult GetBuyNow(OrderData data)
         {
             return PartialView("_ConfirmOrder", data);
@@ -265,7 +258,6 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_ConfirmOrder", data);
 
         }
-
 
         public IActionResult GetPayment(OrderData data)
         {
@@ -288,8 +280,6 @@ namespace Online_Bookstore_Management_System.Controllers
 
         }
 
-
-
         public IActionResult GetPaymentDone(string paymentType, int OrderId)
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
@@ -297,7 +287,6 @@ namespace Online_Bookstore_Management_System.Controllers
 
             return Ok();
         }
-
 
         public IActionResult GeneratePDF([FromQuery] int orderId)
         {
@@ -318,6 +307,31 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult PaymentBill()
         {
             return View();
+        }
+
+        public IActionResult GetMyFavorites()
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+            FavoriteModel model = _customerRepo.GetFavoritesPageData(userId);
+            return PartialView("_MyFavoritesTab", model);
+        }
+        public IActionResult HandleFavoriteAction(string actionType, int bookId)
+        {
+            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+
+            try
+            {
+                bool a = _customerRepo.FavoriteAction(actionType, bookId, userId);
+                bool success = a ? true : false;
+                return Json(new { success });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { success = false });
+
+            }
         }
 
     }

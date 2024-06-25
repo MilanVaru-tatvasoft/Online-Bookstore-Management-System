@@ -73,11 +73,10 @@ public partial class Book
     public virtual Category? Category { get; set; }
 
     [InverseProperty("Book")]
-    public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
+    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
-    [ForeignKey("Publisherid")]
-    [InverseProperty("Books")]
-    public virtual Publisher? PublisherNavigation { get; set; }
+    [InverseProperty("Book")]
+    public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
 
     [InverseProperty("Book")]
     public virtual ICollection<RatingReview> RatingReviews { get; set; } = new List<RatingReview>();

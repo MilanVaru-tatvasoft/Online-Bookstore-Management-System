@@ -3,6 +3,8 @@ using DataAccess.CustomModels;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BusinessLogic.Repository
@@ -41,6 +43,7 @@ namespace BusinessLogic.Repository
             var booksList = booksQuery.ToList();
 
 
+
             if (!string.IsNullOrEmpty(model.Search1))
             {
                 booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
@@ -62,9 +65,11 @@ namespace BusinessLogic.Repository
             List<DashboardList> dashboardList = new List<DashboardList>();
             foreach (var book in booksList)
             {
-                var reviews = _context.RatingReviews.Where(x=>x.BookId == book.Bookid).ToList();
+                var reviews = _context.RatingReviews.Where(x => x.BookId == book.Bookid).ToList();
                 decimal i = 0;
-                if(reviews.Count != 0) { i = (decimal)reviews.Average(x=>x.BookId); }
+                if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.BookId); }
+
+                bool isFavorite = _context.Favorites.Any(x => x.Customerid == customerId && x.Bookid == book.Bookid);
 
                 DashboardList item = new DashboardList();
                 item.BookId = book.Bookid;
@@ -76,6 +81,7 @@ namespace BusinessLogic.Repository
                 item.CategoryName = book.Category.Categoryname;
                 item.Price = book.Price;
                 item.AvgRating = i;
+                item.IsFavorite = isFavorite;
                 dashboardList.Add(item);
 
             }
@@ -98,21 +104,43 @@ namespace BusinessLogic.Repository
             _MainPage.DashboardLists = dashboardList;
             _MainPage.BookCount = booksList.Count();
             _MainPage.itemCount = addtocarts.Count();
-            _MainPage.user = _context.Users.FirstOrDefault(x=>x.Userid == userId);
+            _MainPage.user = _context.Users.FirstOrDefault(x => x.Userid == userId);
 
 
 
             return _MainPage;
         }
-        public List<DashboardList> GetCustomerDashboardTable(int? userId, int pageNumber)
+        public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber)
         {
             int pageSize = 6;
-
+            int? customerId = _context.Customers
+                                    .FirstOrDefault(x => x.Userid == userId)
+                                    ?.Customerid;
             var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
                                    .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
 
             var booksList = booksQuery.ToList();
 
+           
+
+            if (!string.IsNullOrEmpty(model.Search1))
+            {
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
+            }
+
+            if (model.Search2 != null && model.Search2.Count != 0)
+            {
+                booksList = booksList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
+            }
+
+            if (model.Search3 != null && model.Search3.Count != 0)
+            {
+                booksList = booksList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
+            }
+            if (!string.IsNullOrEmpty(model.Search4))
+            {
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
+            }
             List<DashboardList> dashboardList = new List<DashboardList>();
 
             foreach (var book in booksList)
@@ -120,6 +148,8 @@ namespace BusinessLogic.Repository
                 var reviews = _context.RatingReviews.Where(x => x.BookId == book.Bookid).ToList();
                 decimal i = 0;
                 if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.Rating); }
+
+                bool isFavorite = _context.Favorites.Any(x => x.Customerid == customerId && x.Bookid == book.Bookid);
 
                 DashboardList item = new DashboardList();
                 item.BookId = book.Bookid;
@@ -130,6 +160,7 @@ namespace BusinessLogic.Repository
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
                 item.AvgRating = i;
+                item.IsFavorite = isFavorite;
 
                 item.Price = book.Price;
 
@@ -150,9 +181,9 @@ namespace BusinessLogic.Repository
             Customer customer = _context.Customers.FirstOrDefault(x => x.Email == email);
             return customer;
         }
-        public bool RegisterPost(RegisterVm model)
+        public bool RegisterPost(UserProfile model)
         {
-            if (_context.Users.Any(x => x.Email == model.email))
+            if (_context.Users.Any(x => x.Email.ToLower() == model.Email.ToLower()))
             {
                 return false;
             }
@@ -160,27 +191,33 @@ namespace BusinessLogic.Repository
             {
                 User user = new User()
                 {
-                    Firstname = model.firstname,
-                    Lastname = model.lastname,
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
                     Phonenumber = model.Contact,
                     Roleid = 2,
-                    Email = model.email,
-                    Birthdate = model.birthdate,
+                    Email = model.Email,
+                    Birthdate = model.Birthdate,
                     Gender = model.Gender,
-                    City = model.city,
+                    City = model.City,
                     Address = model.Address,
                     Passwordhash = model.Password,
                     IsDeleted = false,
                     Createddate = DateTime.Now,
-
                 };
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
+                if (model.UserProfilePhoto != null)
+                {
+                    _authentication.StoreProfilePhoto(model.UserProfilePhoto, user.Userid);
+                }
+                _context.Users.Update(user);
+                _context.SaveChanges();
+
                 Customer customer = new Customer()
                 {
-                    Name = model.firstname + " " + model.lastname,
-                    Email = model.email,
+                    Name = model.FirstName + " " + model.LastName,
+                    Email = model.Email,
                     Passwordhash = model.Password,
                     Address = model.Address,
                     Phonenumber = model.Contact,
@@ -194,7 +231,6 @@ namespace BusinessLogic.Repository
                 return true;
             }
         }
-
 
         public UserProfile GetUserProfile(int? uId)
         {
@@ -220,9 +256,6 @@ namespace BusinessLogic.Repository
             User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
-
-              
-
 
                 user.Firstname = profile.FirstName;
                 user.Address = profile.Address;
@@ -676,6 +709,102 @@ namespace BusinessLogic.Repository
 
             return orderData;
         }
+
+        public FavoriteModel GetFavoritesPageData(int? userId)
+        {
+            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
+            List<int> ids = _context.Favorites.Where(X => X.Customerid == customerId).Select(x => x.Bookid).ToList();
+            List<DashboardList> favlist = new List<DashboardList>();
+
+            if (ids.Count != 0)
+            {
+                var books = _context.Books.Where(x => ids.Contains(x.Bookid)).Include(c => c.Author).Include(z => z.Category).ToList();
+                foreach (var book in books)
+                {
+                    DashboardList list = new DashboardList()
+                    {
+                        BookId = book.Bookid,
+                        BookPhoto = book.Bookphoto,
+                        AuthorId = (int)book.Authorid,
+                        AuthorName = book.Author.Name,
+                        CategoryId = (int)book.Categoryid,
+                        CategoryName = book.Category.Categoryname,
+                        Title = book.Title,
+                        Price = book.Price,
+
+                    };
+
+
+
+                    favlist.Add(list);
+                }
+
+            }
+
+
+            FavoriteModel model = new FavoriteModel();
+            model.FavBookList = favlist;
+            model.CustomerId = customerId;
+            return model;
+        }
+
+        public bool AddToFavorites(int bookId, int? userId)
+        {
+            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
+            Favorite favData = _context.Favorites.FirstOrDefault(x => x.Customerid == customerId && x.Bookid == bookId);
+            if (favData != null)
+            {
+                return false;
+            }
+            Favorite favorite = new Favorite()
+            {
+                Customerid = customerId,
+                Bookid = bookId,
+                Createddate = DateTime.Now,
+            };
+            _context.Favorites.Add(favorite);
+            _context.SaveChanges();
+            return true;
+        }
+
+        public bool FavoriteAction(string actionType, int bookId, int? userId)
+        {
+            if (userId == null)
+                return false;
+
+            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid ?? 0;
+
+            if (customerId == 0)
+                return false;
+
+            switch (actionType)
+            {
+                case "add":
+                    var newFavorite = new Favorite
+                    {
+                        Customerid = customerId,
+                        Bookid = bookId,
+                        Createddate = DateTime.Now
+                    };
+                    _context.Favorites.Add(newFavorite);
+                    break;
+
+                case "remove":
+                    var favoriteToRemove = _context.Favorites.FirstOrDefault(x => x.Customerid == customerId && x.Bookid == bookId);
+                    if (favoriteToRemove != null)
+                        _context.Favorites.Remove(favoriteToRemove);
+                    else
+                        return false;
+                    break;
+
+                default:
+                    return false;
+            }
+
+            _context.SaveChanges();
+            return true;
+        }
+
     }
 }
 

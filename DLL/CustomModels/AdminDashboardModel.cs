@@ -13,7 +13,7 @@ namespace DataAccess.CustomModels
         public List<decimal> DailySales { get; set; }
         public List<string> Categories { get; set; }
         public List<int> NoOfBooks { get; set; }
-
+        public User? user { get; set; }  
         public int? NewOrders { get; set; }
         public int? ProcessingOrders { get; set; }
         public int? ShippedOrders { get; set; }
@@ -94,6 +94,7 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage = "This field is required")]
         public string? City { get; set; }
         public string? UserPhotoName { get; set; }
+        [Required(ErrorMessage ="This is required")]
         public IFormFile? UserProfilePhoto { get; set; }
     }
 

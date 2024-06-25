@@ -30,13 +30,13 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Emaillog> Emaillogs { get; set; }
 
+    public virtual DbSet<Favorite> Favorites { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<Orderdetail> Orderdetails { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
-
-    public virtual DbSet<Publisher> Publishers { get; set; }
 
     public virtual DbSet<RatingReview> RatingReviews { get; set; }
 
@@ -95,8 +95,6 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasConstraintName("fk_author");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Books).HasConstraintName("books_categoryid_fkey");
-
-            entity.HasOne(d => d.PublisherNavigation).WithMany(p => p.Books).HasConstraintName("fk_publisher");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -118,6 +116,21 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Emaillogid).HasName("emaillog_pkey");
 
             entity.Property(e => e.Senddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        modelBuilder.Entity<Favorite>(entity =>
+        {
+            entity.HasKey(e => e.Favoriteid).HasName("favorites_pkey");
+
+            entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.Favorites)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("favorites_bookid_fkey");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Favorites)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("favorites_customerid_fkey");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -157,13 +170,6 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.Payments)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("payment_order_id_fkey");
-        });
-
-        modelBuilder.Entity<Publisher>(entity =>
-        {
-            entity.HasKey(e => e.Publisherid).HasName("publishers_pkey");
-
-            entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<RatingReview>(entity =>
