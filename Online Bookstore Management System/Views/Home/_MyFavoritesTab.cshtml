@@ -1,0 +1,61 @@
+﻿@model DataAccess.CustomModels.FavoriteModel;
+
+<style>
+    /* Custom styles */
+ 
+
+
+   
+</style>
+
+<div class="container-fluid">
+    <div class="title">
+        <h4>My Favorites</h4>
+    </div>
+    <div class="table row d-flex  container-fluid " id="book-list">
+        @if (Model.FavBookList.Count() != 0)
+        {
+            <input type="text" asp-for="@Model.BookCount" id="BookCount" hidden />
+            @foreach (var obj in Model.FavBookList.ToList())
+            {
+                <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3">
+                    <div class="card border-0 h-100 shadow">
+                        <img src="~/BookListCollections/@obj.BookPhoto" class="card-img-top rounded-top p-0" width="50" height="300" alt="@obj.BookPhoto">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@obj.Title</h5>
+                            <strong class="card-title text-danger fs-4"> @obj.Price $</strong>
+                            <p class="card-text text-truncate px-1">Author: @obj.AuthorName</p>
+                        </div>
+                        <div>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                @if (i <= obj.AvgRating)
+                                {
+                                    <i class="bi bi-star-fill fs-5 text-warning"></i>
+                                }
+                                else if ((decimal)(i - 0.5) == obj.AvgRating)
+                                {
+                                    <i class="bi bi-star-half fs-5 text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star fs-5 text-warning"></i>
+                                }
+                            }
+
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-between">
+                            <buttton class="btn btn-primary" onclick="ViewBookDetails(@obj.BookId)">View More</buttton>
+                      
+                                <button id="removeFromFavoritesBtn(@obj.BookId)" class="btn btn-danger " onclick="HandleFavoriteAction('remove',@obj.BookId)">
+                                    <i class="text-white bi fs-5 bi-heart"></i>
+                                </button>
+                         
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

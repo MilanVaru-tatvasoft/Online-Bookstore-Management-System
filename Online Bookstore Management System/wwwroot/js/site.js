@@ -146,46 +146,48 @@ function GetOrderHistory() {
 function EditUserProfile() {
     event.preventDefault();
     var formdata = new FormData($('#profileForm')[0]);
-
-    $.ajax({
-        method: "POST",
-        url: "/Home/EditUserProfile",
-        data: formdata,
-        contentType: false,
-        processData: false,
-
-
-        success: function (result) {
-            if (result.code == 401) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Profile updated",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                GetUserProfile()
-                });
+    if ($('#profileForm').valid()) {
+        $.ajax({
+            method: "POST",
+            url: "/Home/EditUserProfile",
+            data: formdata,
+            contentType: false,
+            processData: false,
 
 
-            }
-            else if (result.code == 402) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: "error occured",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    GetUserProfile()
+            success: function (result) {
+                if (result.code == 401) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Profile updated",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        GetUserProfile()
                     });
 
+
+                }
+                else if (result.code == 402) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "error occured",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        GetUserProfile()
+                    });
+
+                }
+            },
+            error: function () {
+                alert('Error loading partial view');
             }
-        },
-        error: function () {
-            alert('Error loading partial view');
-        }
-    });
+        });
+
+    }
 }
 function ViewBookDetails(bookId) {
     $.ajax({
@@ -880,7 +882,25 @@ function AdminResetPassword() {
     });
 }
 
+function GetMyFavorites() {
 
+    $.ajax({
+        method: "POST",
+        url: "/Home/GetMyFavorites",
+        success: function (result) {
+            $('#custDashboard').html(result);
+            $('#UserProfile').empty();
+        },
+        error: function () {
+            alert('Error loading  view');
+        }
+    });
+
+
+    $('#loader2').show();
+
+
+}
 
 
 

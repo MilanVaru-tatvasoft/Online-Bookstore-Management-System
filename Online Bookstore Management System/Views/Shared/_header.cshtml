@@ -30,7 +30,11 @@
                     </li>
                  
                     <li class="nav-item ">
-                        <a class="nav-link  d-flex text-dark w-100" onclick="GetOrderHistory()"> My Order</a>
+                        <a class="nav-link text-dark" onclick="GetMyFavorites()">My Favorites</a>
+                    </li>
+                 
+                    <li class="nav-item ">
+                        <a class="nav-link  d-flex text-dark w-100" onclick="GetOrderHistory()"> My Orders</a>
                     </li>
                     <li>
                         <div style="position: relative;" class="d-md-none d-flex">
@@ -51,13 +55,7 @@
                         <button class="btn bg-transparent border rounded-1 position-relative" onclick="GetCartList()">
                             <span class="bi-cart text-dark bi fw-bold"></span>
                         </button>
-                        @if (Model.AddToCarts.Count() != 0)
-                        {
-
-                            <div class="badge bg-danger text-white rounded-circle position-absolute top-0 start-100" style="margin-left: -10px;margin-top:-6px; opacity: 0.9;">
-                                <span class="text-danger">.</span>
-                            </div>
-                        }
+                     
                     </div>
                     <div class="dropdown overflow-hidden position-static d-none d-md-flex align-items-center m-0">
                         <button class="btn bg-transparent border rounded-5 p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">

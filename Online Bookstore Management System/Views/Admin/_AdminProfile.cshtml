@@ -52,8 +52,9 @@
                         </div>
 
                         <div class="form-floating my-2">
-                            <input type="file" asp-for="@Model.UserProfilePhoto" accept="image" onchange="previewPhoto3(event)" disabled />
-                            <span class="text-danger"></span>
+                            <input type="file" asp-for="@Model.UserProfilePhoto"  accept=".png ,.jpg, .jpeg" onchange="handleFileUpload(event)" disabled />
+                            <br />
+                            <span class="text-danger" id="errormsg"></span>
                         </div>
                     </div>
                  
@@ -128,7 +129,7 @@
                         </div>
                         <div class="d-flex gap-2">
                             <button id="edit" class="btn btn-primary" onclick="AdminActionEdit()">Edit</button>
-                            <button class="btn btn-success" type="submit" style="display: none;">Submit</button>
+                            <button class="btn btn-success" type="submit" id="adminProfileSubmit" style="display: none;">Submit</button>
                             <a id="reset" class="btn btn-secondary" style="display: none;" onclick="GetAdminProfile()">Cancel</a>
                         </div>
                     </div>
@@ -190,7 +191,37 @@
 
 
     }
+    function handleFileUpload(event) {
+        var input = event.target;
+        var file = input.files[0];
+        var fileName = file.name.toLowerCase();
 
+        var tagToDisplayMessage = document.getElementById('errormsg');
+
+        if (!(fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.jpg'))) {
+            tagToDisplayMessage.innerText = "Upload file with .jpeg, .jpg, or .png extension.";
+            input.value = "";
+            imgElement.removeClass('d-block').addClass('d-none');
+            return;
+        } else {
+            tagToDisplayMessage.innerText = "";
+            var input = event.target;
+            var reader = new FileReader();
+            var imgElement = $('#preview3');
+            var imgElement2 = $('#preview4');
+            reader.onload = function (e) {
+                imgElement.attr('src', reader.result).show();
+            };
+
+
+            reader.readAsDataURL(input.files[0]);
+
+            imgElement2.removeClass('d-block').addClass('d-none');
+            imgElement.removeClass('d-none').addClass('d-block');
+        }
+
+
+    }
 
     function previewPhoto3(event) {
         var input = event.target;

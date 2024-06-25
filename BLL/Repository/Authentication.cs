@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Interface;
-
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -8,10 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using DataAccess.DataContext;
 using DataAccess.DataModels;
 using DataAccess.CustomModels;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Net.Mail;
 using System.Net;
-using System.Collections;
 using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic.Repository
@@ -104,6 +101,7 @@ namespace BusinessLogic.Repository
         public void StoreProfilePhoto(IFormFile file, int userId)
         {
             User user = _context.Users.FirstOrDefault(x => x.Userid == userId);
+            var fileName = user.Profilephoto;
 
             if (user == null)
             {
@@ -111,7 +109,11 @@ namespace BusinessLogic.Repository
             }
 
             string fileExtension = Path.GetExtension(file.FileName);
-            string fileName = $"{userId}_{user.Firstname.Trim() + user.Lastname.Trim()}{fileExtension}";
+            if (fileExtension == ".png" && fileExtension == ".jpg" && fileExtension == ".jpeg")
+            {
+
+                 fileName = $"{userId}_{user.Firstname.Trim() + user.Lastname.Trim()}{fileExtension}";
+            }
 
             string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UsersProfile");
 
@@ -133,6 +135,7 @@ namespace BusinessLogic.Repository
             }
 
             user.Profilephoto = fileName;
+            
         }
 
         public void EmailSender(string email,string subject, string message)

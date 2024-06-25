@@ -19,6 +19,74 @@ namespace BusinessLogic.Repository
             _authentication = authentication;
             _httpContext = httpContext;
         }
+
+
+        #region private methood
+
+        private int GetAutherId(string? AuthorName)
+        {
+            int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name == AuthorName && x.Isdeleted != true)?.Authorid;
+
+            if (AuthorId == null)
+            {
+                Author Author = new Author() { Name = AuthorName };
+                _context.Authors.Add(Author);
+                _context.SaveChanges();
+                AuthorId = Author.Authorid;
+            }
+
+
+            return (int)AuthorId;
+        }
+        private int GetCategoryId(string? categoryName)
+        {
+
+            int? catId = _context.Categories.FirstOrDefault(x => x.Categoryname == categoryName)?.Categoryid;
+            if (catId == null)
+            {
+                Category c = new Category() { Categoryname = categoryName };
+                _context.Categories.Add(c);
+                _context.SaveChanges();
+                catId = c.Categoryid;
+            }
+            return (int)catId;
+        }
+        private string GetStatusMessage(int tempId)
+        {
+            switch (tempId)
+            {
+                case 1:
+                    return "Your order has been accepted by the admin. It will be delivered to you very soon.";
+                case 2:
+                    return "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
+                case 3:
+                    return "Your order has been delivered to you. We hope you received your order!";
+                case 4:
+                    return "Your order has been deleted as per your request.";
+                default:
+                    return "";
+            }
+        }
+
+        private string GetSubject(int tempId)
+        {
+            switch (tempId)
+            {
+                case 1:
+                    return "Order Acceptance";
+                case 2:
+                    return "Order Shipped";
+                case 3:
+                    return "Order Delivered";
+                case 4:
+                    return "Order Deleted";
+                default:
+                    return "";
+            }
+        }
+        #endregion
+
+        #region public method
         public AdminDashboardModel GetAdminDashboardData()
         {
             int? userid = _httpContext.HttpContext.Session.GetInt32("UserId");
@@ -61,7 +129,7 @@ namespace BusinessLogic.Repository
             return model;
 
         }
-        public OrderListModel getOrderListData()
+        public OrderListModel GetOrderListData()
         {
             OrderListModel orderList = new OrderListModel();
 
@@ -70,23 +138,33 @@ namespace BusinessLogic.Repository
                                     .Select(x => x.Orderid)
                                     .ToList();
 
-
             orderList.OrderDetails = _context.Orderdetails
-                                                .Where(x => orderIds.Contains((int)x.Orderid))
-                                                .ToList();
+                                            .Where(od => orderIds.Contains((int)od.Orderid))
+                                            .Include(od => od.Book)
+                                                .ThenInclude(b => b.Author)
+                                            .ToList();
+
             orderList.Orders = _context.Orders
-                                                .Where(x => orderIds.Contains((int)x.Orderid))
-                                                .ToList();
+                                        .Where(o => orderIds.Contains((int)o.Orderid))
+                                        .Include(o => o.Customer)
+                                        .Include(o => o.Orderstatus)
+                                        .ToList();
+
             orderList.Books = _context.Books
-                                                .ToList();
+                                        .Include(b => b.Author)
+                                        .ToList();
+
             orderList.Authors = _context.Authors
-                                               .ToList();
+                                        .ToList();
+
             orderList.Categories = _context.Categories
-                                               .ToList();
+                                            .ToList();
+
             orderList.Customers = _context.Customers
-                                                .ToList();
+                                            .ToList();
+
             orderList.Statuses = _context.Statuses
-                                               .ToList();
+                                            .ToList();
 
             return orderList;
         }
@@ -163,34 +241,6 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        private int GetAutherId(string? AuthorName)
-        {
-            int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name == AuthorName && x.Isdeleted != true)?.Authorid;
-
-            if (AuthorId == null)
-            {
-                Author Author = new Author() { Name = AuthorName };
-                _context.Authors.Add(Author);
-                _context.SaveChanges();
-                AuthorId = Author.Authorid;
-            }
-
-
-            return (int)AuthorId;
-        }
-        private int GetCategoryId(string? categoryName)
-        {
-
-            int? catId = _context.Categories.FirstOrDefault(x => x.Categoryname == categoryName)?.Categoryid;
-            if (catId == null)
-            {
-                Category c = new Category() { Categoryname = categoryName };
-                _context.Categories.Add(c);
-                _context.SaveChanges();
-                catId = c.Categoryid;
-            }
-            return (int)catId;
-        }
         public bool IsBookExist(string? bookTitle)
         {
             return _context.Books.Any(i => i.Title == bookTitle && i.Isdeleted != true);
@@ -310,7 +360,6 @@ namespace BusinessLogic.Repository
 
         }
 
-
         public bool GetDeleteBook(int bookId)
         {
             if (bookId != 0)
@@ -345,7 +394,7 @@ namespace BusinessLogic.Repository
         }
         public bool EditAdminProfile(AdminProfileModel profile)
         {
-            User? user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
+            User user = _context.Users.FirstOrDefault(x => x.Userid == profile.UserId);
             if (user != null)
             {
                 user.Firstname = profile.FirstName;
@@ -357,33 +406,33 @@ namespace BusinessLogic.Repository
                 user.Gender = profile.Gender;
                 user.Phonenumber = profile.Contact;
 
-
                 _context.Users.Update(user);
                 _context.SaveChanges();
+
                 if (profile.UserProfilePhoto != null)
                 {
                     _authentication.StoreProfilePhoto(profile.UserProfilePhoto, profile.UserId);
                 }
 
-                Admin? admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
+                Admin admin = _context.Admins.FirstOrDefault(x => x.Email == user.Email);
                 if (admin != null)
                 {
                     admin.Firstname = profile.FirstName;
                     admin.Lastname = profile.LastName;
                     admin.Address = profile.Address;
-                    admin.Email = profile.Email;
                     admin.City = profile.City;
                     admin.Gender = profile.Gender;
                     admin.Phonenumber = profile.Contact;
+
                     _context.Admins.Update(admin);
                     _context.SaveChanges();
                 }
 
                 return true;
             }
-            return false;
 
-        }
+            return false;
+        } 
 
         public AuthorListModel GetAuthorList()
         {
@@ -393,7 +442,7 @@ namespace BusinessLogic.Repository
             };
             return model;
         }
-        public CategoryListModel getCategoriesList()
+        public CategoryListModel GetCategoriesList()
         {
             CategoryListModel model = new CategoryListModel()
             {
@@ -423,9 +472,17 @@ namespace BusinessLogic.Repository
 
         public CategoryListModel GetAddCategory(int categoryId)
         {
-            Category? category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
             CategoryListModel model = new CategoryListModel();
-            if (category != null && categoryId != 0)
+
+            if (categoryId <= 0)
+            {
+                model.CategoryId = 0;
+                return model;
+            }
+
+            Category category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
+
+            if (category != null)
             {
                 model.CategoryId = category.Categoryid;
                 model.CategoryName = category.Categoryname;
@@ -438,86 +495,116 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public bool GetDeleteAuthor(int AuthorId)
+        public bool GetDeleteAuthor(int authorId)
         {
-            if (AuthorId != 0)
-            {
-                Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == AuthorId);
-                Author.Isdeleted = true;
-                _context.Authors.Update(Author);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
+            if (authorId <= 0) return false;
+
+            var author = _context.Authors.FirstOrDefault(x => x.Authorid == authorId);
+
+            if (author == null) return false;
+
+
+            author.Isdeleted = true;
+
+            _context.Authors.Update(author);
+            _context.SaveChanges();
+
+            return true;
         }
 
         public bool GetDeleteCategory(int categoryId)
         {
-            if (categoryId != 0)
-            {
-                Category? category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
-                category.Isdeleted = true;
-                _context.Categories.Update(category);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
+            if (categoryId <= 0) return false;
+
+            var category = _context.Categories.FirstOrDefault(x => x.Categoryid == categoryId);
+
+            if (category == null) return false;
+
+
+            category.Isdeleted = true;
+
+            _context.Categories.Update(category);
+            _context.SaveChanges();
+
+            return true;
         }
 
         public bool AddOrUpdateAuthor(AuthorListModel model)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model), "AuthorListModel cannot be null.");
+            }
+
             if (model.AuthorId != 0)
             {
-                Author? Author = _context.Authors.FirstOrDefault(x => x.Authorid == model.AuthorId);
-                Author.Name = model.AuthorName;
-                Author.Bio = model.Bio;
-                Author.Birthdate = model.BirthDate;
-                Author.Isdeleted = false;
-                _context.Authors.Update(Author);
-                _context.SaveChanges();
-                return true;
+                var existingAuthor = _context.Authors.FirstOrDefault(x => x.Authorid == model.AuthorId);
+                if (existingAuthor != null)
+                {
+                    existingAuthor.Name = model.AuthorName;
+                    existingAuthor.Bio = model.Bio;
+                    existingAuthor.Birthdate = model.BirthDate;
+                    existingAuthor.Isdeleted = false;
+
+                    _context.Authors.Update(existingAuthor);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
             }
             else
             {
-                if (_context.Authors.Any(x => x.Name.Trim() != model.AuthorName.Trim()))
+
+                if (!_context.Authors.Any(x => x.Name.Trim().Equals(model.AuthorName.Trim(), StringComparison.OrdinalIgnoreCase)))
                 {
-                    Author Author = new Author()
+                    Author newAuthor = new Author()
                     {
                         Name = model.AuthorName,
                         Bio = model.Bio,
                         Birthdate = model.BirthDate,
                         Isdeleted = false
                     };
-                    _context.Authors.Add(Author);
+
+                    _context.Authors.Add(newAuthor);
                     _context.SaveChanges();
                     return true;
                 }
                 return false;
             }
-
-
         }
+
         public bool AddOrUpdateCategory(CategoryListModel model)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model), "CategoryListModel cannot be null.");
+            }
+
             if (model.CategoryId != 0)
             {
-                Category? ca = _context.Categories.FirstOrDefault(x => x.Categoryid == model.CategoryId);
-                ca.Categoryname = model.CategoryName;
-                ca.Isdeleted = false;
-                _context.Categories.Update(ca);
-                _context.SaveChanges();
-                return true;
+                var existingCategory = _context.Categories.FirstOrDefault(x => x.Categoryid == model.CategoryId);
+                if (existingCategory != null)
+                {
+                    existingCategory.Categoryname = model.CategoryName;
+                    existingCategory.Isdeleted = false;
+
+                    _context.Categories.Update(existingCategory);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
             }
             else
             {
-                if (_context.Categories.Any(x => x.Categoryname.Trim() != model.CategoryName.Trim()))
+                if (!_context.Categories.Any(x => x.Categoryname.Trim().Equals(model.CategoryName.Trim(), StringComparison.OrdinalIgnoreCase)))
                 {
-                    Category category = new Category()
+                    Category newCategory = new Category()
                     {
                         Categoryname = model.CategoryName,
                         Isdeleted = false
                     };
-                    _context.Categories.Add(category);
+
+                    _context.Categories.Add(newCategory);
                     _context.SaveChanges();
                     return true;
                 }
@@ -578,141 +665,6 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public bool GetAcceptorder(int orderId, int customerId)
-        {
-            if (orderId != 0 && customerId != 0)
-            {
-                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
-
-                if (ord != null)
-                {
-                    ord.Orderstatusid = 2;
-                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
-                    ord.Modifieddate = DateTime.Now;
-                    _context.SaveChanges();
-
-                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
-                    if (customer != null)
-                    {
-                        string recipientEmail = customer.Email;
-                        string status = "Your order has been accepted by the admin. It will be delivered to you very soon.";
-                        string body = _authentication.OrderMailMessageBody(status);
-                        string subject = "Order Acceptance";
-
-                        _authentication.EmailSender(recipientEmail, subject, body);
-                    }
-
-                }
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public bool GetShippedorder(int orderId, int customerId)
-        {
-            if (orderId != 0 && customerId != 0)
-            {
-                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
-
-                if (ord != null)
-                {
-                    ord.Orderstatusid = 3;
-                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
-                    ord.Modifieddate = DateTime.Now;
-                    _context.SaveChanges();
-
-                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
-                    if (customer != null)
-                    {
-                        string recipientEmail = customer.Email;
-                        string status = "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
-                        string body = _authentication.OrderMailMessageBody(status);
-                        string subject = "Order Shipped";
-
-                        _authentication.EmailSender(recipientEmail, subject, body);
-                    }
-
-                }
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool GetDeliveredOrder(int orderId, int customerId)
-        {
-            if (orderId != 0 && customerId != 0)
-            {
-                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
-
-                if (ord != null)
-                {
-                    ord.Orderstatusid = 4;
-                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
-                    ord.Modifieddate = DateTime.Now;
-                    _context.SaveChanges();
-
-                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
-                    if (customer != null)
-                    {
-                        string recipientEmail = customer.Email;
-                        string status = "Your order has been  delivered to you. we hope You received Order!";
-                        string body = _authentication.OrderMailMessageBody(status);
-                        string subject = "Order Delivered";
-
-                        _authentication.EmailSender(recipientEmail, subject, body);
-                    }
-
-                }
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool GetDeletedOrder(int orderId, int customerId)
-        {
-            if (orderId != 0 && customerId != 0)
-            {
-                var ord = _context.Orders.FirstOrDefault(x => x.Orderid == orderId);
-
-                if (ord != null)
-                {
-                    ord.Isdeleted = true;
-                    ord.Modifiedby = _httpContext.HttpContext.Session.GetInt32("UserId");
-                    ord.Modifieddate = DateTime.Now;
-                    _context.SaveChanges();
-
-                    var customer = _context.Customers.FirstOrDefault(x => x.Customerid == customerId);
-                    if (customer != null)
-                    {
-                        string recipientEmail = customer.Email;
-                        string status = "Your order has been  Deleted as per your request!";
-                        string body = _authentication.OrderMailMessageBody(status);
-                        string subject = "Order Deleted";
-
-                        _authentication.EmailSender(recipientEmail, subject, body);
-                    }
-
-                }
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public bool HandleOrderAction(int orderId, int customerId, int tempId)
         {
             if (orderId != 0 && customerId != 0)
@@ -761,40 +713,6 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-        private string GetStatusMessage(int tempId)
-        {
-            switch (tempId)
-            {
-                case 1:
-                    return "Your order has been accepted by the admin. It will be delivered to you very soon.";
-                case 2:
-                    return "Your order has been shipped by the admin. It will be delivered to you 4-5 days.";
-                case 3:
-                    return "Your order has been delivered to you. We hope you received your order!";
-                case 4:
-                    return "Your order has been deleted as per your request.";
-                default:
-                    return "";
-            }
-        }
-
-        private string GetSubject(int tempId)
-        {
-            switch (tempId)
-            {
-                case 1:
-                    return "Order Acceptance";
-                case 2:
-                    return "Order Shipped";
-                case 3:
-                    return "Order Delivered";
-                case 4:
-                    return "Order Deleted";
-                default:
-                    return "";
-            }
-        }
-
-
+    #endregion
     }
 }

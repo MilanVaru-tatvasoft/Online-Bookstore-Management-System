@@ -9,7 +9,7 @@ namespace BusinessLogic.Interface
 {
     public interface IAdminDashboardRepo
     {
-        public OrderListModel getOrderListData();
+        public OrderListModel GetOrderListData();
         public AdminDashboardModel GetAdminDashboardData();
 
         public AdminBookListModel GetBookList(AdminBookListModel model);
@@ -22,7 +22,7 @@ namespace BusinessLogic.Interface
         public bool EditAdminProfile(AdminProfileModel profile);
         public AdminProfileModel GetAdminProfile(int? uId);
         public bool GetDeleteBook(int bookId);
-        public CategoryListModel getCategoriesList();
+        public CategoryListModel GetCategoriesList();
         public AuthorListModel GetAuthorList();
         public AuthorListModel GetEditAuthor(int AuthorId);
         public CategoryListModel GetAddCategory(int categtoryId);
@@ -32,10 +32,7 @@ namespace BusinessLogic.Interface
         public bool AddOrUpdateCategory(CategoryListModel model);
 
         public AdminDashboardModel GetChartData(DateTime date);
-         public bool GetAcceptorder(int orderId,  int customerId);
-         public bool GetShippedorder(int orderId,  int customerId);
-         public bool GetDeliveredOrder(int orderId,  int customerId);
-        public bool GetDeletedOrder(int orderId, int customerId);
+
         public bool HandleOrderAction(int orderId, int customerId, int tempId);
 
 

@@ -94,6 +94,7 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage = "This field is required")]
         public string? City { get; set; }
         public string? UserPhotoName { get; set; }
+        [Required(ErrorMessage ="This is required")]
         public IFormFile? UserProfilePhoto { get; set; }
     }
 

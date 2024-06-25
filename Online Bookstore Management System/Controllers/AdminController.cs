@@ -178,7 +178,7 @@ namespace Online_Bookstore_Management_System.Controllers
         }
         public IActionResult GetCategoryList()
         {
-            CategoryListModel model = _adminDashboard.getCategoriesList();
+            CategoryListModel model = _adminDashboard.GetCategoriesList();
 
             return PartialView("_CategoryList", model);
         }
@@ -271,7 +271,7 @@ namespace Online_Bookstore_Management_System.Controllers
 
         public IActionResult GetOrderList()
         {
-            OrderListModel model = _adminDashboard.getOrderListData();
+            OrderListModel model = _adminDashboard.GetOrderListData();
             return PartialView("_OrderListView", model);
         }
         public IActionResult HandleOrderAction(int tempId, int orderId, int customerId)

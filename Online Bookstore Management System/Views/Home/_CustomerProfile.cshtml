@@ -1,239 +1,254 @@
-﻿    @model DataAccess.CustomModels.UserProfile
+﻿@model DataAccess.CustomModels.UserProfile
 
 
 
-    <style>
+<style>
 
-        .profile-container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin: 20px
-        }
+    .profile-container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin: 20px
+    }
 
-        .profile-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 20px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            margin-bottom: 20px;
-        }
+    .profile-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 20px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        margin-bottom: 20px;
+    }
 
-        .profile-photo img {
-            max-width: 200px;
-            height: 200px;
-            border-radius: 10%;
-            border: 5px solid #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-    </style>
+    .profile-photo img {
+        max-width: 200px;
+        height: 200px;
+        border-radius: 10%;
+        border: 5px solid #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+</style>
 
-    <div class="container">
-        <div class="profile-container">
-            <div class="profile-header text-center">
-                <h2>Customer Profile</h2>
-            </div>
-            <form id="profileForm" onsubmit="EditUserProfile()">
-                <div class="row">
-                    <div class="col-md-4 text-center">
-                        <div class="profile-photo ">
-                            <div class="mt-2 d-flex justify-content-center ">
-                                @if (Model.UserPhotoName == null)
-                                {
-                                    <img id="photo" src="~/UsersProfile/Common_ProfilePic.png" alt="Profile Photo">
-                                }
-                                else
-                                {
-                                    <img id="preview2" src="~/UsersProfile/@Model.UserPhotoName" class="d-block" alt="Preview" style="max-width: 100%; max-height: 200px;">
-                                    <img id="preview" src="#" alt="Preview" class="d-none" style="max-width: 100%; max-height: 200px; ">
-                                }
+<div class="container">
+    <div class="profile-container">
+        <div class="profile-header text-center">
+            <h2>Customer Profile</h2>
+        </div>
+        <form id="profileForm" onsubmit="EditUserProfile()">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <div class="profile-photo ">
+                        <div class="mt-2 d-flex justify-content-center ">
+                            @if (Model.UserPhotoName == null)
+                            {
+                                <img id="photo" src="~/UsersProfile/Common_ProfilePic.png" alt="Profile Photo">
+                            }
+                            else
+                            {
+                                <img id="preview2" src="~/UsersProfile/@Model.UserPhotoName" class="d-block" alt="Preview" style="max-width: 100%; max-height: 200px;">
+                                <img id="preview" src="#" alt="Preview" class="d-none" style="max-width: 100%; max-height: 200px; ">
+                            }
+                        </div>
+
+                        <div class="form-floating my-2">
+                            <input type="file" asp-for="UserProfilePhoto" id="fileUploadId" accept=".png,.jpg,.jpeg" onchange=" handleFileUpload(event);" disabled />
+                            <br />
+                            <span id="errormsg" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-8 ">
+                    <input type="text" asp-for="@Model.UserId" hidden />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="floatingInputFirstName" asp-for="FirstName" placeholder="First Name" disabled>
+                                <label for="floatingInputFirstName">First Name</label>
+                                <span class="text-danger" asp-validation-for="FirstName"></span>
                             </div>
-
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="floatingInputLastName" asp-for="LastName" placeholder="Last Name" disabled>
+                                <label for="floatingInputLastName">Last Name</label>
+                                <span class="text-danger" asp-validation-for="LastName"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <div class="form-floating my-2">
-                                <input type="file" asp-for="@Model.UserProfilePhoto" accept="image" onchange="previewPhoto2(event)" disabled />
-                                <span class="text-danger"></span>
+                                <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.Birthdate" placeholder="Birth Date" disabled>
+                                <label for="floatingBirthDate">Birth Date</label>
+                                <span class="text-danger" asp-validation-for="Birthdate"></span>
                             </div>
-
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="my-2">
+                                <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="Gender" disabled required>
+                                    <option value="male" selected>Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating my-2">
+                                <input type="email" class="form-control" id="floatingEmail" asp-for="Email" placeholder="Email Address" disabled>
+                                <label for="floatingEmail">Email Address</label>
+                                <span class="text-danger" asp-validation-for="Email"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating my-2">
+                                <input type="text" class="form-control" id="floatingContact" asp-for="Contact" placeholder="Contact" disabled>
+                                <label for="floatingContact">Contact</label>
+                                <span class="text-danger" asp-validation-for="Contact"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating my-2">
+                                <input type="text" class="form-control" id="floatingCity" asp-for="City" placeholder="City" disabled>
+                                <label for="floatingCity">City</label>
+                                <span class="text-danger" asp-validation-for="City"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating my-2">
+                                <textarea class="form-control" id="floatingAddress" asp-for="Address" placeholder="Address" style="height: 100px;" disabled></textarea>
+                                <label for="floatingAddress">Address</label>
+                                <span class="text-danger" asp-validation-for="Address"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-8 ">
-                        <input type="text" asp-for="@Model.UserId" hidden />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInputFirstName" asp-for="FirstName" placeholder="First Name" disabled>
-                                    <label for="floatingInputFirstName">First Name</label>
-                                    <span class="text-danger" asp-validation-for="FirstName"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInputLastName" asp-for="LastName" placeholder="Last Name" disabled>
-                                    <label for="floatingInputLastName">Last Name</label>
-                                    <span class="text-danger" asp-validation-for="LastName"></span>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating my-2">
-                                    <input type="date" class="form-control" id="floatingBirthDate" asp-for="@Model.Birthdate" placeholder="Birth Date" disabled>
-                                    <label for="floatingBirthDate">Birth Date</label>
-                                    <span class="text-danger" asp-validation-for="Birthdate"></span>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="my-2">
-                                    <select id="gender" name="gender" class="form-select" style="height:55px" asp-for="Gender" disabled required>
-                                        <option value="male" selected>Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating my-2">
-                                    <input type="email" class="form-control" id="floatingEmail" asp-for="Email" placeholder="Email Address" disabled>
-                                    <label for="floatingEmail">Email Address</label>
-                                    <span class="text-danger" asp-validation-for="Email"></span>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control" id="floatingContact" asp-for="Contact" placeholder="Contact" disabled>
-                                    <label for="floatingContact">Contact</label>
-                                    <span class="text-danger" asp-validation-for="Contact"></span>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control" id="floatingCity" asp-for="City" placeholder="City" disabled>
-                                    <label for="floatingCity">City</label>
-                                    <span class="text-danger" asp-validation-for="City"></span>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating my-2">
-                                    <textarea class="form-control" id="floatingAddress" asp-for="Address" placeholder="Address" style="height: 100px;" disabled></textarea>
-                                    <label for="floatingAddress">Address</label>
-                                    <span class="text-danger" asp-validation-for="Address"></span>
-                                </div>
-                            </div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-dark px-3" onclick="GetResetPassword()">
+                                Reset password
+                            </button>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <button class="btn btn-dark px-3" onclick="GetResetPassword()">
-                                    Reset password
-                                </button>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button id="edit" class="btn btn-primary" onclick="ActionEdit()">Edit</button>
-                                <button class="btn btn-success" type="submit" style="display: none;" onclick="EditUserProfile()">Submit</button>
-                                <a id="reset" class="btn btn-secondary" style="display: none;" onclick="GetUserProfile()">Cancel</a>
-                            </div>
+                        <div class="d-flex gap-2">
+                            <button id="edit" class="btn btn-primary" onclick="ActionEdit()">Edit</button>
+                            <button class="btn btn-success" id="customerProfileSubmit" type="submit" style="display: none;" onclick="EditUserProfile()">Submit</button>
+                            <a id="reset" class="btn btn-secondary" style="display: none;" onclick="GetUserProfile()">Cancel</a>
                         </div>
                     </div>
                 </div>
+            </div>
 
+        </form>
+    </div>
+    <!-- Reset Password Section -->
+    <div class="card mt-3 d-none" id="ResetPassword">
+        <div class="card-header bg-secondary text-white">
+            <h2 class="card-title mb-0">Reset Password</h2>
+        </div>
+        <div class="card-body">
+            <form id="resetForm" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="password" asp-for="Password" class="form-control" id="custpassword" placeholder="Password" required oninput="return CustomerPasswordLength()">
+                        <span class="text-danger" id="error"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return CustomerComparePassword()">
+                        <span class="text-danger" id="error2"></span>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-center gap-2">
+                        <button type="submit" class="btn btn-primary" id="submitbtn" onclick="ResetPassword()" disabled>Submit</button>
+                        <button type="button" class="btn btn-dark" onclick="GetUserProfile()">Reset</button>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="UserId" />
             </form>
         </div>
-        <!-- Reset Password Section -->
-        <div class="card mt-3 d-none" id="ResetPassword">
-            <div class="card-header bg-secondary text-white">
-                <h2 class="card-title mb-0">Reset Password</h2>
-            </div>
-            <div class="card-body">
-                <form id="resetForm" method="post">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="password" asp-for="Password" class="form-control" id="custpassword" placeholder="Password" required oninput="return CustomerPasswordLength()">
-                            <span class="text-danger" id="error"></span>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="password" asp-for="Password2" class="form-control" id="confirmPassword" placeholder="Confirm Password" required oninput="return CustomerComparePassword()">
-                            <span class="text-danger" id="error2"></span>
-                        </div>
-                        <div class="col-md-3 d-flex justify-content-center gap-2">
-                            <button type="submit" class="btn btn-primary" id="submitbtn" onclick="ResetPassword()" disabled>Submit</button>
-                            <button type="button" class="btn btn-dark" onclick="GetUserProfile()">Reset</button>
-                        </div>
-                    </div>
-                    <input type="hidden" asp-for="Email" />
-                    <input type="hidden" asp-for="UserId" />
-                </form>
-            </div>
-        </div>
     </div>
+</div>
+<partial name="_ValidationScriptsPartial" />
 
-    <script>
+<script>
+    function handleFileUpload(event) {
+        var input = event.target;
+        var file = input.files[0];
+        var fileName = file.name.toLowerCase();
+      
+        var tagToDisplayMessage = document.getElementById('errormsg');
 
-        function ActionEdit() {
-            event.preventDefault();
-            const editButton = document.getElementById('edit');
-
-            const submitButton = document.querySelector('form button[type="submit"]');
-            const resetButton = document.getElementById('reset');
-
-            const inputFields = document.querySelectorAll('form input, form textarea, form select');
-            inputFields.forEach(function (input) {
-                input.disabled = false;
-            });
-
-            submitButton.style.display = 'block';
-            resetButton.style.display = 'block';
-
-            editButton.style.display = 'none';
-        }
-
-        function previewPhoto2(event) {
+        if (!(fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.jpg'))) {
+            tagToDisplayMessage.innerText = "Upload file with .jpeg, .jpg, or .png extension.";
+            input.value = "";
+            imgElement.removeClass('d-block').addClass('d-none');
+            return;
+        } else {
+            tagToDisplayMessage.innerText = ""; 
             var input = event.target;
             var reader = new FileReader();
-            var imgElement = $('#preview'); 
-            var imgElement2 = $('#preview2'); 
+            var imgElement = $('#preview');
+            var imgElement2 = $('#preview2');
             reader.onload = function (e) {
                 imgElement.attr('src', reader.result).show();
             };
 
-            reader.readAsDataURL(input.files[0]); 
 
-            imgElement2.removeClass('d-block').addClass('d-none'); 
-            imgElement.removeClass('d-none').addClass('d-block'); 
+            reader.readAsDataURL(input.files[0]);
+
+            imgElement2.removeClass('d-block').addClass('d-none');
+            imgElement.removeClass('d-none').addClass('d-block');
         }
 
+   
+    }
 
-        function GetResetPassword() {
-            event.preventDefault();
-            $('#ResetPassword').toggleClass('d-block d-none');
+    function ActionEdit() {
+        event.preventDefault();
+        const editButton = document.getElementById('edit');
 
+        const submitButton = document.querySelector('form button[type="submit"]');
+        const resetButton = document.getElementById('reset');
+
+        const inputFields = document.querySelectorAll('form input, form textarea, form select');
+        inputFields.forEach(function (input) {
+            input.disabled = false;
+        });
+
+        submitButton.style.display = 'block';
+        resetButton.style.display = 'block';
+
+        editButton.style.display = 'none';
+    }
+
+    function GetResetPassword() {
+        event.preventDefault();
+        $('#ResetPassword').toggleClass('d-block d-none');
+    }
+
+    function CustomerPasswordLength() {
+        var password = document.getElementById("custpassword").value;
+
+        if (password.length < 6) {
+            $('#error').text("Password length must be greater than 6!");
+            return false;
+
+        } else {
+            $('#error').hide();
+        }
+    }
+
+    function CustomerComparePassword() {
+        var password = document.getElementById("custpassword").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password != confirmPassword) {
+            $('#error2').text("Passwords not the same!");
+            $('#submitbtn').prop('disabled', true);
+
+            return false;
+        } else {
+            $('#error2').empty();
+            $('#submitbtn').prop('disabled', false);
 
         }
+    }
 
-        function CustomerPasswordLength() {
-            var password = document.getElementById("custpassword").value;
-
-            if (password.length < 6) {
-                $('#error').text("Password length must be greater than 6!");
-                return false;
-
-            } else {
-                $('#error').hide();
-            }
-        }
-
-        function CustomerComparePassword() {
-            var password = document.getElementById("custpassword").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (password != confirmPassword) {
-                $('#error2').text("Passwords not the same!");
-                $('#submitbtn').prop('disabled', true);
-
-                return false;
-            } else {
-                $('#error2').empty();
-                $('#submitbtn').prop('disabled', false);
-
-            }
-        }
-
-    </script>
+</script>
