@@ -27,6 +27,9 @@ public partial class Book
     [Column("noofpages")]
     public int? Noofpages { get; set; }
 
+    [Column("publisherid")]
+    public int? Publisherid { get; set; }
+
     [Column("categoryid")]
     public int? Categoryid { get; set; }
 
@@ -71,6 +74,10 @@ public partial class Book
 
     [InverseProperty("Book")]
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
+
+    [ForeignKey("Publisherid")]
+    [InverseProperty("Books")]
+    public virtual Publisher? PublisherNavigation { get; set; }
 
     [InverseProperty("Book")]
     public virtual ICollection<RatingReview> RatingReviews { get; set; } = new List<RatingReview>();

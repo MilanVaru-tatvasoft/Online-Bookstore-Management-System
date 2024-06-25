@@ -151,7 +151,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = book.Publisher,
+                //publisherName = book.Publisher,
                 bookPic = book.Bookphoto,
 
 
@@ -210,7 +210,7 @@ namespace BusinessLogic.Repository
                 Title = model.Title,
                 Authorid = authorId,
                 Bookphoto = model.bookPhoto.FileName,
-                Publisher = model.publisherName,
+                //Publisher = model.publisherName,
                 Categoryid = categoryId,
                 Noofpages = model.pageNumber,
                 Price = (decimal)model.price,
@@ -240,7 +240,7 @@ namespace BusinessLogic.Repository
             book.Title = model.Title;
             book.Authorid = authorId;
             book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
-            book.Publisher = model.publisherName;
+            //book.Publisher = model.publisherName;
             book.Categoryid = categoryId;
             book.Noofpages = model.pageNumber;
             book.Price = (decimal)model.price;
@@ -269,7 +269,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = book.Publisher,
+                //publisherName = book.Publisher,
                 categoryName = _context.Categories?.FirstOrDefault(x => x.Categoryid == book.Categoryid).Categoryname,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,

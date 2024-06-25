@@ -272,7 +272,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                publisherName = book.Publisher,
+                //publisherName = book.Publisher,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,
                 quantity = 1,

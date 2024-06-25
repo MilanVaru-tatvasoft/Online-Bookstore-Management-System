@@ -72,7 +72,7 @@
                             <td>@i.Address</td>
                             <td>@i.City</td>
                             <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
-                            <td>@i.Orderstatus.StatusName</td>
+                            <td>@* @i.Orderstatus.StatusName *@</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2 w-auto">
                                     @if (i.Orderstatusid == 1)
