@@ -30,8 +30,6 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Emaillog> Emaillogs { get; set; }
 
-    public virtual DbSet<Favorite> Favorites { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<Orderdetail> Orderdetails { get; set; }
@@ -116,21 +114,6 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Emaillogid).HasName("emaillog_pkey");
 
             entity.Property(e => e.Senddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-        });
-
-        modelBuilder.Entity<Favorite>(entity =>
-        {
-            entity.HasKey(e => e.Favoriteid).HasName("favorites_pkey");
-
-            entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            entity.HasOne(d => d.Book).WithMany(p => p.Favorites)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_book");
-
-            entity.HasOne(d => d.Customer).WithMany(p => p.Favorites)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_customer");
         });
 
         modelBuilder.Entity<Order>(entity =>

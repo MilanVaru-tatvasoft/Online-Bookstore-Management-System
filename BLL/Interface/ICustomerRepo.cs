@@ -31,8 +31,8 @@ namespace BusinessLogic.Interface
 
         public PaymentBillDetails getBillDetails(int orderId);
         public OrderData GetOrderHistoy(int? userId);
-      
 
+        public int GetFilterBookCount(CustomerMainPage model);
 
 
 

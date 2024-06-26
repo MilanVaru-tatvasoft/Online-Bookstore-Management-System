@@ -51,9 +51,6 @@ public partial class Customer
     public virtual ICollection<Addtocart> Addtocarts { get; set; } = new List<Addtocart>();
 
     [InverseProperty("Customer")]
-    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-
-    [InverseProperty("Customer")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     [InverseProperty("Customer")]

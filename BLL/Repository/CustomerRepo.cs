@@ -44,24 +44,7 @@ namespace BusinessLogic.Repository
 
 
 
-            if (!string.IsNullOrEmpty(model.Search1))
-            {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
-            }
-
-            if (model.filterAuthors != null && model.filterAuthors.Count != 0)
-            {
-                booksList = booksList.Where(r => model.filterAuthors.Contains((int)r.Authorid)).ToList();
-            }
-
-            if (model.filterCategory != null && model.filterCategory.Count != 0)
-            {
-                booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
-            }
-            if (!string.IsNullOrEmpty(model.Search4))
-            {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
-            }
+          
 
 
 
@@ -122,7 +105,6 @@ namespace BusinessLogic.Repository
                 decimal i = 0;
                 if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.Rating); }
 
-                bool isFavorite = _context.Favorites.Any(x => x.Customerid == customerId && x.Bookid == book.Bookid);
 
                 DashboardList item = new DashboardList();
                 item.BookId = book.Bookid;
@@ -133,15 +115,15 @@ namespace BusinessLogic.Repository
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
                 item.AvgRating = i;
-                item.IsFavorite = isFavorite;
 
                 item.Price = book.Price;
 
                 dashboardList.Add(item);
             }
 
-            if (pageNumber < 1 || pageNumber > lastPageNumber)
+            if (pageNumber < 1 || pageNumber > lastPageNumber+1)
             {
+                model.BookCount = 0;
                 return null;
             }
 
@@ -151,6 +133,37 @@ namespace BusinessLogic.Repository
 
             return dashboardList;
 
+        }
+
+        public int GetFilterBookCount(CustomerMainPage model)
+        {
+            var booksQuery = _context.Books.Include(x => x.Author).Include(y => y.Category)
+                                  .Where(x => x.Isdeleted != true).OrderBy(c => c.Bookid);
+
+            var booksList = booksQuery.ToList();
+
+
+
+            if (!string.IsNullOrEmpty(model.Search1))
+            {
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
+            }
+
+            if (model.filterAuthors != null && model.filterAuthors.Count != 0)
+            {
+                booksList = booksList.Where(r => model.filterAuthors.Contains((int)r.Authorid)).ToList();
+            }
+
+            if (model.filterCategory != null && model.filterCategory.Count != 0)
+            {
+                booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(model.Search4))
+            {
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
+            }
+            return booksList.Count;
         }
 
         public Admin GetAdminData(string email)

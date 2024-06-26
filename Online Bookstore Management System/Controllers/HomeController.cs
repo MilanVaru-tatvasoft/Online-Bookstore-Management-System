@@ -96,20 +96,26 @@ namespace Online_Bookstore_Management_System.Controllers
             return PartialView("_CustomerMainPage", dashData);
         }
 
+        public IActionResult GetbookListCount(CustomerMainPage model)
+        {
+            int count = _customerRepo.GetFilterBookCount(model);
+            return Ok(count); 
+        }
+
+
         public IActionResult CustomerDashboardTable(CustomerMainPage model)
         {
             try
             {
                 int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
                 List<DashboardList> list = _customerRepo.GetCustomerDashboardTable(model, userId, model.PageNumber);
-
+                model.BookCount = _customerRepo.GetFilterBookCount(model);
                 if (list != null && list.Count > 0)
                 {
                     return Json(list);
                 }
                 else
                 {
-               
                     return Json(new List<DashboardList>()); 
                 }
             }

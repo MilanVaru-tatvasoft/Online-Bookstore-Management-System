@@ -39,6 +39,7 @@ namespace DataAccess.CustomModels
         public decimal AvgRating { get; set; }
         public bool IsFavorite { get; set; }
 
+
     }
 
     public class UserProfile
