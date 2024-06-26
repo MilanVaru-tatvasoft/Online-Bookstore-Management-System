@@ -19,8 +19,6 @@ namespace BusinessLogic.Repository
             _authentication = authentication;
         }
 
-
-
         public CustomerMainPage GetCustomerDashboardData(CustomerMainPage model, int? userId, int pageNumber)
         {
             CustomerMainPage _MainPage = new CustomerMainPage();
@@ -42,12 +40,6 @@ namespace BusinessLogic.Repository
 
             var booksList = booksQuery.ToList();
 
-
-
-          
-
-
-
             _MainPage.Authors = authors;
             _MainPage.Categories = categories;
             _MainPage.UserId = userId;
@@ -61,7 +53,7 @@ namespace BusinessLogic.Repository
         }
         public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber)
         {
-            if (pageNumber == 0 && model.Search1 != null && model.filterAuthors.Count != 0 && model.filterCategory.Count != 0 && model.Search4 != null) { pageNumber = 1; }
+            
             int pageSize = 6;
             int? customerId = _context.Customers
                                     .FirstOrDefault(x => x.Userid == userId)
@@ -285,7 +277,6 @@ namespace BusinessLogic.Repository
             return false;
 
         }
-
 
         public viewBookModel ViewBookDetails(int bookId, int? userId)
         {
@@ -704,8 +695,6 @@ namespace BusinessLogic.Repository
 
             return orderData;
         }
-
-       
 
     }
 }
