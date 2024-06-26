@@ -31,8 +31,7 @@ namespace BusinessLogic.Interface
 
         public PaymentBillDetails getBillDetails(int orderId);
         public OrderData GetOrderHistoy(int? userId);
-        public FavoriteModel GetFavoritesPageData(int? userId);
-        public bool FavoriteAction(string actionType, int bookId, int? userId);
+      
 
 
 

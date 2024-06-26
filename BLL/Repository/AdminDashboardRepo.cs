@@ -183,14 +183,14 @@ namespace BusinessLogic.Repository
                 bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
             }
 
-            if (model.Search2 != null && model.Search2.Count != 0)
+            if (model.filterAuthors != null && model.filterAuthors.Count != 0)
             {
-                bookList = bookList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
+                bookList = bookList.Where(r => model.filterAuthors.Contains((int)r.Authorid)).ToList();
             }
 
-            if (model.Search3 != null && model.Search3.Count != 0)
+            if (model.filterCategory != null && model.filterCategory.Count != 0)
             {
-                bookList = bookList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
+                bookList = bookList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
 
             if (model.Search4 != null)

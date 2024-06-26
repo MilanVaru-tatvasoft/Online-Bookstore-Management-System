@@ -43,8 +43,8 @@ namespace DataAccess.CustomModels
         public List<Publisher>? Publishers { get; set; }
         public List<Category>? Categories { get; set; }
         public string? Search1 { get; set; }
-        public List<int>? Search2 { get; set; }
-        public List<int>? Search3 { get; set; }
+        public List<int>? filterAuthors { get; set; }
+        public List<int>? filterCategory { get; set; }
         public string? Search4 { get; set; }
         public List<AdminBookList> AdminBookLists { get; set; }
     }

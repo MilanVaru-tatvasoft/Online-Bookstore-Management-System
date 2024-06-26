@@ -21,8 +21,8 @@ namespace DataAccess.CustomModels
         public int? BookCount { get; set; }
         public int PageNumber { get; set; }
         public string? Search1 { get; set; }
-        public List<int>? Search2 { get; set; }
-        public List<int>? Search3 { get; set; }
+        public List<int>? filterAuthors { get; set; }
+        public List<int>? filterCategory { get; set; }
         public string? Search4 { get; set; }
     }
 

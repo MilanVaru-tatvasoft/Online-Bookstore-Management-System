@@ -49,14 +49,14 @@ namespace BusinessLogic.Repository
                 booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
             }
 
-            if (model.Search2 != null && model.Search2.Count != 0)
+            if (model.filterAuthors != null && model.filterAuthors.Count != 0)
             {
-                booksList = booksList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
+                booksList = booksList.Where(r => model.filterAuthors.Contains((int)r.Authorid)).ToList();
             }
 
-            if (model.Search3 != null && model.Search3.Count != 0)
+            if (model.filterCategory != null && model.filterCategory.Count != 0)
             {
-                booksList = booksList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
+                booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
             if (!string.IsNullOrEmpty(model.Search4))
             {
@@ -78,7 +78,7 @@ namespace BusinessLogic.Repository
         }
         public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber)
         {
-            if (pageNumber == 0 && model.Search1 != null && model.Search2.Count != 0 && model.Search3.Count != 0 && model.Search4 != null) { pageNumber = 1; }
+            if (pageNumber == 0 && model.Search1 != null && model.filterAuthors.Count != 0 && model.filterCategory.Count != 0 && model.Search4 != null) { pageNumber = 1; }
             int pageSize = 6;
             int? customerId = _context.Customers
                                     .FirstOrDefault(x => x.Userid == userId)
@@ -95,14 +95,14 @@ namespace BusinessLogic.Repository
                 booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
             }
 
-            if (model.Search2 != null && model.Search2.Count != 0)
+            if (model.filterAuthors != null && model.filterAuthors.Count != 0)
             {
-                booksList = booksList.Where(r => model.Search2.Contains((int)r.Authorid)).ToList();
+                booksList = booksList.Where(r => model.filterAuthors.Contains((int)r.Authorid)).ToList();
             }
 
-            if (model.Search3 != null && model.Search3.Count != 0)
+            if (model.filterCategory != null && model.filterCategory.Count != 0)
             {
-                booksList = booksList.Where(r => model.Search3.Contains((int)r.Categoryid)).ToList();
+                booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
             if (!string.IsNullOrEmpty(model.Search4))
             {
@@ -692,100 +692,7 @@ namespace BusinessLogic.Repository
             return orderData;
         }
 
-        public FavoriteModel GetFavoritesPageData(int? userId)
-        {
-            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
-            List<int> ids = _context.Favorites.Where(X => X.Customerid == customerId).Select(x => x.Bookid).ToList();
-            List<DashboardList> favlist = new List<DashboardList>();
-
-            if (ids.Count != 0)
-            {
-                var books = _context.Books.Where(x => ids.Contains(x.Bookid)).Include(c => c.Author).Include(z => z.Category).ToList();
-                foreach (var book in books)
-                {
-                    DashboardList list = new DashboardList()
-                    {
-                        BookId = book.Bookid,
-                        BookPhoto = book.Bookphoto,
-                        AuthorId = (int)book.Authorid,
-                        AuthorName = book.Author.Name,
-                        CategoryId = (int)book.Categoryid,
-                        CategoryName = book.Category.Categoryname,
-                        Title = book.Title,
-                        Price = book.Price,
-
-                    };
-
-
-
-                    favlist.Add(list);
-                }
-
-            }
-
-
-            FavoriteModel model = new FavoriteModel();
-            model.FavBookList = favlist;
-            model.CustomerId = customerId;
-            return model;
-        }
-
-        public bool AddToFavorites(int bookId, int? userId)
-        {
-            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId).Customerid;
-            Favorite favData = _context.Favorites.FirstOrDefault(x => x.Customerid == customerId && x.Bookid == bookId);
-            if (favData != null)
-            {
-                return false;
-            }
-            Favorite favorite = new Favorite()
-            {
-                Customerid = customerId,
-                Bookid = bookId,
-                Createddate = DateTime.Now,
-            };
-            _context.Favorites.Add(favorite);
-            _context.SaveChanges();
-            return true;
-        }
-
-        public bool FavoriteAction(string actionType, int bookId, int? userId)
-        {
-            if (userId == null)
-                return false;
-
-            int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid ?? 0;
-
-            if (customerId == 0)
-                return false;
-
-            switch (actionType)
-            {
-                case "add":
-                    var newFavorite = new Favorite
-                    {
-                        Customerid = customerId,
-                        Bookid = bookId,
-                        Createddate = DateTime.Now
-                    };
-                    _context.Favorites.Add(newFavorite);
-                    break;
-
-                case "remove":
-                    var favoriteToRemove = _context.Favorites.FirstOrDefault(x => x.Customerid == customerId && x.Bookid == bookId);
-                    if (favoriteToRemove != null)
-                        _context.Favorites.Remove(favoriteToRemove);
-                    else
-                        return false;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            _context.SaveChanges();
-            return true;
-        }
+       
 
     }
 }

@@ -2,9 +2,9 @@
 @functions {
     public bool ischecked(int AuthorId)
     {
-        if (Model.Search2 != null)
+        if (Model.filterAuthors != null)
         {
-            if (Model.Search2.Contains(AuthorId))
+            if (Model.filterAuthors.Contains(AuthorId))
             {
                 return true;
             }
@@ -14,9 +14,9 @@
     }
     public bool ischecked2(int catId)
     {
-        if (Model.Search3 != null)
+        if (Model.filterCategory != null)
         {
-            if (Model.Search3.Contains(catId))
+            if (Model.filterCategory.Contains(catId))
             {
                 return true;
             }
@@ -119,7 +119,7 @@
                 </div>
                 <div class="form-group col-md-3 col-6">
                     <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.Search2" hidden>
+                        <input type="text" asp-for="@Model.filterAuthors" hidden>
                         <label class="dropdown-label p-2 ">Authors</label>
 
                         <div class="dropdown-list">
@@ -139,7 +139,7 @@
 
                 <div class="form-group col-md-3  col-6">
                     <div class="dropdown " data-control="checkbox-dropdown">
-                        <input type="text" asp-for="@Model.Search3" hidden>
+                        <input type="text" asp-for="@Model.filterCategory" hidden>
                         <label class="dropdown-label p-2">Categories</label>
 
                         <div class="dropdown-list ">
@@ -307,16 +307,16 @@
         // Get all checked checkboxes with class "AuthorData"
         let checkboxes = document.querySelectorAll(".AuthorData:checked");
         let checkboxes2 = document.querySelectorAll(".categorytdata:checked");
-        const search2 = [];
+        const filterAuthors = [];
 
-        // Loop through checked checkboxes and push their values to the search2 array
+        // Loop through checked checkboxes and push their values to the filterAuthors array
         var formData = new FormData($('#searchForm')[0]);
         checkboxes.forEach(function (checkbox) {
-            formData.append('search2', checkbox.value);
+            formData.append('filterAuthors', checkbox.value);
 
         });
         checkboxes2.forEach(function (checkbox) {
-            formData.append('search3', checkbox.value);
+            formData.append('filterCategory', checkbox.value);
 
         });
 

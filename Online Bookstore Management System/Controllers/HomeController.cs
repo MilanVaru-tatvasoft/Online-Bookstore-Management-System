@@ -329,30 +329,8 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
 
-        public IActionResult GetMyFavorites()
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            FavoriteModel model = _customerRepo.GetFavoritesPageData(userId);
-            return PartialView("_MyFavoritesTab", model);
-        }
-        public IActionResult HandleFavoriteAction(string actionType, int bookId)
-        {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-
-            try
-            {
-                bool a = _customerRepo.FavoriteAction(actionType, bookId, userId);
-                bool success = a ? true : false;
-                return Json(new { success });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception occurred: {ex.Message}");
-
-                return Json(new { success = false });
-
-            }
-        }
+       
+        
 
     }
 }
