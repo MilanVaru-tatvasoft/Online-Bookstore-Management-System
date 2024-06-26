@@ -79,9 +79,9 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult CustomerDashboard()
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-
+            int pageNumber = 1;
             CustomerMainPage dashData = new CustomerMainPage();
-            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, 1);
+            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, pageNumber);
 
             return View(dashData);
         }
@@ -90,19 +90,39 @@ namespace Online_Bookstore_Management_System.Controllers
         {
             int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
             CustomerMainPage dashData = new CustomerMainPage();
-            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, 1);
+            int pageNumber = 1;
+
+            dashData = _customerRepo.GetCustomerDashboardData(dashData, userId, pageNumber);
             return PartialView("_CustomerMainPage", dashData);
         }
 
         public IActionResult CustomerDashboardTable(CustomerMainPage model)
         {
-            int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
-            CustomerMainPage customerData = new CustomerMainPage(); 
-            List<DashboardList> list =  _customerRepo.GetCustomerDashboardTable(customerData, userId, model.PageNumber);
-            return Json(list);
+            try
+            {
+                int? userId = _httpcontext.HttpContext.Session.GetInt32("UserId");
+                List<DashboardList> list = _customerRepo.GetCustomerDashboardTable(model, userId, model.PageNumber);
+
+                if (list != null && list.Count > 0)
+                {
+                    return Json(list);
+                }
+                else
+                {
+               
+                    return Json(new List<DashboardList>()); 
+                }
+            }
+            catch (Exception ex)
+            {
+           
+                return Json(new { error = "An error occurred while fetching data.", ex.Message });
+            }
+
+
         }
 
-     
+
 
         public IActionResult GetRegistrationform()
         {

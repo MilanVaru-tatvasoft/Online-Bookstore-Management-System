@@ -27,9 +27,6 @@ public partial class Book
     [Column("noofpages")]
     public int? Noofpages { get; set; }
 
-    [Column("publisherid")]
-    public int? Publisherid { get; set; }
-
     [Column("categoryid")]
     public int? Categoryid { get; set; }
 
@@ -39,10 +36,6 @@ public partial class Book
 
     [Column("stockquantity")]
     public int Stockquantity { get; set; }
-
-    [Column("isbn")]
-    [StringLength(20)]
-    public string? Isbn { get; set; }
 
     [Column("createdby")]
     public int? Createdby { get; set; }

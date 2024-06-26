@@ -62,46 +62,12 @@ namespace BusinessLogic.Repository
             {
                 booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
             }
-            List<DashboardList> dashboardList = new List<DashboardList>();
-            foreach (var book in booksList)
-            {
-                var reviews = _context.RatingReviews.Where(x => x.BookId == book.Bookid).ToList();
-                decimal i = 0;
-                if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.BookId); }
 
-                bool isFavorite = _context.Favorites.Any(x => x.Customerid == customerId && x.Bookid == book.Bookid);
 
-                DashboardList item = new DashboardList();
-                item.BookId = book.Bookid;
-                item.Title = book.Title;
-                item.BookPhoto = book.Bookphoto;
-                item.AuthorId = (int)book.Authorid;
-                item.AuthorName = book.Author.Name;
-                item.CategoryId = (int)book.Categoryid;
-                item.CategoryName = book.Category.Categoryname;
-                item.Price = book.Price;
-                item.AvgRating = i;
-                item.IsFavorite = isFavorite;
-                dashboardList.Add(item);
-
-            }
-            if (model.Search2 == null && model.Search3 == null && model.Search4 == null)
-            {
-                dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(); _MainPage.AddToCarts = addtocarts;
-
-            }
-            else
-            {
-                _MainPage.Search3 = model.Search3;
-                _MainPage.Search2 = model.Search2;
-                _MainPage.Search4 = model.Search4;
-
-            }
 
             _MainPage.Authors = authors;
             _MainPage.Categories = categories;
             _MainPage.UserId = userId;
-            _MainPage.DashboardLists = dashboardList;
             _MainPage.BookCount = booksList.Count();
             _MainPage.itemCount = addtocarts.Count();
             _MainPage.user = _context.Users.FirstOrDefault(x => x.Userid == userId);
@@ -112,6 +78,7 @@ namespace BusinessLogic.Repository
         }
         public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber)
         {
+            if (pageNumber == 0 && model.Search1 != null && model.Search2.Count != 0 && model.Search3.Count != 0 && model.Search4 != null) { pageNumber = 1; }
             int pageSize = 6;
             int? customerId = _context.Customers
                                     .FirstOrDefault(x => x.Userid == userId)
@@ -121,7 +88,7 @@ namespace BusinessLogic.Repository
 
             var booksList = booksQuery.ToList();
 
-           
+
 
             if (!string.IsNullOrEmpty(model.Search1))
             {
@@ -141,6 +108,12 @@ namespace BusinessLogic.Repository
             {
                 booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
             }
+
+
+            int bookCount = booksList.Count;
+            model.BookCount = bookCount;
+            int lastPageNumber = (int)Math.Ceiling((double)bookCount / pageSize);
+
             List<DashboardList> dashboardList = new List<DashboardList>();
 
             foreach (var book in booksList)
@@ -166,9 +139,18 @@ namespace BusinessLogic.Repository
 
                 dashboardList.Add(item);
             }
-            dashboardList = dashboardList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            if (pageNumber < 1 || pageNumber > lastPageNumber)
+            {
+                return null;
+            }
+
+
+            int skipCount = (pageNumber - 1) * pageSize;
+            dashboardList = dashboardList.Skip(skipCount).Take(pageSize).ToList();
 
             return dashboardList;
+
         }
 
         public Admin GetAdminData(string email)

@@ -40,9 +40,6 @@ public partial class User
     [Column("is_deleted")]
     public bool? IsDeleted { get; set; }
 
-    [Column("createdby")]
-    public int? Createdby { get; set; }
-
     [Column("createddate", TypeName = "timestamp without time zone")]
     public DateTime? Createddate { get; set; }
 
@@ -64,12 +61,6 @@ public partial class User
     [Column("profilephoto")]
     [StringLength(255)]
     public string? Profilephoto { get; set; }
-
-    [InverseProperty("CreatedbyNavigation")]
-    public virtual ICollection<Order> OrderCreatedbyNavigations { get; set; } = new List<Order>();
-
-    [InverseProperty("ModifiedbyNavigation")]
-    public virtual ICollection<Order> OrderModifiedbyNavigations { get; set; } = new List<Order>();
 
     [ForeignKey("Roleid")]
     [InverseProperty("Users")]

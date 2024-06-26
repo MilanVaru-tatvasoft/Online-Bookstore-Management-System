@@ -126,11 +126,11 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Book).WithMany(p => p.Favorites)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("favorites_bookid_fkey");
+                .HasConstraintName("fk_book");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Favorites)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("favorites_customerid_fkey");
+                .HasConstraintName("fk_customer");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -139,11 +139,9 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.Createddate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.OrderCreatedbyNavigations).HasConstraintName("orders_createdby_fkey");
-
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("orders_customerid_fkey");
 
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.OrderModifiedbyNavigations).HasConstraintName("orders_modifiedby_fkey");
+            entity.HasOne(d => d.Orderstatus).WithMany(p => p.Orders).HasConstraintName("orders_orderstatusid_fkey");
         });
 
         modelBuilder.Entity<Orderdetail>(entity =>

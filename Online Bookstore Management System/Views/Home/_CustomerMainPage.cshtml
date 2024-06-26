@@ -126,10 +126,11 @@
                 </div>
 
                 <div class="form-group d-flex justify-content-end col-md-12 mt-3">
-                    <button type="submit" class="btn btn-primary" onclick="fetchMoreData(0)">Search</button>
+                    <button type="button" class="btn btn-primary" onclick="fetchSearchData(1)">Search</button>
                     <button type="reset" class="btn btn-secondary" onclick="GetCustomerDashboard()">Reset</button>
                 </div>
                 <input type="text" id="PageNumber" asp-for="PageNumber" hidden />
+                <input type="text" id="BookCount" asp-for="BookCount" hidden />
             </form>
         </div>
     </div>
@@ -145,7 +146,7 @@
     </div>
     <div class="w-100 d-flex justify-content-center">
 
-        <div class="spinner-border d-none" role="status" id="spinner">
+        <div class="spinner-border d-none" role="status" id="loader">
             <span class="visually-hidden text-center">Loading...</span>
         </div>
     </div>
@@ -157,92 +158,7 @@
 
 <script>
 
-    function SearchParamsbooks() {
-        event.preventDefault();
-
-        let chkAuthor = document.querySelectorAll(".AuthorData:checked");
-        let chkCategory = document.querySelectorAll(".categorytdata:checked");
-        const search2 = [];
-
-        var formData = new FormData($('#searchForm')[0]);
-        chkAuthor.forEach(function (checkbox) {
-            formData.append('search2', checkbox.value);
-
-        });
-        chkCategory.forEach(function (checkbox) {
-            formData.append('search3', checkbox.value);
-
-        });
-
-        $.ajax({
-            method: "POST",
-            url: "/Home/HandleSearch",
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: function (result) {
-                $.each(result, function (index, obj) {
-                    var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
-                                                        <div class="card border-0 h-100 shadow">
-                                                            <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
-                                                            <div class="card-body">
-                                                                <h5 class="card-title text-truncate">${obj.title}</h5>
-                                                                <strong class="card-title text-danger fs-4">${obj.price} $</strong>
-                                                                <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
-                                                            </div>
-                                                            <div>`;
-
-
-                    for (var i = 1; i <= 5; i++) {
-                        if (i <= obj.avgRating) {
-                            html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
-                        } else if (i - 0.5 <= obj.avgRating) {
-                            html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
-                        } else {
-                            html += `<i class="bi bi-star fs-5 text-warning"></i>`;
-                        }
-                    }
-
-                    html += `</div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>`;
-
-                    if (!obj.isFavorite) {
-                        html += `
-                                <button id="addToFavoritesBtn_${obj.BookId}" class="btn btn-success" onclick="HandleFavoriteAction('add', ${obj.bookId})">
-                                <i class="text-white bi fs-5 bi-heart-fill"></i>
-                            </button>`;
-                    } else {
-                        html += `
-                                <button id="removeFromFavoritesBtn_${obj.BookId}" class="btn btn-danger" onclick="HandleFavoriteAction('remove', ${obj.bookId})">
-                                <i class="text-white bi fs-5 bi-heart"></i>
-                            </button>`;
-                    }
-
-                    html += `
-                        </div>
-                    </div>`;
-
-
-                    $('#book-list').append(html);
-
-
-
-
-
-                });
-                isLoading = false;
-
-                $('#loader').hide();
-                $('#loader').removeClass('d-flex');
-
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-        });
-    }
-
+  
 
     (function ($) {
         var CheckboxDropdown = function (el) {
@@ -311,58 +227,65 @@
         }
     })(jQuery);
 
-
     $(document).ready(function () {
-        var isLoading = false;
+        var pageNumber = 1; 
+        var bookCount = $('#BookCount').val(); 
+        console.log("books" + bookCount);
+        var pageSize = 6; 
+        var lastPageNumber = Math.ceil(bookCount / pageSize);
+        $('#PageNumber').val(pageNumber)
 
         function isScrolledToBottom() {
-
+            console.log("hgdvrfjhb")
             return $(window).scrollTop() + $(window).height() >= $(document).height();
         }
-
-        var pageNumber = 0;
-        var bookCount = $('#BookCount').val();
-        var lastPageNumber = Math.ceil(bookCount / 6);
 
 
         $(window).scroll(function () {
             if (isScrolledToBottom()) {
+                pageNumber++;
+                $('#PageNumber').val(pageNumber)
                 if (pageNumber < lastPageNumber + 1) {
-                    pageNumber++;
-                    console.log(pageNumber);
                     fetchMoreData(pageNumber);
-                } else {
-                    var isLoading = false;
-                    $('#loader').hide();
                 }
+
+                console.log("last page:"+lastPageNumber)
+
             }
         });
-        fetchMoreData(pageNumber);
+
+        fetchMoreData(pageNumber); // Initial load
     });
-        function fetchMoreData(pageNumber) {
-            debugger;
-            let chkAuthor = document.querySelectorAll(".AuthorData:checked");
-            let chkCategory = document.querySelectorAll(".categorytdata:checked");
+
+    function fetchMoreData(pageNumber) {
+        var pageSize = 6;
+        console.log(pageNumber)
+     
+            var chkAuthor = document.querySelectorAll(".AuthorData:checked");
+            var chkCategory = document.querySelectorAll(".categorytdata:checked");
             var formData = new FormData($('#searchForm')[0]);
+
             chkAuthor.forEach(function (checkbox) {
                 formData.append('search2', checkbox.value);
-
             });
+
             chkCategory.forEach(function (checkbox) {
                 formData.append('search3', checkbox.value);
-
             });
-            formData.append('PageNumber', pageNumber)
+
+        $('#PageNumber').val(pageNumber)
+
             $.ajax({
                 url: "/Home/CustomerDashboardTable",
                 type: "POST",
                 data: formData,
                 contentType: false,
                 processData: false,
+           
                 success: function (result) {
-                    $('#loader').hide();
-                    $.each(result, function (index, obj) {
-                        var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
+                    if (result.length > 0) {
+                        result.forEach(function (obj) {
+                            var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
                                                     <div class="card border-0 h-100 shadow">
                                                         <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
                                                         <div class="card-body">
@@ -372,60 +295,145 @@
                                                         </div>
                                                         <div>`;
 
-
-                        for (var i = 1; i <= 5; i++) {
-                            if (i <= obj.avgRating) {
-                                html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
-                            } else if (i - 0.5 <= obj.avgRating) {
-                                html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
-                            } else {
-                                html += `<i class="bi bi-star fs-5 text-warning"></i>`;
+                            for (var i = 1; i <= 5; i++) {
+                                if (i <= obj.avgRating) {
+                                    html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
+                                } else if (i - 0.5 <= obj.avgRating) {
+                                    html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
+                                } else {
+                                    html += `<i class="bi bi-star fs-5 text-warning"></i>`;
+                                }
                             }
-                        }
 
-                        html += `</div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>`;
+                            html += `</div>
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>`;
 
-                        if (!obj.isFavorite) {
-                            html += `
-                            <button id="addToFavoritesBtn_${obj.BookId}" class="btn btn-success" onclick="HandleFavoriteAction('add', ${obj.bookId})">
-                            <i class="text-white bi fs-5 bi-heart-fill"></i>
-                        </button>`;
-                        } else {
-                            html += `
-                            <button id="removeFromFavoritesBtn_${obj.BookId}" class="btn btn-danger" onclick="HandleFavoriteAction('remove', ${obj.bookId})">
-                            <i class="text-white bi fs-5 bi-heart"></i>
-                        </button>`;
-                        }
+                            if (!obj.isFavorite) {
+                                html += `
+                                            <button id="addToFavoritesBtn_${obj.bookId}" class="btn btn-success" onclick="HandleFavoriteAction('add', ${obj.bookId})">
+                                                <i class="text-white bi fs-5 bi-heart-fill"></i>
+                                            </button>`;
+                            } else {
+                                html += `
+                                            <button id="removeFromFavoritesBtn_${obj.bookId}" class="btn btn-danger" onclick="HandleFavoriteAction('remove', ${obj.bookId})">
+                                                <i class="text-white bi fs-5 bi-heart"></i>
+                                            </button>`;
+                            }
 
-                        html += `
-                    </div>
-                </div>`;
+                            html += `</div>
+                                            </div>
+                                        </div>`;
 
-
-                        $('#book-list').append(html);
-
-
-
-
-
-                    });
-                    isLoading = false;
-
-                    $('#loader').hide();
-                    $('#loader').removeClass('d-flex');
-
+                            $('#book-list').append(html);
+                        });
+                    } else {
+                        console.log("No more data to load.");
+                    }
+                    isLoading = false; // Reset isLoading flag
                 },
-                error: function (err, xhr, a) {
-                    $('#loader').hide();
+                error: function (err) {
+                    $('#loader').hide(); // Hide loader on error
                     alert('Error loading partial view');
-                    isLoading = false;
+                    isLoading = false; // Reset isLoading flag
                 }
             });
+        
+    }
 
+    function fetchSearchData(pageNumber) {
+        $('#book-list').empty();
+        var pageNumber = 1;
+        var bookCount = $('#BookCount').val();
+   
+        $('#PageNumber').val(pageNumber)
+        console.log("fatch search data")
+            isLoading = true;
+            var chkAuthor = document.querySelectorAll(".AuthorData:checked");
+            var chkCategory = document.querySelectorAll(".categorytdata:checked");
+            var formData = new FormData($('#searchForm')[0]);
 
-        }
+            chkAuthor.forEach(function (checkbox) {
+                formData.append('search2', checkbox.value);
+            });
+
+            chkCategory.forEach(function (checkbox) {
+                formData.append('search3', checkbox.value);
+            });
+
+            formData.append('PageNumber', pageNumber);
+
+            $.ajax({
+                url: "/Home/CustomerDashboardTable",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function () {
+                    $('#loader').show(); // Show loader before request
+                },
+                success: function (result) {
+                    $('#loader').hide(); // Hide loader on success
+                    if (result.length > 0) {
+                        result.forEach(function (obj) {
+                            var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
+                                            <div class="card border-0 h-100 shadow">
+                                                <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
+                                                <div class="card-body">
+                                                    <h5 class="card-title text-truncate">${obj.title}</h5>
+                                                    <strong class="card-title text-danger fs-4">${obj.price} $</strong>
+                                                    <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
+                                                </div>
+                                                <div>`;
+
+                            for (var i = 1; i <= 5; i++) {
+                                if (i <= obj.avgRating) {
+                                    html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
+                                } else if (i - 0.5 <= obj.avgRating) {
+                                    html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
+                                } else {
+                                    html += `<i class="bi bi-star fs-5 text-warning"></i>`;
+                                }
+                            }
+
+                            html += `</div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>`;
+
+                            if (!obj.isFavorite) {
+                                html += `
+                                    <button id="addToFavoritesBtn_${obj.bookId}" class="btn btn-success" onclick="HandleFavoriteAction('add', ${obj.bookId})">
+                                        <i class="text-white bi fs-5 bi-heart-fill"></i>
+                                    </button>`;
+                            } else {
+                                html += `
+                                    <button id="removeFromFavoritesBtn_${obj.bookId}" class="btn btn-danger" onclick="HandleFavoriteAction('remove', ${obj.bookId})">
+                                        <i class="text-white bi fs-5 bi-heart"></i>
+                                    </button>`;
+                            }
+
+                            html += `</div>
+                                    </div>
+                                </div>`;
+
+                            $('#book-list').append(html);
+                        });
+                        pageNumber++;
+                    } else {
+                        // No more data
+                        console.log("No more data to load.");
+                    }
+                    isLoading = false; // Reset isLoading flag
+                },
+                error: function (err) {
+                    $('#loader').hide(); // Hide loader on error
+                    alert('Error loading partial view');
+                    isLoading = false; // Reset isLoading flag
+                }
+            });
+        
+    }
+
 
     function HandleFavoriteAction(actionType, bookId) {
         event.preventDefault();

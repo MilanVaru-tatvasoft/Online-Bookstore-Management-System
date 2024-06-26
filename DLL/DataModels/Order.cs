@@ -61,20 +61,16 @@ public partial class Order
     [Column("modifieddate", TypeName = "timestamp without time zone")]
     public DateTime? Modifieddate { get; set; }
 
-    [ForeignKey("Createdby")]
-    [InverseProperty("OrderCreatedbyNavigations")]
-    public virtual User? CreatedbyNavigation { get; set; }
-
     [ForeignKey("Customerid")]
     [InverseProperty("Orders")]
     public virtual Customer? Customer { get; set; }
 
-    [ForeignKey("Modifiedby")]
-    [InverseProperty("OrderModifiedbyNavigations")]
-    public virtual User? ModifiedbyNavigation { get; set; }
-
     [InverseProperty("Order")]
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
+
+    [ForeignKey("Orderstatusid")]
+    [InverseProperty("Orders")]
+    public virtual Status? Orderstatus { get; set; }
 
     [InverseProperty("Order")]
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
