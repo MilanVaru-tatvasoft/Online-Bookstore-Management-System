@@ -179,9 +179,31 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult GetCategoryList()
         {
             CategoryListModel model = _adminDashboard.GetCategoriesList();
-
             return PartialView("_CategoryList", model);
         }
+
+        public IActionResult GetUsersList()
+        {
+            UserListModel model = _adminDashboard.GetUsersList();
+            return PartialView("_UsersList", model);
+        }
+        public IActionResult GetDeleteUser(int UserId)
+        {
+            try
+            {
+                bool result = _adminDashboard.GetDeleteUser(UserId);
+                int code = result ? 401 : 402;
+
+                return Json(new { code });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+
+                return Json(new { error = "An error occurred while deleting the category.", code = 500 });
+            }
+        }
+
         public IActionResult GetAddAuthor(int AuthorId)
         {
             AuthorListModel model = _adminDashboard.GetEditAuthor(AuthorId);

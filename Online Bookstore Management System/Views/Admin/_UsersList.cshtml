@@ -1,0 +1,114 @@
+﻿@model DataAccess.CustomModels.UserListModel
+<div class="container-fluid">
+
+    <h4 class="mt-4">Orders Dashboard</h4>
+
+    <div class="my-2 py-3 p-1 p-md-3">
+        <form id="searchForm" method="post" action="/Orders/Search">
+            <div class="row d-flex m-2 gy-2">
+                <div class="form-group col-md-3 col-6">
+                    <input type="text" class="form-control" id="userName" name="userName" placeholder="userName">
+                </div>
+                <div class="form-group col-md-3 col-6">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="email ">
+                </div>
+
+                <div class="form-group col-md-3 col-6">
+                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                </div>
+                <div class="form-group col-md-3 col-6">
+                    <input type="text" class="form-control" id="roleName" name="roleName" placeholder="roleName">
+                </div>
+               
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
+                <button type="reset" class="btn btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <div class="table table-responsive  p-3">
+        <table id="UsersTable" class="display " style="width:100%">
+            <thead class="bg-body-tertiary">
+                <tr>
+                    <th>UserId</th>
+                    <th>User Name</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white">
+                @if (Model.UsersList.Count() != 0)
+                {
+
+                    @foreach (var i in Model.UsersList)
+                    {
+                        <tr class="text-center">
+                            <td>@i.UserId</td>
+                            <td>@i.FirstName  @i.LastName</td>
+                            <td>@i.Gender</td>
+                            <td>@i.Email</td>
+                            <td>@i.PhoneNumber</td>
+                            <td>@i.Address</td>
+                            <td>@i.City</td>
+                            <td>@i.Role</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-danger" onclick="DeleteUser(@i.UserId)" >Delete </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var table = $('#UsersTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[10, 20, -1], [10, 20, "All"]],
+            "pageLength": 10,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+
+            }
+        });
+        $('.dataTables_filter').hide();
+        $('#ordersTable_first').hide();
+        $('#ordersTable_last').hide();
+
+        $('#searchBtn').on('click', function () {
+            table.columns(3).search($('#email').val().trim());
+            table.columns(6).search($('#city').val().trim());
+            table.columns(1).search($('#userName').val().trim());
+            table.columns(8).search($('#roleName').val().trim());
+            table.draw();
+            $('.dataTables_filter').hide();
+            $('#ordersTable_first').hide();
+            $('#ordersTable_last').hide();
+        });
+
+        $('button[type="reset"]').on('click', function () {
+            GetOrderList()
+        });
+    });
+</script>
+<script>
+
+
+</script>

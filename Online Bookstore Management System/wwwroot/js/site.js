@@ -914,5 +914,57 @@ function GetMyFavorites() {
 
 }
 
+function GetUsersList() {
+    $.ajax({
+        method: "GET",
+        url: "/Admin/GetUsersList",
 
+        success: function (result) {
+            $('#AdminDash').empty()
+            $('#AdminDash').html(result)
+        },
+        error: function () {
+            alert('Error loading partial view');
+        }
+    });
+}
+
+function DeleteUser(UserId) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove It"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/GetDeleteUser",
+                data: { UserId: UserId },
+
+                success: function (result) {
+                    if (result.code == 401)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Removed",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            GetUsersList();
+                        });
+
+
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+    });
+
+}
 

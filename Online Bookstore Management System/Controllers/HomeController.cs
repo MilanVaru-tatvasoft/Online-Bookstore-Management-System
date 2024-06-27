@@ -33,13 +33,13 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult LoginPostMethod(LoginVm model)
+        public IActionResult LoginPostMethod(LoginModel model)
         {
             if (!string.IsNullOrEmpty(model.loginEmail) && !string.IsNullOrEmpty(model.password))
             {
+                User user = _authentication.GetSessionData(model.loginEmail);
                 if (_authentication.ValidateLogin(model.loginEmail, model.password))
                 {
-                    User user = _authentication.GetSessionData(model.loginEmail);
                     string roleId;
                     if (user.Roleid == 1) { roleId = "Admin"; } else { roleId = "customer"; }
                     string name = user.Firstname + " " + user.Lastname;
@@ -62,25 +62,29 @@ namespace Online_Bookstore_Management_System.Controllers
                     {
                         Customer customer = _customerRepo.GetCustomerData(model.loginEmail);
                         _httpcontext.HttpContext.Session.SetInt32("customerId", customer.Customerid);
-                        TempData["ToastMessage"] = "Welcome! "+ customer.Name;
-
+                        TempData["ToastMessage"] = "Welcome! " + customer.Name;
                         return RedirectToAction("CustomerDashboard");
-
                     }
                     else
                     {
+
                         TempData["ToastMessage"] = "Invalid login credentials.";
-
                         return RedirectToAction("Index");
-
                     }
+                }
+
+                if (user.IsDeleted == true)
+                {
+                    TempData["ToastMessage"] = "This Email is deleted or blocked";
+                    return RedirectToAction("Index");
                 }
                 TempData["ToastMessage"] = "Invalid login credentials.";
 
                 return RedirectToAction("Index");
             }
-            TempData["ToastMessage"] = "Invalid login credentials.";
+            
 
+            TempData["ToastMessage"] = "Invalid login credentials.";
             return RedirectToAction("Index");
         }
 
@@ -108,7 +112,7 @@ namespace Online_Bookstore_Management_System.Controllers
         public IActionResult GetbookListCount(CustomerMainPage model)
         {
             int count = _customerRepo.GetFilterBookCount(model);
-            return Ok(count); 
+            return Ok(count);
         }
 
 
@@ -125,12 +129,12 @@ namespace Online_Bookstore_Management_System.Controllers
                 }
                 else
                 {
-                    return Json(new List<DashboardList>()); 
+                    return Json(new List<DashboardList>());
                 }
             }
             catch (Exception ex)
             {
-           
+
                 return Json(new { error = "An error occurred while fetching data.", ex.Message });
             }
 
@@ -344,8 +348,8 @@ namespace Online_Bookstore_Management_System.Controllers
             return View();
         }
 
-       
-        
+
+
 
     }
 }

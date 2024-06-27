@@ -123,5 +123,23 @@ namespace DataAccess.CustomModels
         public bool? IsDeleted { get; set; }
     }
 
-   
+    public class UserListModel
+    {
+        public List<UserList>? UsersList { get; set; }
+
+    }
+
+    public class UserList
+    {
+        public int? UserId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public bool? IsDeleted { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? Role { get; set; }
+        public string? Gender { get; set; }
+    }
 }

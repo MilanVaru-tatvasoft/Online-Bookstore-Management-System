@@ -431,7 +431,7 @@ namespace BusinessLogic.Repository
             }
 
             return false;
-        } 
+        }
 
         public AuthorListModel GetAuthorList()
         {
@@ -447,6 +447,34 @@ namespace BusinessLogic.Repository
             {
                 Categories = _context.Categories.Where(x => x.Isdeleted != true).ToList(),
             };
+            return model;
+        }
+        public UserListModel GetUsersList()
+        {
+            UserListModel model = new UserListModel();
+            List<UserList> userList = new List<UserList>();
+
+            var users = _context.Users.Where(c => c.IsDeleted != true).Include(c => c.Role).OrderBy(n => n.Userid).ToList();
+            foreach (var user in users)
+            {
+                UserList userList2 = new UserList()
+                {
+                    UserId = user.Userid,
+                    FirstName = user.Firstname,
+                    LastName = user.Lastname,
+                    Email = user.Email,
+                    PhoneNumber = user.Phonenumber,
+                    Address = user.Address,
+                    Role = user.Role.Rolename,
+                    Gender = user.Gender,
+                    IsDeleted = user.IsDeleted,
+                    City = user.City,
+                };
+                userList.Add(userList2);
+
+            }
+
+            model.UsersList = userList;
             return model;
         }
 
@@ -523,6 +551,21 @@ namespace BusinessLogic.Repository
             category.Isdeleted = true;
 
             _context.Categories.Update(category);
+            _context.SaveChanges();
+
+            return true;
+        }
+        public bool GetDeleteUser(int UserId)
+        {
+            if (UserId <= 0) return false;
+
+            var User = _context.Users.FirstOrDefault(x => x.Userid == UserId);
+
+            if (User == null) return false;
+
+            User.IsDeleted = true;
+
+            _context.Users.Update(User);
             _context.SaveChanges();
 
             return true;
@@ -712,6 +755,6 @@ namespace BusinessLogic.Repository
             return false;
         }
 
-    #endregion
+        #endregion
     }
 }

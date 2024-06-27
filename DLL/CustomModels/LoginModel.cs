@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.CustomModels
 {
-    public class LoginVm
+    public class LoginModel
     {
         [Required(ErrorMessage = "Email address is required.")]
         [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
@@ -17,8 +17,10 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage = "Password is required.")]
         public string password { get; set; }
 
+        public bool isdeleted { get; set; } 
+
     }
-    public class RegisterVm
+    public class RegisterModel
     {
         [Required(ErrorMessage ="This field is required")]
         public string? firstname { get; set;}

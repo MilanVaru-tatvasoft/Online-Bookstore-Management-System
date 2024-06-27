@@ -1,313 +1,313 @@
 ﻿@model DataAccess.CustomModels.OrderListModel;
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <h4 class="mt-4">Orders Dashboard</h4>
+        <h4 class="mt-4">Orders Dashboard</h4>
 
-    <div class="my-2 py-3 p-1 p-md-3">
-        <form id="searchForm" method="post" action="/Orders/Search">
-            <div class="row d-flex m-2 gy-2">
-                <div class="form-group col-md-3 col-6">
-                    <input type="text" class="form-control" id="customer" name="customer" placeholder="Customer">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="email ">
-                </div>
+        <div class="my-2 py-3 p-1 p-md-3">
+            <form id="searchForm" method="post" action="/Orders/Search">
+                <div class="row d-flex m-2 gy-2">
+                    <div class="form-group col-md-3 col-6">
+                        <input type="text" class="form-control" id="customer" name="customer" placeholder="Customer">
+                    </div>
+                    <div class="form-group col-md-3 col-6">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="email ">
+                    </div>
 
-                <div class="form-group col-md-3 col-6">
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <input type="date" class="form-control" id="orderDate" name="orderDate" placeholder="Order ID" max="@DateTime.Today.Date">
-                </div>
-                <div class="form-group col-md-3 col-6">
-                    <select class="form-select" aria-label="Default select example" onchange="GetStatus(this.value)">
-                        <option disabled selected>all</option>
-                        @foreach (var x in Model.Statuses.ToList())
-                        {
-                            <option value="@x.StatusName">@x.StatusName</option>
-                        }
+                    <div class="form-group col-md-3 col-6">
+                        <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                    </div>
+                    <div class="form-group col-md-3 col-6">
+                        <input type="date" class="form-control" id="orderDate" name="orderDate" placeholder="Order ID" max="@DateTime.Today.Date">
+                    </div>
+                    <div class="form-group col-md-3 col-6">
+                        <select class="form-select" aria-label="Default select example" onchange="GetStatus(this.value)">
+                            <option disabled selected>all</option>
+                            @foreach (var x in Model.Statuses.ToList())
+                            {
+                                <option value="@x.StatusName">@x.StatusName</option>
+                            }
 
-                    </select>
-                    <input type="text" id="statusname" hidden />
+                        </select>
+                        <input type="text" id="statusname" hidden />
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-                <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
-                <button type="reset" class="btn btn-secondary">Cancel</button>
-            </div>
-        </form>
-    </div>
-    <div class="table table-responsive  p-3">
-        <table id="ordersTable" class="display " style="width:100%">
-            <thead class="bg-body-tertiary">
-                <tr>
-                    <th>OrderId</th>
-                    <th>Order Date</th>
-                    <th>Delivery Date</th>
-                    <th>Customer</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Address</th>
-                    <th>City</th>
-                    <th>Quantity/Total amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white">
-                @if (Model.Orders.Count() != 0)
-                {
-
-                    @foreach (var i in Model.Orders)
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+        <div class="table table-responsive  p-3">
+            <table id="ordersTable" class="display " style="width:100%">
+                <thead class="bg-body-tertiary">
+                    <tr>
+                        <th>OrderId</th>
+                        <th>Order Date</th>
+                        <th>Delivery Date</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Quantity/Total amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model.Orders.Count() != 0)
                     {
-                        <tr class="text-center">
-                            <td>@i.Orderid</td>
-                            <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
-                            <td>@i.Orderdate.AddDays(6).ToString("yyyy-MM-dd")</td>
-                            <td>@i.Customername</td>
-                            <td>@i.Email</td>
-                            <td>@i.Phonenumber</td>
 
-                            <td>@i.Address</td>
-                            <td>@i.City</td>
-                            <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
-                            <td>@* @i.Orderstatus.StatusName *@</td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2 w-auto">
-                                    @if (i.Orderstatusid == 1)
-                                    {
-                                        <button class="btn btn-info" onclick="handleOrderAction('accept',@i.Orderid,@i.Customerid)">
-                                            <i class="bi bi-clipboard-check-fill"></i>
-                                        </button>
-                                    }
-                                    else if (i.Orderstatusid == 2)
-                                    {
-                                        <button class="btn btn-warning" onclick="handleOrderAction('ship',@i.Orderid,@i.Customerid)">
-                                            <i class="bi bi-truck"></i>
-                                        </button>
-                                    }
-                                    else if (i.Orderstatusid == 3)
-                                    {
-                                        <button class="btn btn-success" onclick="handleOrderAction('deliver',@i.Orderid,@i.Customerid)">
-                                            <i class="bi bi-check2-square"></i>
-                                        </button>
-                                    }
+                        @foreach (var i in Model.Orders)
+                        {
+                            <tr class="text-center">
+                                <td>@i.Orderid</td>
+                                <td>@i.Orderdate.ToString("yyyy-MM-dd")</td>
+                                <td>@i.Orderdate.AddDays(6).ToString("yyyy-MM-dd")</td>
+                                <td>@i.Customername</td>
+                                <td>@i.Email</td>
+                                <td>@i.Phonenumber</td>
 
-                                    @if (i.Orderstatusid != 4)
-                                    {
+                                <td>@i.Address</td>
+                                <td>@i.City</td>
+                                <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == i.Orderid).Quantity/ $ @i.Totalamount</td>
+                                <td>@* @i.Orderstatus.StatusName *@</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2 w-auto">
+                                        @if (i.Orderstatusid == 1)
+                                        {
+                                            <button class="btn btn-info" onclick="handleOrderAction('accept',@i.Orderid,@i.Customerid)">
+                                                <i class="bi bi-clipboard-check-fill"></i>
+                                            </button>
+                                        }
+                                        else if (i.Orderstatusid == 2)
+                                        {
+                                            <button class="btn btn-warning" onclick="handleOrderAction('ship',@i.Orderid,@i.Customerid)">
+                                                <i class="bi bi-truck"></i>
+                                            </button>
+                                        }
+                                        else if (i.Orderstatusid == 3)
+                                        {
+                                            <button class="btn btn-success" onclick="handleOrderAction('deliver',@i.Orderid,@i.Customerid)">
+                                                <i class="bi bi-check2-square"></i>
+                                            </button>
+                                        }
 
-                                        <button class="btn btn-danger" onclick="handleOrderAction('delete',@i.Orderid,@i.Customerid)">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
+                                        @if (i.Orderstatusid != 4)
+                                        {
 
-                                        <button class="btn btn-outline-secondary" onclick="GetGenerateBill(@i.Orderid)">
-                                            <i class="bi bi-download"></i>Download Bill
-                                        </button>
-                                    }
-                                </div>
+                                            <button class="btn btn-danger" onclick="handleOrderAction('delete',@i.Orderid,@i.Customerid)">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
 
-                            </td>
-                        </tr>
+                                            <button class="btn btn-outline-secondary" onclick="GetGenerateBill(@i.Orderid)">
+                                                <i class="bi bi-download"></i>Download Bill
+                                            </button>
+                                        }
+                                    </div>
+
+                                </td>
+                            </tr>
+                        }
                     }
-                }
 
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
+        </div>
     </div>
-</div>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready(function () {
-        var table = $('#ordersTable').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [[10, 20, -1], [10, 20, "All"]],
-            "pageLength": 10,
-            language: {
-                oPaginate: {
-                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
-                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#ordersTable').DataTable({
+                "pagingType": "full_numbers",
+                "lengthMenu": [[10, 20, -1], [10, 20, "All"]],
+                "pageLength": 10,
+                language: {
+                    oPaginate: {
+                        sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                        sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                    }
+
                 }
-
-            }
-        });
-        $('.dataTables_filter').hide();
-        $('#ordersTable_first').hide();
-        $('#ordersTable_last').hide();
-
-        $('#searchBtn').on('click', function () {
-            table.columns(4).search($('#email').val().trim());
-            table.columns(3).search($('#customer').val().trim());
-            table.columns(7).search($('#city').val().trim());
-            table.columns(1).search($('#orderDate').val().trim());
-            table.columns(9).search($('#statusname').val().trim());
-            table.draw();
+            });
             $('.dataTables_filter').hide();
             $('#ordersTable_first').hide();
             $('#ordersTable_last').hide();
+
+            $('#searchBtn').on('click', function () {
+                table.columns(4).search($('#email').val().trim());
+                table.columns(3).search($('#customer').val().trim());
+                table.columns(7).search($('#city').val().trim());
+                table.columns(1).search($('#orderDate').val().trim());
+                table.columns(9).search($('#statusname').val().trim());
+                table.draw();
+                $('.dataTables_filter').hide();
+                $('#ordersTable_first').hide();
+                $('#ordersTable_last').hide();
+            });
+
+            $('button[type="reset"]').on('click', function () {
+                GetOrderList()
+            });
         });
+    </script>
+    <script>
+        function GetViewOrder(orderDetailId) {
+            $.ajax({
+                method: "GET",
+                url: "/Admin/getViewOrder",
+                data: { orderDetailId: orderDetailId },
+                success: function (result) {
+                    $('#AdminDash').empty()
+                    $('#AdminDash').html(result)
+                },
+                error: function () {
 
-        $('button[type="reset"]').on('click', function () {
-            GetOrderList()
-        });
-    });
-</script>
-<script>
-    function GetViewOrder(orderDetailId) {
-        $.ajax({
-            method: "GET",
-            url: "/Admin/getViewOrder",
-            data: { orderDetailId: orderDetailId },
-            success: function (result) {
-                $('#AdminDash').empty()
-                $('#AdminDash').html(result)
-            },
-            error: function () {
-
-                alert('Error loading partial view');
-            }
-        });
-    }
-    function GetStatus(value) {
-        $('#statusname').val(value);
-    }
-
-    function handleOrderAction(actionType, orderId, customerId) {
-        var tempId = 0;
-
-        switch (actionType) {
-            case "accept":
-                tempId = 1;
-                break;
-            case "ship":
-                tempId = 2;
-                break;
-            case "deliver":
-                tempId = 3;
-                break;
-            case "delete":
-                tempId = 4;
-                break;
-            default:
-                console.error("Invalid actionType specified.");
-                return;
+                    alert('Error loading partial view');
+                }
+            });
+        }
+        function GetStatus(value) {
+            $('#statusname').val(value);
         }
 
-        $.ajax({
-            method: "GET",
-            url: "/Admin/HandleOrderAction",
-            data: { tempId: tempId, orderId: orderId, customerId: customerId },
-            success: function (result) {
-                if (result.code == 401) {
-                    switch (actionType) {
-                        case "accept":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "order accepted",
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "ship":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "order Shipped",
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "deliver":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "order Delivered",
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "delete":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "order Deleted",
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        default:
-                            console.error("Invalid actionType specified.");
-                            break;
-                    }
-                } else {
-                    switch (actionType) {
-                        case "accept":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: "order not accepted",
-                                showConfirmButton: true,
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "ship":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: "order not Shipped",
-                                showConfirmButton: true,
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "deliver":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: "order not Delivered",
-                                showConfirmButton: true,
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        case "delete":
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: "order not Deleted",
-                                showConfirmButton: true,
-                            }).then(() => {
-                                GetOrderList();
-                            });
-                            break;
-                        default:
-                            console.error("Invalid actionType specified.");
-                            break;
-                    }
-                }
-            },
-            error: function () {
-                alert('Error loading partial view');
-            }
-        });
-    }
+        function handleOrderAction(actionType, orderId, customerId) {
+            var tempId = 0;
 
-</script>
+            switch (actionType) {
+                case "accept":
+                    tempId = 1;
+                    break;
+                case "ship":
+                    tempId = 2;
+                    break;
+                case "deliver":
+                    tempId = 3;
+                    break;
+                case "delete":
+                    tempId = 4;
+                    break;
+                default:
+                    console.error("Invalid actionType specified.");
+                    return;
+            }
+
+            $.ajax({
+                method: "GET",
+                url: "/Admin/HandleOrderAction",
+                data: { tempId: tempId, orderId: orderId, customerId: customerId },
+                success: function (result) {
+                    if (result.code == 401) {
+                        switch (actionType) {
+                            case "accept":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "order accepted",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "ship":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "order Shipped",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "deliver":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "order Delivered",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "delete":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "order Deleted",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            default:
+                                console.error("Invalid actionType specified.");
+                                break;
+                        }
+                    } else {
+                        switch (actionType) {
+                            case "accept":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: "order not accepted",
+                                    showConfirmButton: true,
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "ship":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: "order not Shipped",
+                                    showConfirmButton: true,
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "deliver":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: "order not Delivered",
+                                    showConfirmButton: true,
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            case "delete":
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: "order not Deleted",
+                                    showConfirmButton: true,
+                                }).then(() => {
+                                    GetOrderList();
+                                });
+                                break;
+                            default:
+                                console.error("Invalid actionType specified.");
+                                break;
+                        }
+                    }
+                },
+                error: function () {
+                    alert('Error loading partial view');
+                }
+            });
+        }
+
+    </script>

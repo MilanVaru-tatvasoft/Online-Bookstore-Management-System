@@ -10,6 +10,7 @@ using DataAccess.CustomModels;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.IISIntegration;
 
 namespace BusinessLogic.Repository
 {
@@ -30,7 +31,7 @@ namespace BusinessLogic.Repository
 
         public bool ValidateLogin(string email, string password)
         {
-            var userData = _context.Users.FirstOrDefault(u => u.Email == email);
+            var userData = _context.Users.FirstOrDefault(u => u.Email == email && u.IsDeleted != true);
             if (userData != null)
             {
                 if (userData.Passwordhash == password)

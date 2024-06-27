@@ -24,6 +24,7 @@ namespace BusinessLogic.Interface
         public bool GetDeleteBook(int bookId);
         public CategoryListModel GetCategoriesList();
         public AuthorListModel GetAuthorList();
+        public UserListModel GetUsersList();
         public AuthorListModel GetEditAuthor(int AuthorId);
         public CategoryListModel GetAddCategory(int categtoryId);
         public bool GetDeleteCategory(int categoryId);
@@ -32,6 +33,7 @@ namespace BusinessLogic.Interface
         public bool AddOrUpdateCategory(CategoryListModel model);
 
         public AdminDashboardModel GetChartData(DateTime date);
+        public bool GetDeleteUser(int UserId);
 
         public bool HandleOrderAction(int orderId, int customerId, int tempId);
 
