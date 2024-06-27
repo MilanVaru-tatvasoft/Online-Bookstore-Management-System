@@ -42,10 +42,10 @@ namespace DataAccess.CustomModels
         public List<Author>? Authors { get; set; }
         public List<Publisher>? Publishers { get; set; }
         public List<Category>? Categories { get; set; }
-        public string? Search1 { get; set; }
+        public string? searchByBookName { get; set; }
         public List<int>? filterAuthors { get; set; }
         public List<int>? filterCategory { get; set; }
-        public string? Search4 { get; set; }
+        public string? searchByPublisher { get; set; }
         public List<AdminBookList> AdminBookLists { get; set; }
     }
 
@@ -76,7 +76,7 @@ namespace DataAccess.CustomModels
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        [EmailAddress(ErrorMessage = "Enter a valid email")]
+        [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "This field is required")]

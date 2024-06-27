@@ -54,6 +54,7 @@ namespace Online_Bookstore_Management_System.Controllers
                     {
                         Admin admin = _customerRepo.GetAdminData(model.loginEmail);
                         _httpcontext.HttpContext.Session.SetInt32("AdminId", admin.Adminid);
+                        TempData["ToastMessage"] = "Logged In As A Admin!";
 
                         return RedirectToAction("AdminDashboard", "Admin");
                     }
@@ -61,17 +62,25 @@ namespace Online_Bookstore_Management_System.Controllers
                     {
                         Customer customer = _customerRepo.GetCustomerData(model.loginEmail);
                         _httpcontext.HttpContext.Session.SetInt32("customerId", customer.Customerid);
+                        TempData["ToastMessage"] = "Welcome! "+ customer.Name;
+
                         return RedirectToAction("CustomerDashboard");
 
                     }
                     else
                     {
+                        TempData["ToastMessage"] = "Invalid login credentials.";
+
                         return RedirectToAction("Index");
 
                     }
                 }
+                TempData["ToastMessage"] = "Invalid login credentials.";
+
                 return RedirectToAction("Index");
             }
+            TempData["ToastMessage"] = "Invalid login credentials.";
+
             return RedirectToAction("Index");
         }
 

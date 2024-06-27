@@ -10,8 +10,12 @@ namespace DataAccess.CustomModels
 {
     public class LoginVm
     {
-        public string? loginEmail {  get; set; }
-        public string? password { get; set; }
+        [Required(ErrorMessage = "Email address is required.")]
+        [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
+        public string loginEmail { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        public string password { get; set; }
 
     }
     public class RegisterVm
@@ -21,7 +25,7 @@ namespace DataAccess.CustomModels
         [Required(ErrorMessage ="This field is required")]
         public string? lastname { get; set;}
         [Required(ErrorMessage ="This field is required")]
-        [EmailAddress(ErrorMessage ="enter valid email")]
+        [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
         public string? email { get; set;}
         [Required(ErrorMessage ="This field is required")]
         public string? Password { get; set;}

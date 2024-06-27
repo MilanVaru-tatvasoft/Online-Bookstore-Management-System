@@ -178,9 +178,9 @@ namespace BusinessLogic.Repository
             var bookList = booksQuery.ToList();
             model.Authors = _context.Authors.ToList();
 
-            if (model.Search1 != null)
+            if (model.searchByBookName != null)
             {
-                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
+                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByBookName.Trim().ToLower())).ToList();
             }
 
             if (model.filterAuthors != null && model.filterAuthors.Count != 0)
@@ -193,9 +193,9 @@ namespace BusinessLogic.Repository
                 bookList = bookList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
 
-            if (model.Search4 != null)
+            if (model.searchByPublisher != null)
             {
-                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
+                bookList = bookList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByPublisher.Trim().ToLower())).ToList();
             }
             List<AdminBookList> AdminBookList = new List<AdminBookList>();
             foreach (var book in bookList)

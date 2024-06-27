@@ -65,9 +65,9 @@ namespace BusinessLogic.Repository
 
 
 
-            if (!string.IsNullOrEmpty(model.Search1))
+            if (!string.IsNullOrEmpty(model.searchByBookName))
             {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByBookName.Trim().ToLower())).ToList();
             }
 
             if (model.filterAuthors != null && model.filterAuthors.Count != 0)
@@ -79,9 +79,9 @@ namespace BusinessLogic.Repository
             {
                 booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
-            if (!string.IsNullOrEmpty(model.Search4))
+            if (!string.IsNullOrEmpty(model.searchByPublisher))
             {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByPublisher.Trim().ToLower())).ToList();
             }
 
 
@@ -136,9 +136,9 @@ namespace BusinessLogic.Repository
 
 
 
-            if (!string.IsNullOrEmpty(model.Search1))
+            if (!string.IsNullOrEmpty(model.searchByBookName))
             {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search1.Trim().ToLower())).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByBookName.Trim().ToLower())).ToList();
             }
 
             if (model.filterAuthors != null && model.filterAuthors.Count != 0)
@@ -151,9 +151,9 @@ namespace BusinessLogic.Repository
                 booksList = booksList.Where(r => model.filterCategory.Contains((int)r.Categoryid)).ToList();
             }
 
-            if (!string.IsNullOrEmpty(model.Search4))
+            if (!string.IsNullOrEmpty(model.searchByPublisher))
             {
-                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.Search4.Trim().ToLower())).ToList();
+                booksList = booksList.Where(r => r.Title.Trim().ToLower().Contains(model.searchByPublisher.Trim().ToLower())).ToList();
             }
             return booksList.Count;
         }

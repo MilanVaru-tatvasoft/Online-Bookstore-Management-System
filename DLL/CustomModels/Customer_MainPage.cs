@@ -20,10 +20,10 @@ namespace DataAccess.CustomModels
         public int? UserId { get; set; }
         public int? BookCount { get; set; }
         public int PageNumber { get; set; }
-        public string? Search1 { get; set; }
+        public string? searchByBookName { get; set; }
         public List<int>? filterAuthors { get; set; }
         public List<int>? filterCategory { get; set; }
-        public string? Search4 { get; set; }
+        public string? searchByPublisher { get; set; }
     }
 
     public class DashboardList
@@ -59,7 +59,7 @@ namespace DataAccess.CustomModels
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]
-        [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", ErrorMessage = "Invalid email address format")]
+        [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Contact number is required")]
@@ -119,7 +119,7 @@ namespace DataAccess.CustomModels
         public decimal? Price { get; set; }
 
         [Required(ErrorMessage = "Email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Total amount is required")]
@@ -162,6 +162,7 @@ namespace DataAccess.CustomModels
     public class ResetPasswordModel
     {
         public int? UserId { get; set; }
+
 
         public string? Email { get; set; }
 

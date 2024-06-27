@@ -20,24 +20,23 @@
 
     </div>
 </nav>
+
+
+
 <div id="MainPage" class="d-flex w-100  flex-column align-items-center">
     <img src="~/login_bg.jpg" id="MainPage2" class="img-fluid" />
     <h1 class="text-white text-center my-4" style="z-index:1;">
         Welcome to BookStore
     </h1>
-    <div class="d-flex justify-content-end w-100 me-2 d-none" id="resetpasssuccessmsg">
-
-        <div class="alert alert-success alert-dismissible" role="alert">
-            A simple success alert—check it out!
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;" class="d-flex justify-content-end w-100">
+        <div class="toast bg-danger-subtle " style="position: absolute; top: 0; right: 0;" data-delay="5000">
+            <div class="toast-body">
+            </div>
         </div>
     </div>
     <div class="w-75 mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <h3 class="text-secondary text-center mb-4 ">
-                    Login to Explore
-                </h3>
                 <div class="card shadow-lg p-4">
                     <div class="card-body">
                         <form id="registrationForm" asp-action="LoginPostMethod" asp-controller="Home">
@@ -47,12 +46,14 @@
                                     <span class="input-group-text">
                                         <i class="bi bi-envelope"></i>
                                     </span>
-                                    <input type="email"
+                                    <input type="text"
                                            class="form-control"
                                            id="loginemail"
                                            asp-for="@Model.loginEmail"
+                                           oninput="validateEmail(this.value)"
                                            placeholder="Email" required />
                                 </div>
+                                <span class="text-danger validEmail" asp-validation-for="loginEmail"></span>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="loginpassword" class="form-label">Password</label>
@@ -66,6 +67,8 @@
                                            id="loginpassword"
                                            placeholder="Password"
                                            required oninput="return ChkPasswordLength()" />
+                                    <span class="text-danger" asp-validation-for="password"></span>
+
                                 </div>
                                 <span id="error" class="text-danger"></span>
                                 <div class="d-flex justify-content-end">
@@ -93,6 +96,7 @@
 
 </div>
 <div id="UserProfile"></div>
+<partial name="_ValidationScriptsPartial" />
 <script>
     function ForgotPasswordMail() {
         $.ajax({
@@ -125,4 +129,21 @@
     }
 
 </script>
-<partial name="_ValidationScriptsPartial" />
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var toastMessage = '@TempData["ToastMessage"]';
+        if (toastMessage !== '') {
+            var delay = 3000;
+            $('.toast-body').text(toastMessage);
+            $('.toast').toast({ delay: delay });
+            $('.toast').toast('show');
+        }
+    });
+
+</script>
+
+

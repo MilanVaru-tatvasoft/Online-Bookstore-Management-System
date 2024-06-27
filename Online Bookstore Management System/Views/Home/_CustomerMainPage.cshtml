@@ -81,14 +81,20 @@
 </style>
 
 <div class="">
-    <div class="bookCategory">
-        <h3 class="my-2 ms-1">All Books</h3>
+    <div class="bookCategory d-flex w-100">
+        <h3 class="my-2 ms-1 w-100">All Books</h3>
+        <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;" class="d-flex justify-content-end w-100">
+            <div class="toast bg-success-subtle " style="position: absolute; top: 0; right: 0;" data-delay="5000">
+                <div class="toast-body d-flex">
+                </div>
+            </div>
+        </div>
     </div>
     <div class="mx-0 mt-3 p-3">
         <div class="searchbar m-0">
             <form id="searchForm" class="mb-2 gy-2 row">
                 <div class="col-md-3 col-6">
-                    <input asp-for="@Model.Search1" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
+                    <input asp-for="@Model.searchByBookName" type="text" class="form-control" id="bookTitle" placeholder="Book Title">
                 </div>
 
                 <div class="form-group col-md-3 col-6">
@@ -122,7 +128,7 @@
                 </div>
 
                 <div class=" col-md-3 col-6">
-                    <input asp-for=@Model.Search4 type="text" class=" form-control" id="bookPublisher" placeholder="Publisher Name">
+                    <input asp-for=@Model.searchByPublisher type="text" class=" form-control" id="bookPublisher" placeholder="Publisher Name">
                 </div>
 
                 <div class="form-group d-flex justify-content-end col-md-12 mt-3">
@@ -235,9 +241,19 @@
     }
 
     $(document).ready(function () {
+         var toastMessage = '@TempData["ToastMessage"]';
+        if (toastMessage !== '') {
+            var delay = 5000;
+            var toastTypeClass = toastMessage.toLowerCase().includes('Invalid') ? 'toast-error' : 'toast-success';
+            $('.toast-body').text(toastMessage);
+            $('.toast').toast({ delay: delay });
+            $('.toast').toast('show');
+        }
+
         var bookCount = $('#BookCount').val();
         var lastPageNumber = Math.ceil(bookCount / pageSize);
         $('#pageNumber').val(pageNumber)
+        fetchMoreData(pageNumber);
 
 
 
@@ -258,8 +274,38 @@
             }
         });
 
-        fetchMoreData(pageNumber);
     })
+
+    function buildBookCard(obj) {
+        var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3">
+                                <div class="card border-0 h-100 shadow">
+                                    <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-truncate">${obj.title}</h5>
+                                        <strong class="card-title text-danger fs-4">${obj.price} $</strong>
+                                        <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
+                                    </div>
+                                    <div class="ratings">`;
+
+        for (var i = 1; i <= 5; i++) {
+            if (i <= obj.avgRating) {
+                html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
+            } else if (i - 0.5 <= obj.avgRating) {
+                html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
+            } else {
+                html += `<i class="bi bi-star fs-5 text-warning"></i>`;
+            }
+        }
+
+        html += `</div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>
+                        </div>
+                    </div>
+                </div>`;
+
+        return html;
+    }
 
     function fetchMoreData(pageNumber) {
         
@@ -288,32 +334,8 @@
             success: function (result) {
                 if (result.length > 0) {
                     result.forEach(function (obj) {
-                        var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3">
-                                <div class="card border-0 h-100 shadow">
-                                    <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
-                                    <div class="card-body">
-                                            <h5 class="card-title text-truncate">${obj.title}</h5>
-                                            <strong class="card-title text-danger fs-4">${obj.price} $</strong>
-                                            <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
-                                    </div>
-                                    <div class="ratings">`;
+                        var html = buildBookCard(obj);
 
-                        for (var i = 1; i <= 5; i++) {
-                            if (i <= obj.avgRating) {
-                                html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
-                            } else if (i - 0.5 <= obj.avgRating) {
-                                html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
-                            } else {
-                                html += `<i class="bi bi-star fs-5 text-warning"></i>`;
-                            }
-                        }
-
-                        html += `</div>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>
-                                    </div>
-                            </div>
-                        </div>`;
 
                         $('#book-list').append(html);
 
@@ -333,6 +355,7 @@
         });
 
     }
+
 
     function fetchSearchData() {
         $('#book-list').empty();
@@ -370,32 +393,7 @@
                 $('#loader').hide(); // Hide loader on success
                 if (result.length > 0) {
                     result.forEach(function (obj) {
-                        var html = `<div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 gy-3 ">
-                                                                                                                <div class="card border-0 h-100 shadow">
-                                                                                                                    <img src="/BookListCollections/${obj.bookPhoto}" class="card-img-top rounded-top p-0" width="50" height="300" alt="${obj.bookPhoto}">
-                                                                                                                    <div class="card-body">
-                                                                                                                        <h5 class="card-title text-truncate">${obj.title}</h5>
-                                                                                                                        <strong class="card-title text-danger fs-4">${obj.price} $</strong>
-                                                                                                                        <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
-                                                                                                                    </div>
-                                                                                                                    <div>`;
-
-                        for (var i = 1; i <= 5; i++) {
-                            if (i <= obj.avgRating) {
-                                html += `<i class="bi bi-star-fill fs-5 text-warning"></i>`;
-                            } else if (i - 0.5 <= obj.avgRating) {
-                                html += `<i class="bi bi-star-half fs-5 text-warning"></i>`;
-                            } else {
-                                html += `<i class="bi bi-star fs-5 text-warning"></i>`;
-                            }
-                        }
-
-                        html += `</div>
-                                                <div class="d-flex gap-2">
-                                                    <button class="btn btn-primary" onclick="ViewBookDetails(${obj.bookId})">View More</button>
-                                                </div>
-                                            </div>
-                                            </div>`;
+                        var html = buildBookCard(obj);
 
 
                         $('#book-list').append(html);
@@ -417,7 +415,12 @@
 
 </script>
 
+<script>
+    $(document).ready(function () {
+       
+    });
 
+</script>
 
 
 <div id="Modaldata"></div>

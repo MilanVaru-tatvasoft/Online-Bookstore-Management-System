@@ -1,4 +1,16 @@
 ﻿
+
+function validateEmail(email) {
+    var regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (regex.test(email)) {
+        $('.validEmail').text("");
+    } else {
+        $('.validEmail').text("Email is not in valid format");
+    }
+}
+
+
 function RegisterPost() {
     event.preventDefault();
     var form = new FormData($('#RegisterForm')[0]);

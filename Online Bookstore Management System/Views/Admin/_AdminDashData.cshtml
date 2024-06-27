@@ -41,7 +41,12 @@
 </style>
 
 <div class="">
-
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;" class="d-flex justify-content-end w-100">
+        <div class="toast bg-success-subtle " style="position: absolute; top: 0; right: 0;" data-delay="5000">
+            <div class="toast-body d-flex">
+            </div>
+        </div>
+    </div>
     <div class="row mt-1">
         <div class="col-md-3 mb-4">
             <div class="card shadow bg-info-subtle">
@@ -296,4 +301,16 @@
 
 </script>
 
+<script>
+    $(document).ready(function () {
+        var toastMessage = '@TempData["ToastMessage"]';
+        if (toastMessage !== '') {
+            var delay = 5000;
+            var toastTypeClass = toastMessage.toLowerCase().includes('Invalid') ? 'toast-error' : 'toast-success';
+            $('.toast-body').text(toastMessage);
+            $('.toast').toast({ delay: delay });
+            $('.toast').toast('show');
+        }
+    });
 
+</script>
