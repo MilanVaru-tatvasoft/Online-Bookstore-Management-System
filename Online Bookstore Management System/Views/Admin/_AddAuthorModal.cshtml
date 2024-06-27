@@ -12,26 +12,26 @@
                     <div class="mb-3">
                         <input type="text" asp-for="@Model.AuthorId" hidden />
                         <label for="AuthorName" class="form-label">Author Name</label>
-                        <input type="text" asp-for=AuthorName class="form-control" id="AuthorName" placeholder="Enter Author name" >
+                        <input type="text" asp-for=AuthorName class="form-control" id="AuthorName" placeholder="Enter Author name">
                         <span class="text-danger" asp-validation-for="AuthorName"></span>
 
                     </div>
                     <div class="mb-3">
-                        <label for="AuthorBio"  class="form-label">Author Biography</label>
-                        <textarea class="form-control" asp-for=Bio id="AuthorBio" rows="4" placeholder="Enter Author biography" ></textarea>
+                        <label for="AuthorBio" class="form-label">Author Biography</label>
+                        <textarea class="form-control" asp-for=Bio id="AuthorBio" rows="4" placeholder="Enter Author biography"></textarea>
                         <span class="text-danger" asp-validation-for="Bio"></span>
 
                     </div>
                     <div class="mb-3">
-                        <label for="birthdate"  class="form-label">Birthdate</label>
-                        <input type="date" asp-for=BirthDate class="form-control" id="birthdate" >
+                        <label for="birthdate" class="form-label">Birthdate</label>
+                        <input type="date" asp-for=BirthDate class="form-control" id="birthdate">
                         <span class="text-danger" asp-validation-for="BirthDate"></span>
 
                     </div>
-            <div class="">
-                <button type="submit" class="btn btn-primary" >Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+                    <div class="">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </form>
             </div>
         </div>

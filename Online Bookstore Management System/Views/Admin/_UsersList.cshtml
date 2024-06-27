@@ -27,8 +27,8 @@
             </div>
         </form>
     </div>
-    <div class="table table-responsive  p-3">
-        <table id="UsersTable" class="display " style="width:100%">
+    <div class="table table-striped  p-3">
+        <table id="UsersTable" class="  display " style="width:100%">
             <thead class="bg-body-tertiary">
                 <tr>
                     <th>UserId</th>
@@ -89,22 +89,22 @@
             }
         });
         $('.dataTables_filter').hide();
-        $('#ordersTable_first').hide();
-        $('#ordersTable_last').hide();
+        $('#UsersTable_first').hide();
+        $('#UsersTable_last').hide();
 
         $('#searchBtn').on('click', function () {
             table.columns(3).search($('#email').val().trim());
             table.columns(6).search($('#city').val().trim());
             table.columns(1).search($('#userName').val().trim());
-            table.columns(8).search($('#roleName').val().trim());
+            table.columns(7).search($('#roleName').val().trim());
             table.draw();
             $('.dataTables_filter').hide();
-            $('#ordersTable_first').hide();
-            $('#ordersTable_last').hide();
+            $('#UsersTable_first').hide();
+            $('#UsersTable_last').hide();
         });
 
         $('button[type="reset"]').on('click', function () {
-            GetOrderList()
+            GetUsersList();
         });
     });
 </script>

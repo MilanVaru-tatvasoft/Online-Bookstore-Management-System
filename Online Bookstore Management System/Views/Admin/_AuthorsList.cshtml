@@ -7,11 +7,10 @@
         <div class="d-flex justify-content-end m-2  w-100">
             <button class="btn btn-success  " onclick="GetAddOrUpdateAuthor(0)"> Add Author </button>
         </div>
-        <div class="table-responsive">
-
-            <table id="AuthorTable" class=" table-striped ">
+        <div class="table table-bordered  p-3">
+            <table id="AuthorTable" class=" display ">
                 <thead>
-                    <tr>
+                    <tr class="text-center">
                         <th>AuthorId</th>
                         <th>Author Name</th>
                         <th>Bio</th>
@@ -24,9 +23,9 @@
                     {
                         <tr>
                            
-                            <td><span class="text-wrap fs-5">@obj.Authorid</span></td>
+                            <td>@obj.Authorid</td>
                             <td>@obj.Name</td>
-                            <td>@obj.Bio </td>
+                            <td><span class="text-wrap">@obj.Bio</span> </td>
                             <td>
                                 @obj.Birthdate?.ToString("dd-MM-yyyy")
                             </td>

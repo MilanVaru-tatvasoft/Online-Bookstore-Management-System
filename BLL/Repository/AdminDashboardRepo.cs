@@ -25,7 +25,7 @@ namespace BusinessLogic.Repository
 
         private int GetAutherId(string? AuthorName)
         {
-            int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name == AuthorName && x.Isdeleted != true)?.Authorid;
+            int? AuthorId = _context.Authors.FirstOrDefault(x => x.Name.Trim().ToLower() == AuthorName.Trim().ToLower() && x.Isdeleted != true)?.Authorid;
 
             if (AuthorId == null)
             {
@@ -41,7 +41,7 @@ namespace BusinessLogic.Repository
         private int GetCategoryId(string? categoryName)
         {
 
-            int? catId = _context.Categories.FirstOrDefault(x => x.Categoryname == categoryName)?.Categoryid;
+            int? catId = _context.Categories.FirstOrDefault(x => x.Categoryname.Trim().ToLower() == categoryName.Trim().ToLower())?.Categoryid;
             if (catId == null)
             {
                 Category c = new Category() { Categoryname = categoryName };
@@ -292,8 +292,7 @@ namespace BusinessLogic.Repository
 
             book.Title = model.Title;
             book.Authorid = authorId;
-            book.Bookphoto = model.bookPhoto?.FileName ?? model.bookPic;
-            //book.Publisher = model.publisherName;
+            book.Publisher = model.publisherName;
             book.Categoryid = categoryId;
             book.Noofpages = model.pageNumber;
             book.Price = (decimal)model.price;
@@ -304,7 +303,8 @@ namespace BusinessLogic.Repository
 
             if (model.bookPhoto != null)
             {
-                StoreFileAsync(model.bookPhoto, book.Title);
+                var uplodedfilename = StoreFileAsync(model.bookPhoto, book.Title);
+                book.Bookphoto = uplodedfilename;
             }
 
             _context.Books.Update(book);
@@ -332,7 +332,7 @@ namespace BusinessLogic.Repository
             return model;
         }
 
-        public async Task StoreFileAsync(IFormFile file, string bookTitle)
+        public string StoreFileAsync(IFormFile file, string bookTitle)
         {
             if (file == null || file.Length == 0)
             {
@@ -349,13 +349,16 @@ namespace BusinessLogic.Repository
 
             if (File.Exists(filePath))
             {
-                throw new IOException($"File {fileName} already exists.");
+                File.Delete(filePath);
+
             }
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await file.CopyToAsync(stream);
+                 file.CopyToAsync(stream);
             }
+
+            return fileName;
 
         }
 
@@ -597,7 +600,20 @@ namespace BusinessLogic.Repository
             else
             {
 
-                if (!_context.Authors.Any(x => x.Name.Trim().Equals(model.AuthorName.Trim(), StringComparison.OrdinalIgnoreCase)))
+                if (!_context.Authors.Any(x => x.Name.Trim().ToLower() == model.AuthorName.Trim().ToLower()))
+                {
+                    Author newAuthor = new Author()
+                    {
+                        Name = model.AuthorName,
+                        Bio = model.Bio,
+                        Birthdate = model.BirthDate,
+                        Isdeleted = false
+                    };
+
+                    _context.Authors.Add(newAuthor);
+                    _context.SaveChanges();
+                    return true;
+                }
                 {
                     Author newAuthor = new Author()
                     {

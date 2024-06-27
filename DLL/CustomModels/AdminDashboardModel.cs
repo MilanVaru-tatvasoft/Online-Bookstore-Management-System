@@ -101,7 +101,7 @@ namespace DataAccess.CustomModels
     public class AuthorListModel
     {
         public List<Author>? Authors { get; set; }
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         public string? AuthorName { get; set; }

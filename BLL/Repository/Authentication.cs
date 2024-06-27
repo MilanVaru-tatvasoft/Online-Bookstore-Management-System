@@ -102,7 +102,7 @@ namespace BusinessLogic.Repository
         public void StoreProfilePhoto(IFormFile file, int userId)
         {
             User user = _context.Users.FirstOrDefault(x => x.Userid == userId);
-            var fileName = user.Profilephoto;
+            var fileName = file.FileName;
 
             if (user == null)
             {
