@@ -103,6 +103,7 @@
                                     </small>
                                 </div>
                                 <span class="text-muted">$ @obj.Price</span>
+                                <span class="text-muted">% @obj.Book.Discount</span>
                                 <span class="text-muted"> @obj.Quantity</span>
                                 <span class="text-muted">$ @obj.Totalamount</span>
                             </li>
@@ -112,10 +113,18 @@
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
                                 <h6 class="my-0">
-                                    Total
+                                    Total(Discount Included)
                                 </h6>
                             </div>
-                            <span class="text-muted"> $ @totalamount() </span>
+                            <span class="text-muted"> $ @Model.TotalAmountAfterDiscounts </span>
+                        </li>
+                         <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <h6 class="my-0">
+                                    Total(All Taxes Included)
+                                </h6>
+                            </div>
+                            <span class="text-muted"> $ @Model.GrossTotal </span>
                         </li>
 
                     }

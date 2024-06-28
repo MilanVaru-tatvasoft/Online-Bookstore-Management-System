@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.DataModels;
 
-[Table("rating_reviews")]
-public partial class RatingReview
+[Table("ratingreviews")]
+public partial class Ratingreview
 {
     [Key]
     [Column("rating_id")]
@@ -30,10 +30,10 @@ public partial class RatingReview
     public DateTime? RatingDate { get; set; }
 
     [ForeignKey("BookId")]
-    [InverseProperty("RatingReviews")]
+    [InverseProperty("Ratingreviews")]
     public virtual Book Book { get; set; } = null!;
 
     [ForeignKey("CustomerId")]
-    [InverseProperty("RatingReviews")]
+    [InverseProperty("Ratingreviews")]
     public virtual Customer Customer { get; set; } = null!;
 }

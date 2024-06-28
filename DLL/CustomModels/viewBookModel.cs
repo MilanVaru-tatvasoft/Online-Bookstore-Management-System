@@ -39,6 +39,9 @@ namespace DataAccess.CustomModels
         public decimal? price { get; set; }
         [Required(ErrorMessage = "This is required")]
 
+        public decimal? discount { get; set; }
+        [Required(ErrorMessage = "This is required")]
+
         public int? pageNumber { get; set; }
         [Required(ErrorMessage = "This is required")]
 
@@ -52,7 +55,7 @@ namespace DataAccess.CustomModels
         public string? reviewNote { get; set; }
 
         public List<Author>? Author { get; set; }
-        public List<RatingReview>? reviews { get; set; }
+        public List<Ratingreview>? reviews { get; set; }
         public List<Category>? categories { get; set; }
         public List<Customer>? customers { get; set; }
 

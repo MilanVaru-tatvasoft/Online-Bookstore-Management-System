@@ -41,19 +41,19 @@
                     <div class="card-body">
                         <form id="registrationForm" asp-action="LoginPostMethod" asp-controller="Home">
                             <div class="form-group mb-3">
-                                <label for="loginemail" class="form-label">Email</label>
+                                <label for="LoginEmail" class="form-label">Email</label>
                                 <div class="input-group">
                                     <span class="input-group-text">
                                         <i class="bi bi-envelope"></i>
                                     </span>
                                     <input type="text"
                                            class="form-control"
-                                           id="loginemail"
-                                           asp-for="@Model.loginEmail"
+                                           id="LoginEmail"
+                                           asp-for="@Model.LoginEmail"
                                            oninput="validateEmail(this.value)"
                                            placeholder="Email" required />
                                 </div>
-                                <span class="text-danger validEmail" asp-validation-for="loginEmail"></span>
+                                <span class="text-danger validEmail" asp-validation-for="LoginEmail"></span>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="loginpassword" class="form-label">Password</label>
@@ -63,11 +63,11 @@
                                     </span>
                                     <input type="password"
                                            class="form-control"
-                                           asp-for="@Model.password"
+                                           asp-for="@Model.Password"
                                            id="loginpassword"
                                            placeholder="Password"
                                            required oninput="return ChkPasswordLength()" />
-                                    <span class="text-danger" asp-validation-for="password"></span>
+                                    <span class="text-danger" asp-validation-for="Password"></span>
 
                                 </div>
                                 <span id="error" class="text-danger"></span>

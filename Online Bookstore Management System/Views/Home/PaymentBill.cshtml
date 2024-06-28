@@ -74,6 +74,7 @@
                     <th>Book Title</th>
                     <th>Author</th>
                     <th>Price</th>
+                    <th>Discount</th>
                     <th>Quantity</th>
                     <th>Total</th>
                 </tr>
@@ -85,6 +86,7 @@
                         <td>@o.Title</td>
                         <td>@o.Author.Name</td>
                         <td>$@o.Price</td>
+                        <td>@o.Discount %</td>
                         <td>@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Quantity</td>
                         <td>$@Model.OrderDetails.FirstOrDefault(x=>x.Orderid == Model.Orders.Orderid && x.Bookid == o.Bookid).Totalamount</td>
                     </tr>
@@ -94,26 +96,26 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3">Subtotal</td>
+                    <td colspan="4">Subtotal</td>
 
                     <td>@Model.TotalBooks</td>
                     <td>$@Model.TotalAmount
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4">Discount</td>
-                    <td>@Model.DiscountPercentage %</td>
+                    <td colspan="5">Total with discounts</td>
+                    <td>$ @Model.TotalAfterDiscounts </td>
                 </tr>
                 <tr>
-                    <td colspan="4">Shipping Charge</td>
+                    <td colspan="5">Shipping Charge</td>
                     <td>$@Model.ShippingAmount</td>
                 </tr>
                 <tr>
-                    <td colspan="4">Tax</td>
-                    <td>$@Model.Tax</td>
+                    <td colspan="5">Tax</td>
+                    <td>@Model.Tax %</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Gross Total</td>
+                    <td colspan="4">Gross Total</td>
                     <td>@Model.TotalBooks</td>
                     <td>$@Model.GrossTotal</td>
                 </tr>

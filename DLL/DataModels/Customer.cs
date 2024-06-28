@@ -57,5 +57,5 @@ public partial class Customer
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     [InverseProperty("Customer")]
-    public virtual ICollection<RatingReview> RatingReviews { get; set; } = new List<RatingReview>();
+    public virtual ICollection<Ratingreview> Ratingreviews { get; set; } = new List<Ratingreview>();
 }

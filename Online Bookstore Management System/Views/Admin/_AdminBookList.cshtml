@@ -192,7 +192,16 @@
                     {
                         <tr>
                             <td>
-                                <img src="~/BookListCollections/@obj.BookPhoto" class="  p-0" width="100" height="150" alt="@obj.BookPhoto">
+                                @if(obj.BookPhoto != null)
+                                {
+                                    
+                                    <img src="~/BookListCollections/@obj.BookPhoto" class="  p-0" width="100" height="150" alt="@obj.BookPhoto">
+                                }
+                                else
+                                {
+                                    <img src="~/BookListCollections/sampleBook.jpg" class="  p-0" width="100" height="150" alt="@obj.BookPhoto">
+                                    
+                                }
                             </td>
                             <td><span class="text-wrap fs-5">@obj.Title</span></td>
                             <td>@obj.AuthorName</td>

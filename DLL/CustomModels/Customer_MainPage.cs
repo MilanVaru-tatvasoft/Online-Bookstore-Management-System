@@ -13,7 +13,7 @@ namespace DataAccess.CustomModels
         public List<Author> Authors { get; set; }
         public List<Publisher> Publishers { get; set; }
         public List<Addtocart>? AddToCarts { get; set; }
-        public List<RatingReview>? Reviews { get; set; }
+        public List<Ratingreview>? Reviews { get; set; }
         public List<DashboardList>? DashboardLists { get; set; }
         public User? user { get; set; }
         public int? itemCount { get; set; }
@@ -36,6 +36,7 @@ namespace DataAccess.CustomModels
         public int AuthorId { get; set; }
         public string BookPhoto { get; set; }
         public decimal Price { get; set; }
+        public decimal discount { get; set; }
         public decimal AvgRating { get; set; }
         public bool IsFavorite { get; set; }
 
@@ -97,7 +98,7 @@ namespace DataAccess.CustomModels
 
         public int? ItemCount { get; set; }
         public decimal? TotalBooks { get; set; }
-        public decimal? DiscountPercentage { get; set; }
+        public decimal? TotalAmountAfterDiscounts { get; set; }
         public decimal? ShippingAmount { get; set; }
         public decimal? GrossTotal { get; set; }
         public decimal? Tax { get; set; }
@@ -188,6 +189,7 @@ namespace DataAccess.CustomModels
         public decimal? TotalAmount { get; set; }
         public decimal? TotalBooks { get; set; }
         public decimal? DiscountPercentage { get; set; }
+        public decimal TotalAfterDiscounts { get; set; }
         public decimal? ShippingAmount { get; set; }
         public decimal? GrossTotal { get; set; }
         public decimal? Tax { get; set; }

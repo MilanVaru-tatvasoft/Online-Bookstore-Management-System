@@ -36,7 +36,7 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Payment> Payments { get; set; }
 
-    public virtual DbSet<RatingReview> RatingReviews { get; set; }
+    public virtual DbSet<Ratingreview> Ratingreviews { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -153,17 +153,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("payment_order_id_fkey");
         });
 
-        modelBuilder.Entity<RatingReview>(entity =>
+        modelBuilder.Entity<Ratingreview>(entity =>
         {
             entity.HasKey(e => e.RatingId).HasName("rating_reviews_pkey");
 
+            entity.Property(e => e.RatingId).HasDefaultValueSql("nextval('rating_reviews_rating_id_seq'::regclass)");
             entity.Property(e => e.RatingDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(d => d.Book).WithMany(p => p.RatingReviews)
+            entity.HasOne(d => d.Book).WithMany(p => p.Ratingreviews)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rating_reviews_book_id_fkey");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.RatingReviews)
+            entity.HasOne(d => d.Customer).WithMany(p => p.Ratingreviews)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rating_reviews_customer_id_fkey");
         });

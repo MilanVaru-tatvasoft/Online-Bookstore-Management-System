@@ -17,6 +17,7 @@
                                 <th>Book</th>
                                 <th>book Name</th>
                                 <th>Price</th>
+                                <th>Discount()</th>
                                 <th>Quantity</th>
                                 <th>Total Amaunt</th>
                                 <th>Action</th>
@@ -36,6 +37,7 @@
                                     </td>
                                     <td>@obj.Book.Title</td>
                                     <td>@obj.Book.Price</td>
+                                    <td>@obj.Book.Discount %</td>
                                     <td>
                                         <input type="text" asp-for="@Model.BookList.FirstOrDefault(x=>x.Bookid == obj.Bookid).Stockquantity" id="bookStockQuantity@(obj.Bookid)" hidden />
 
@@ -109,7 +111,7 @@
                         <div class="col-sm-6">
                             <p>Total Books:</p>
                             <p>Total Amount:</p>
-                            <p>Discount:</p>
+                            <p>Total Amount After Discounts:</p>
                             <p>Shipping Amount:</p>
                             <p>Tax:</p>
                             <hr>
@@ -118,7 +120,7 @@
                         <div class="col-sm-6 text-right">
                             <p><strong>@Model.TotalBooks</strong></p>
                             <p><strong>$@Model.TotalAmount</strong></p>
-                            <p><strong>@Model.DiscountPercentage %</strong></p>
+                            <p><strong>$ @Model.TotalAmountAfterDiscounts </strong></p>
                             <p><strong>$@Model.ShippingAmount</strong></p>
                             <p><strong>@Model.Tax %</strong></p>
                             <hr>

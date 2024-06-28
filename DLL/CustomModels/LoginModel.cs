@@ -12,10 +12,10 @@ namespace DataAccess.CustomModels
     {
         [Required(ErrorMessage = "Email address is required.")]
         [RegularExpression(@"^[a-z0-9._%+-]+@[a-z]{3,}\.[a-z]{2,}$", ErrorMessage = "Invalid email address format.")]
-        public string loginEmail { get; set; }
+        public string LoginEmail { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         public bool isdeleted { get; set; } 
 

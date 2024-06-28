@@ -51,9 +51,9 @@ namespace BusinessLogic.Repository
 
             return _MainPage;
         }
-        public List<DashboardList> GetCustomerDashboardTable(CustomerMainPage model, int? userId, int pageNumber)
+        public List<DashboardList> GetCustomerDashBookList(CustomerMainPage model, int? userId, int pageNumber)
         {
-            
+
             int pageSize = 6;
             int? customerId = _context.Customers
                                     .FirstOrDefault(x => x.Userid == userId)
@@ -93,7 +93,7 @@ namespace BusinessLogic.Repository
 
             foreach (var book in booksList)
             {
-                var reviews = _context.RatingReviews.Where(x => x.BookId == book.Bookid).ToList();
+                var reviews = _context.Ratingreviews.Where(x => x.BookId == book.Bookid).ToList();
                 decimal i = 0;
                 if (reviews.Count != 0) { i = (decimal)reviews.Average(x => x.Rating); }
 
@@ -107,13 +107,14 @@ namespace BusinessLogic.Repository
                 item.CategoryId = (int)book.Categoryid;
                 item.CategoryName = book.Category.Categoryname;
                 item.AvgRating = i;
+                item.discount = (decimal)book.Discount;
 
                 item.Price = book.Price;
 
                 dashboardList.Add(item);
             }
 
-            if (pageNumber < 1 || pageNumber > lastPageNumber+1)
+            if (pageNumber < 1 || pageNumber > lastPageNumber + 1)
             {
                 model.BookCount = 0;
                 return null;
@@ -298,7 +299,7 @@ namespace BusinessLogic.Repository
                 cartId = (int)(cart != null && cart?.Cartid != null ? cart.Cartid : 0),
                 Addtocarts = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid).ToList(),
                 itemCount = _context.Addtocarts?.Where(x => x.Customerid == customer.Customerid && x.Isremoved != true && x.Checkout != true).ToList().Count(),
-                reviews = _context.RatingReviews.Where(x => x.BookId == bookId).OrderByDescending(x => x.RatingDate).ToList(),
+                reviews = _context.Ratingreviews.Where(x => x.BookId == bookId).OrderByDescending(x => x.RatingDate).ToList(),
                 customers = _context.Customers.ToList(),
 
 
@@ -420,7 +421,7 @@ namespace BusinessLogic.Repository
                     Createdby = userId,
                     Createddate = DateTime.Now,
                     Isdeleted = false,
-                    Totalamount = totalAmount
+                    Totalamount = Math.Round((decimal)(book.Price * (1 - book.Discount / 100)), 2),
                 };
 
                 _context.Orders.Add(order);
@@ -432,7 +433,7 @@ namespace BusinessLogic.Repository
                     Bookid = data.BookId,
                     Price = book.Price,
                     Quantity = (int)data.Quantity,
-                    Totalamount = totalAmount,
+                    Totalamount = Math.Round((decimal)(book.Price * (1 - book.Discount / 100)), 2),
                     Createdby = userId.ToString(),
                     Createddate = DateTime.Now
                 };
@@ -463,7 +464,7 @@ namespace BusinessLogic.Repository
                     Createdby = userId,
                     Createddate = DateTime.Now,
                     Isdeleted = false,
-                    Totalamount = (decimal)data.AddToCarts.Sum(x => x.Totalamount),
+                    Totalamount = (decimal)data.GrossTotal,
                 };
 
                 _context.Orders.Add(order);
@@ -477,7 +478,7 @@ namespace BusinessLogic.Repository
                         Bookid = cart.Bookid,
                         Price = (decimal)cart.Price,
                         Quantity = (int)cart.Quantity,
-                        Totalamount = cart.Totalamount,
+                        Totalamount = Math.Round((decimal)(cart.Book.Price * (1 - cart.Book.Discount / 100)), 2),
                         Createdby = userId.ToString(),
                         Createddate = DateTime.Now
                     };
@@ -520,8 +521,8 @@ namespace BusinessLogic.Repository
 
             var totalBooks = addtocart.Sum(a => a.Quantity);
             var totalAmount = addtocart.Sum(a => a.Quantity * a.Book.Price);
-            var tax = 3m;
-            var discountPercentage = 5m;
+            var totalAmountAfterDiscounts = addtocart.Sum(a => a.Quantity * (Math.Round((decimal)(a.Book.Price * (1 - a.Book.Discount / 100)))));
+            var tax = 5m;
             var shippingAmount = 10m;
 
             var data = new OrderData
@@ -534,7 +535,7 @@ namespace BusinessLogic.Repository
                 ItemCount = _context.Addtocarts.Where(x => x.Customerid == customerId && x.Isremoved != true && x.Checkout != true).Count(),
                 TotalBooks = totalBooks,
                 TotalAmount = totalAmount,
-                DiscountPercentage = discountPercentage,
+                TotalAmountAfterDiscounts = totalAmountAfterDiscounts,
                 ShippingAmount = shippingAmount,
                 Tax = tax,
 
@@ -543,16 +544,15 @@ namespace BusinessLogic.Repository
 
             if (totalBooks > 0)
             {
-                var discount = totalAmount * (discountPercentage / 100);
-                var taxAmount = totalAmount * (tax / 100);
-                var grossTotal = totalAmount + taxAmount + shippingAmount - discount;
+                var taxAmount = Math.Round((decimal)totalAmountAfterDiscounts * (tax / 100), 2);
+                var grossTotal = Math.Round((decimal)(totalAmountAfterDiscounts + taxAmount + shippingAmount), 2);
 
-                data.Tax = taxAmount;
+                data.Tax = tax;
                 data.GrossTotal = grossTotal;
             }
             else
             {
-                data.DiscountPercentage = 0;
+                data.TotalAmountAfterDiscounts = 0;
                 data.Tax = 0;
                 data.GrossTotal = 0;
                 data.ShippingAmount = 0;
@@ -575,18 +575,18 @@ namespace BusinessLogic.Repository
         {
             int customerId = _context.Customers.FirstOrDefault(x => x.Userid == userId)?.Customerid ?? 0;
 
-            RatingReview rate2 = _context.RatingReviews.FirstOrDefault(x => x.BookId == model.bookId && x.CustomerId == customerId);
+            Ratingreview rate2 = _context.Ratingreviews.FirstOrDefault(x => x.BookId == model.bookId && x.CustomerId == customerId);
             if (rate2 != null)
             {
                 rate2.Rating = model.ratingValue;
                 rate2.Reviews = model.reviewNote;
                 rate2.RatingDate = DateTime.Now;
-                _context.RatingReviews.Update(rate2);
+                _context.Ratingreviews.Update(rate2);
                 _context.SaveChanges();
             }
             else
             {
-                RatingReview rate = new RatingReview()
+                Ratingreview rate = new Ratingreview()
                 {
                     CustomerId = customerId,
                     BookId = (int)model.bookId,
@@ -595,7 +595,7 @@ namespace BusinessLogic.Repository
                     RatingDate = DateTime.Now,
 
                 };
-                _context.RatingReviews.Add(rate);
+                _context.Ratingreviews.Add(rate);
                 _context.SaveChanges();
 
             }
@@ -643,11 +643,10 @@ namespace BusinessLogic.Repository
             var totalBooks = orderDetails.Sum(a => a.Quantity);
             var totalAmount = orderDetails.Sum(a => a.Quantity * a.Book.Price);
             var tax = 3m;
-            var discountPercentage = 5m;
+            var totalAmountAfterDiscount = orderDetails.Sum(a => a.Quantity * (Math.Round((decimal)(a.Book.Price * (1 - a.Book.Discount / 100)))));
             var shippingAmount = 10m;
-            var discount = totalAmount * (discountPercentage / 100);
             var taxAmount = totalAmount * (tax / 100);
-            var grossTotal = totalAmount + taxAmount + shippingAmount - discount;
+            var grossTotal = Math.Round((decimal)(totalAmountAfterDiscount + taxAmount + shippingAmount), 2);
 
             if (order != null)
             {
@@ -655,8 +654,8 @@ namespace BusinessLogic.Repository
                 bill.Orders = order;
                 bill.Authors = _context.Authors.ToList();
                 bill.OrderDetails = orderDetails.ToList();
-                bill.Tax = taxAmount;
-                bill.DiscountPercentage = discountPercentage;
+                bill.Tax = tax;
+                bill.TotalAfterDiscounts = totalAmountAfterDiscount;
                 bill.GrossTotal = grossTotal;
                 bill.TotalBooks = totalBooks;
                 bill.ShippingAmount = shippingAmount;

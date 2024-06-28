@@ -54,6 +54,10 @@ public partial class Book
     [StringLength(500)]
     public string? Publisher { get; set; }
 
+    [Column("discount")]
+    [Precision(5, 2)]
+    public decimal? Discount { get; set; }
+
     [InverseProperty("Book")]
     public virtual ICollection<Addtocart> Addtocarts { get; set; } = new List<Addtocart>();
 
@@ -69,5 +73,5 @@ public partial class Book
     public virtual ICollection<Orderdetail> Orderdetails { get; set; } = new List<Orderdetail>();
 
     [InverseProperty("Book")]
-    public virtual ICollection<RatingReview> RatingReviews { get; set; } = new List<RatingReview>();
+    public virtual ICollection<Ratingreview> Ratingreviews { get; set; } = new List<Ratingreview>();
 }

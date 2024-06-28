@@ -94,7 +94,7 @@ function GetCustomerDashboard() {
     var pageNum = 1;
     $.ajax({
         method: "POST",
-        url: "/Home/CustomerDashboard2",
+        url: "/Home/CustomerMainPage",
         data: { pageNumber:pageNum }
 ,
         success: function (result) {

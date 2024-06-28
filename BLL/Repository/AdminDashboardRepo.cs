@@ -300,6 +300,7 @@ namespace BusinessLogic.Repository
             book.Createdby = userId;
             book.Createddate = DateTime.Now;
             book.Description = model.description;
+            book.Discount = model.discount;
 
             if (model.bookPhoto != null)
             {
@@ -322,10 +323,11 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                //publisherName = book.Publisher,
+                publisherName = book.Publisher,
                 categoryName = _context.Categories?.FirstOrDefault(x => x.Categoryid == book.Categoryid).Categoryname,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,
+                discount = book.Discount,
                 Author = _context.Authors.ToList(),
                 categories = _context.Categories.ToList(),
             };

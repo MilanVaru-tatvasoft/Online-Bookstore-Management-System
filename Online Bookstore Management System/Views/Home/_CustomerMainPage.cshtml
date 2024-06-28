@@ -284,6 +284,7 @@
                                         <h5 class="card-title text-truncate">${obj.title}</h5>
                                         <strong class="card-title text-danger fs-4">${obj.price} $</strong>
                                         <p class="card-text text-truncate px-1">Author: ${obj.authorName}</p>
+                                            <h4 class="text-muted my-0">${obj.discount} % Off</h4>
                                     </div>
                                     <div class="ratings">`;
 
@@ -325,7 +326,7 @@
    
 
         $.ajax({
-            url: "/Home/CustomerDashboardTable",
+            url: "/Home/CustomerDashBookList",
             type: "POST",
             data: formData,
             contentType: false,
@@ -381,7 +382,7 @@
 
 
         $.ajax({
-            url: "/Home/CustomerDashboardTable",
+            url: "/Home/CustomerDashBookList",
             type: "POST",
             data: formData,
             contentType: false,
