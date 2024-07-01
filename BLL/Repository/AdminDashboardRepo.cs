@@ -146,7 +146,7 @@ namespace BusinessLogic.Repository
 
             orderList.Orders = _context.Orders
                                         .Where(o => orderIds.Contains((int)o.Orderid))
-                                        .Include(o => o.Customer)
+                                        .Include(o => o.Customer).OrderByDescending(o => o.Orderid)
                                         .ToList();
 
             orderList.Books = _context.Books

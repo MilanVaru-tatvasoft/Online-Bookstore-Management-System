@@ -261,7 +261,7 @@ namespace BusinessLogic.Repository
                 _context.Users.Update(user);
                 _context.SaveChanges();
 
-                Customer customer = _context.Customers.FirstOrDefault(x => x.Email == user.Email);
+                Customer customer = _context.Customers.FirstOrDefault(x => x.Userid == user.Userid);
                 if (customer != null)
                 {
                     customer.Name = profile.FirstName + " " + profile.LastName;
@@ -292,7 +292,7 @@ namespace BusinessLogic.Repository
                 pageNumber = book.Noofpages,
                 price = book.Price,
                 AuthorName = _context.Authors?.FirstOrDefault(x => x.Authorid == book.Authorid).Name,
-                //publisherName = book.Publisher,
+                publisherName = book.Publisher,
                 bookPic = book.Bookphoto,
                 Stockquantity = book.Stockquantity,
                 quantity = 1,
@@ -521,7 +521,7 @@ namespace BusinessLogic.Repository
 
             var totalBooks = addtocart.Sum(a => a.Quantity);
             var totalAmount = addtocart.Sum(a => a.Quantity * a.Book.Price);
-            var totalAmountAfterDiscounts = addtocart.Sum(a => a.Quantity * (Math.Round((decimal)(a.Book.Price * (1 - a.Book.Discount / 100)))));
+            var totalAmountAfterDiscounts = Math.Round((decimal)addtocart.Sum(a => a.Quantity * (a.Book.Price * (1 - a.Book.Discount / 100))),2); ;
             var tax = 5m;
             var shippingAmount = 10m;
 

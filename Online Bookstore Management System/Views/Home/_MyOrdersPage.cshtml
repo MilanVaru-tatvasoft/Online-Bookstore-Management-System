@@ -11,7 +11,7 @@
                 <div class="card mb-4">
                     <div class="card-header bg-info d-flex justify-content-between text-white">
                         <h5 class="mb-0">
-                            Order @order.Orderid
+                            Order @order.Orderstatus.StatusName
                         </h5>
                         <h5 class="mb-0">
                             @order.Orderdate.ToString("MMM dd, yyyy")
@@ -45,7 +45,7 @@
                                 <div class="card d-flex justify-content-between flex-row">
                                     <div class="card-body">
 
-                                        <p class="mb-1">Order Status :<span class="text-primary"> @* @order.Orderstatus.StatusName *@ </span></p>
+                                        <p class="mb-1">Order Status :<span class="text-primary"> @order.Orderstatus.StatusName </span></p>
                                         <p class="mb-1">Total Payment :<span class="text-danger"> $@Model.OrderDetails.Where(x=>x.Orderid == order.Orderid).Sum(c=>c.Totalamount)</span></p>
                                         <p class="mb-1">Delivery Date: @order.Orderdate.AddDays(6).ToString("MMM dd, yyyy")</p>
                                         <p class="mb-1">Payment Method: @Model.Payments?.FirstOrDefault(p => p.OrderId == order.Orderid)?.PaymentMethod</p>

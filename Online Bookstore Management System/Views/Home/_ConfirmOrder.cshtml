@@ -38,21 +38,22 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="billingFirstName">First Name</label>
-                        <input type="text" class="form-control" id="billingFirstName" asp-for="CustomerName" placeholder="First Name">
+                        <input type="text" class="form-control" id="billingFirstName" asp-for="CustomerName" placeholder="First Name" required> 
+                        
                     </div>
                     <div class="form-group col-md-6">
                         <label for="billingLastName">Email</label>
-                        <input type="email" class="form-control" id="billingLastName" asp-for="Email" placeholder="Email">
+                        <input type="email" class="form-control" id="billingLastName" asp-for="Email" placeholder="Email" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="billingAddress">Phone Number</label>
-                        <input type="text" class="form-control" id="billingAddress" asp-for="PhoneNumber" placeholder="Phone Number">
+                        <input type="text" class="form-control" id="billingAddress" asp-for="PhoneNumber" placeholder="Phone Number" required>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="billingAddress2">Address</label>
-                        <input type="text" class="form-control" id="billingAddress2" asp-for="OrderAddress" placeholder="Address">
+                        <input type="text" class="form-control" id="billingAddress2" asp-for="OrderAddress" placeholder="Address" required>
                     </div>
                 </div>
                 <div class="form-row">

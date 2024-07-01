@@ -13,7 +13,7 @@
                     <tr class="text-center">
                         <th>AuthorId</th>
                         <th>Author Name</th>
-                        <th>Bio</th>
+                        <th class="w-50">Bio</th>
                         <th>Birth Date</th>
                         <th>Action</th>
                     </tr>
@@ -21,7 +21,7 @@
                 <tbody>
                     @foreach (var obj in Model.Authors.ToList())
                     {
-                        <tr>
+                        <tr class="text-center">
                            
                             <td>@obj.Authorid</td>
                             <td>@obj.Name</td>
@@ -52,7 +52,7 @@
         var table = $('#AuthorTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
-            "pageLength": 5,
+            "pageLength": 10,
             language: {
                 oPaginate: {
                     sNext: '<i class="bi bi-caret-right-fill text-info"></i>',

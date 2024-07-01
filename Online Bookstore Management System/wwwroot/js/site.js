@@ -158,7 +158,7 @@ function GetOrderHistory() {
 function EditUserProfile() {
     event.preventDefault();
     var formdata = new FormData($('#profileForm')[0]);
-    if ($('#profileForm').valid()) {
+    //if ($('#profileForm').valid()) {
         $.ajax({
             method: "POST",
             url: "/Home/EditUserProfile",
@@ -199,7 +199,7 @@ function EditUserProfile() {
             }
         });
 
-    }
+    //}
 }
 function ViewBookDetails(bookId) {
     $.ajax({
@@ -759,7 +759,7 @@ function DeleteCategory(categoryId) {
 
 }
 
-function getForgotPassword() {
+function GetForgotPassword() {
     var email = $('#fpasswordEmail').val();
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
